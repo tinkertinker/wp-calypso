@@ -8,6 +8,17 @@
  *  - https://wpcalypso.wordpress.com/devdocs/docs/our-approach-to-data.md#actions
  */
 
+// TODO: Move to correct place when ready for support chat
+
+export const LIVE_CHAT_CONNECT = 'LIVE_CHAT_CONNECT';
+export const LIVE_CHAT_CONNECTING = 'LIVE_CHAT_CONNECTING';
+export const LIVE_CHAT_CONNECTED = 'LIVE_CHAT_CONNECTED';
+export const LIVE_CHAT_CLOSING = 'LIVE_CHAT_CLOSING';
+export const LIVE_CHAT_SET_MESSAGE = 'LIVE_CHAT_SET_MESSAGE';
+export const LIVE_CHAT_MINIMIZE = 'LIVE_CHAT_MINIMIZE';
+export const LIVE_CHAT_RECEIVE_EVENT = 'LIVE_CHAT_RECEIVE_EVENT';
+export const LIVE_CHAT_SET_AUTOSCROLL = 'LIVE_CHAT_SET_AUTOSCROLL';
+
 export const CONNECTION_LOST = 'CONNECTION_LOST';
 export const CONNECTION_RESTORED = 'CONNECTION_RESTORED';
 export const CURRENT_USER_ID_SET = 'CURRENT_USER_ID_SET';

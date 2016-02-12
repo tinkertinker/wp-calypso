@@ -1,0 +1,167 @@
+.live-chat-container {
+	position: fixed;
+	bottom: 0;
+	right: 32px;
+	z-index: 5000;
+}
+
+.live-chat-title {
+	background: $blue-medium;
+	color: $white;
+	font-weight: bold;
+	flex: 0 0 auto;
+
+	> div {
+		padding: 8px 16px;
+	}
+
+	.live-chat-active-toolar {
+		display: flex;
+		padding: 8px 8px 8px 16px;
+
+		div {
+			margin: 0 4px;
+		}
+
+		:first-child {
+			flex: 1;
+			margin-left: 0;
+		}
+	}
+
+}
+
+.live-chat {
+	background: $gray-light;
+	display: flex;
+	flex-direction: column;
+
+	&.open {
+		min-width: 320px;
+		max-width: 320px;
+		max-height: 360px;
+		min-height: 320px;
+		box-shadow: 0 0 8px hsla( 0, 0%, 0%, 0.5 );
+	}
+}
+
+.live-chat-conversation {
+	flex: 1 1 auto;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	position: relative;
+
+	&::before {
+		content: '';
+		flex: 1 1 auto;
+	}
+
+}
+
+.live-chat-loading {
+	flex: 1 auto;
+	display: flex;
+	justify-content: space-around;
+	align-items: center;
+}
+
+.live-chat-welcome {
+	flex: 1 auto;
+	padding: 16px;
+	color: $gray-dark;
+}
+
+.live-chat-composer {
+	display: flex;
+	padding: 8px;
+	flex: 0 0 auto;
+}
+
+.live-chat-message {
+	flex: 1 1 auto;
+	background: $white;
+	border-radius: 4px;
+	border: 0;
+
+	> textarea {
+		border: none;
+		background: transparent;
+		font-size: 14px;
+		min-height: initial;
+		padding: 4px;
+		align-self: stretch;
+
+		&:focus, &:active {
+			outline: none;
+		}
+	}
+}
+
+.live-chat-submit {
+	align-self: flex-start;
+	flex: 0 0 auto;
+	border-radius: 4px;
+	background: $blue-medium;
+	color: $white;
+	padding: 8px 16px;
+	margin-left: 8px;
+}
+
+.live-chat-timeline-message {
+	flex: 0 0 auto;
+	display: flex;
+	flex-direction: row-reverse;
+	padding: 4px 8px;
+	margin: 4px 0;
+
+	.message-text {
+		font-size: 14px;
+		flex: 1;
+		padding: 8px;
+		border-radius: 8px 8px 8px 0;
+		color: $white;
+		background: $blue-medium;
+
+		p {
+			margin: 8px 0;
+			&:first-child { margin-top: 0 }
+			&:last-child { margin-bottom: 0 }
+		}
+
+	}
+
+	.message-nick {
+		font-weight: bold;
+	}
+
+	.message-meta {
+		align-self: flex-end;
+		margin: 0 4px;
+	}
+
+	.message-avatar {
+		width: 32px;
+		height: 32px;
+		border-radius: 32px;
+		background: darken( $gray-light, 10% );
+		overflow: hidden;
+
+		> img {
+			width: 100%;
+			height: auto;
+		}
+
+	}
+
+	&.userMessage {
+		flex-direction: row;
+
+		.message-text {
+			background: $white;
+			color: $gray-dark;
+			border-radius: 8px 8px 0 8px;
+		}
+
+	}
+}
