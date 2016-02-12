@@ -33,7 +33,8 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	PollerPool = require( 'lib/data-poller' ),
 	KeyboardShortcutsMenu,
 	Layout,
-	SupportUser;
+	SupportUser,
+	LiveChat = require( 'components/live-chat' );
 
 import { isOffline } from 'state/application/selectors';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
@@ -195,7 +196,12 @@ Layout = React.createClass( {
 				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 				{ this.renderMasterbar() }
 				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
+<<<<<<< 209397017578ed58edc0a5d61687866b6df73abd
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
+=======
+				{ config.isEnabled( 'live-chat' ) && <LiveChat /> }
+				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
+>>>>>>> Prototype of a live-chat support UI
 				{ this.props.isOffline && <OfflineStatus /> }
 				<div id="content" className="wp-content">
 					{ this.renderWelcome() }
