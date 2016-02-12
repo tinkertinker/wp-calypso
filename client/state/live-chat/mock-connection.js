@@ -25,7 +25,7 @@ const matches = ( regexp, map = ( { message } ) => message ) => ( fn ) => ( ... 
 	}
 }
 
-const delay = ( time, fn ) => ( ... args ) => setTimeout( () => fn( ...args ), time )
+const delay = ( ms, fn ) => ( ... args ) => setTimeout( () => fn( ...args ), ms )
 const delayedMatch = ( regex, fn, ms = 1000 ) => matches( regex )( delay( ms, fn ) )
 
 const cheekyHelp = delayedMatch( /\bhelp\b/, ( { connection } ) => connection.fakeMessage( 'Did you try turning it off and on again?' ) )
