@@ -22,7 +22,8 @@ const timeline_event = ( state = [], action ) => {
 					id: event.id,
 					nick: event.user.nick,
 					image: event.user.picture,
-					user_id: event.user.id
+					user_id: event.user.id,
+					type: event.type
 				} )
 			]
 		default:

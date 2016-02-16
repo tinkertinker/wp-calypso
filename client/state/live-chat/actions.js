@@ -1,6 +1,6 @@
 const debug = require( 'debug' )( 'calypso:live-chat:actions' )
 
-import buildConnection from './mock-connection'
+import buildConnection from 'lib/live-chat/connection'
 import {
 	LIVE_CHAT_CONNECTING,
 	LIVE_CHAT_CONNECTED,
@@ -35,6 +35,7 @@ export const openChat = ( user ) => ( dispatch ) => {
 	dispatch( setChatConnecting() )
 	debug( 'connecting, now attempt to connect' )
 	connection.open( user ).then( () => {
+		debug( 'connected' )
 		dispatch( setChatConnected() )
 		connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) )
 	} )

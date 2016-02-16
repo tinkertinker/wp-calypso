@@ -6,7 +6,14 @@ import { isArray, isEmpty } from 'lodash/lang'
 import GridIcon from 'components/gridicon'
 import Spinner from 'components/spinner'
 import { pure, log, first, any, all, when, propExists, propEquals, actionDispatcher, each } from 'lib/functional'
-import { openChat, closeChat, minimizeChat, updateChatMessage, sendChatMessage, setLiveChatAutoScroll } from 'state/live-chat/actions'
+import {
+	openChat,
+	closeChat,
+	minimizeChat,
+	updateChatMessage,
+	sendChatMessage,
+	setLiveChatAutoScroll
+} from 'state/live-chat/actions'
 
 const debug = require( 'debug' )( 'calypso:live-chat:component' )
 const logger = log( debug )
@@ -39,7 +46,11 @@ const availabilityTitle = when(
 	() => <div>Live Support Unavailable</div>
 )
 
-const connectingTitle = () => <div>Starting chat</div>
+const connectingTitle = ( { dispatch } ) => <div className="live-chat-active-toolar">
+	<div>Starting chat</div>
+	<div onClick={ dispatchCloseChat( dispatch ) }><GridIcon icon="cross" /></div>
+</div>
+
 const connectedTitle = ( { dispatch } ) => (
 	<div className="live-chat-active-toolar">
 		<div>Howdy, how may we help?</div>
@@ -92,10 +103,7 @@ const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt
  */
 const renderMessage = when( propExists( 'isCurrentUser' ), messageText, messageTextWithNick )
 
-/*
- * Renders a chat bubble with multiple messages grouped by user.
- */
-const renderGroupedTimelineItem = ( { item, isCurrentUser } ) => {
+const renderGroupedMessages = ( { item, isCurrentUser } ) => {
 	let [ initial, ... rest ] = item
 	let [ message, meta ] = initial
 	return (
@@ -112,6 +120,13 @@ const renderGroupedTimelineItem = ( { item, isCurrentUser } ) => {
 }
 
 /*
+ * Renders a chat bubble with multiple messages grouped by user.
+ */
+const renderGroupedTimelineItem = first(
+	when( ( { item } ) => item[0][1].type === 'message', renderGroupedMessages ),
+	( { item } ) => debug( 'no handler for message type', item[0][1].type, item )
+)
+/*
  * Renders a spinner in a flex-box context so it is centered vertically and horizontally
  */
 const renderLoading = () => (
@@ -121,13 +136,14 @@ const renderLoading = () => (
 )
 
 const groupMessages = ( messages ) => {
-	let grouped = messages.reduce( ( { user_id, group, groups }, [ message, meta ] ) => {
+	let grouped = messages.reduce( ( { user_id, type, group, groups }, [ message, meta ] ) => {
 		const message_user_id = meta.user_id
-		if ( user_id !== message_user_id ) {
-			return { user_id: message_user_id, group: [ [ message, meta ] ], groups: group ? groups.concat( [ group ] ) : groups }
+		const message_type = meta.type
+		if ( user_id !== message_user_id || message_type !== type ) {
+			return { user_id: message_user_id, type: message_type, group: [ [ message, meta ] ], groups: group ? groups.concat( [ group ] ) : groups }
 		}
 		// it's the same user so group it together
-		return { user_id, group: group.concat( [ [ message, meta ] ] ), groups }
+		return { user_id, group: group.concat( [ [ message, meta ] ] ), groups, type }
 	}, { groups: [] } )
 
 	return grouped.groups.concat( [ grouped.group ] )
