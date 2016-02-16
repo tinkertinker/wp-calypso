@@ -11,6 +11,7 @@
 	"logout_url": "/logout",
 	"facebook_api_key": "249643311490",
 	"discover_logged_out_redirect_url": "https://discover.wordpress.com",
+	"live_chat_server_url": "http://a8c.supportpit.com/chat",
 	"features": {
 		"accept-invite": true,
 		"ad-tracking": false,
