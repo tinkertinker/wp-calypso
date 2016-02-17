@@ -3,7 +3,7 @@ const debug = require( 'debug' )( 'calypso:live-chat:connection' )
 import IO from 'socket.io-client'
 import { EventEmitter } from 'events'
 import { pick, mapKeys, get } from 'lodash/object'
-
+import { bot } from './mock-connection'
 import config from 'config'
 
 const USER_KEY_MAP = {
@@ -50,6 +50,7 @@ class Connection extends EventEmitter {
 
 	send( message ) {
 		return new Promise( ( resolve, reject ) => {
+			bot( { message, connection: this } )
 			if ( !this.socket ) return reject( new Error( 'socket not connected' ) )
 			debug( 'emit message', message )
 			this.socket.emit( 'action', { message, type: 'message' }, resolve )
