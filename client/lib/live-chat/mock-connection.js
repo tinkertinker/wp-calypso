@@ -9,7 +9,7 @@ const alternate = ( ... options ) => () => {
 	return current
 }
 
-const fakeMessage = alternate(
+const createMessage = alternate(
 	'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.',
 	'Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut',
 	'aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.',
@@ -28,14 +28,14 @@ const matches = ( regexp, map = ( { message } ) => message ) => ( fn ) => ( ... 
 const delay = ( ms, fn ) => ( ... args ) => setTimeout( () => fn( ...args ), ms )
 const delayedMatch = ( regex, fn, ms = 1000 ) => matches( regex )( delay( ms, fn ) )
 
-const cheekyHelp = delayedMatch( /\bhelp\b/, ( { connection } ) => connection.fakeMessage( 'Did you try turning it off and on again?' ) )
-const replyWithCount = delayedMatch( /^reply with ([\d])/i, ( { connection }, results ) => times( parseInt( results[1] ), () => connection.fakeMessage() )() )
-const getMeCoffee = delayedMatch( /\bcoffee\b/i, ( { connection } ) => connection.fakeMessage( 'I could really use a cup of coffee' ) )
-const reply = delayedMatch( /\breply\b/i, ( { connection } ) => setTimeout( () => connection.fakeMessage() ) )
-const dontKnow = everyCount( 5, delay( 1000, ( { connection } ) => connection.fakeMessage( 'I have no clue what you\'re talking about' ) ) )
+const cheekyHelp = delayedMatch( /\bhelp\b/, ( { connection } ) => fakeMessage( { connection, message: 'Did you try turning it off and on again?' } ) )
+const replyWithCount = delayedMatch( /^reply with ([\d])/i, ( { connection }, results ) => times( parseInt( results[1] ), () => fakeMessage( { connection } ) )() )
+const getMeCoffee = delayedMatch( /\bcoffee\b/i, ( { connection } ) => fakeMessage( { connection, message: 'I could really use a cup of coffee' } ) )
+const reply = delayedMatch( /\breply\b/i, ( { connection } ) => setTimeout( () => fakeMessage( { connection } ) ) )
+const dontKnow = everyCount( 5, delay( 1000, ( { connection } ) => fakeMessage( { connection, message: 'I have no clue what you\'re talking about' } ) ) )
 const hello = delayedMatch( /^hello$/i, ( { connection } ) => {
-	[ 'Hello', 'It\'s me', 'I was wondering if after all this time you\'d like to meet ...', 'to go over', 'ev-er-y-thing' ].forEach( ( msg, i ) => {
-		setTimeout( () => connection.fakeMessage( msg ), i * 2000 + 400 )
+	[ 'Hello', 'It\'s me', 'I was wondering if after all this time you\'d like to meet ...', 'to go over', 'ev-er-y-thing' ].forEach( ( message, i ) => {
+		setTimeout( () => fakeMessage( { connection, message } ), i * 2000 + 400 )
 	} )
 } )
 
@@ -44,8 +44,7 @@ const detectors = any(
 	cheekyHelp,
 	getMeCoffee,
 	reply,
-	hello,
-	dontKnow
+	hello
 )
 
 export class MockConnection extends EventEmitter {
@@ -74,16 +73,17 @@ export class MockConnection extends EventEmitter {
 		} )
 	}
 
-	// send fake messages to be rendered in the chat screen
-	fakeMessage( message ) {
-		this.emit( 'event', {
-			id: uuid(),
-			type: 'message',
-			message: message || fakeMessage(),
-			user: { nick: 'Smeagol', picture: 'https://cldup.com/3yiF9JyZr0.jpeg', id: 12345 }
-		} )
-	}
+}
 
+export function fakeMessage( { connection, message } ) {
+	connection.emit( 'event', {
+		id: uuid(),
+		type: 'message',
+		message: message || createMessage(),
+		user: { nick: 'Smeagol', picture: 'https://cldup.com/3yiF9JyZr0.jpeg', id: 12345 }
+	} )
 }
 
 export default () => new MockConnection()
+
+export { detectors as bot }
