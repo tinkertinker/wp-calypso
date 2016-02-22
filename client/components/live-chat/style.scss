@@ -108,6 +108,12 @@
 	margin-left: 8px;
 }
 
+.live-chat-timeline-join-message {
+	flex: 0 0 auto;
+	padding: 4px 8px;
+	color: $gray-dark;
+	text-align: center;
+}
 .live-chat-timeline-message {
 	flex: 0 0 auto;
 	display: flex;
