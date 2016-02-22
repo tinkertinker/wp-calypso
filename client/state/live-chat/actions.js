@@ -1,6 +1,8 @@
 const debug = require( 'debug' )( 'calypso:live-chat:actions' )
 
 import buildConnection from 'lib/live-chat/connection'
+import throttle from 'lodash/function/throttle'
+import { propExists, when } from 'lib/functional'
 import {
 	LIVE_CHAT_CONNECTING,
 	LIVE_CHAT_CONNECTED,
@@ -41,9 +43,15 @@ export const openChat = ( user ) => ( dispatch ) => {
 	} )
 }
 
+const throttleTyping = when( propExists( 'message' ), throttle( ( { message } ) => {
+	debug( 'send typing indicator' )
+	connection.typing( message )
+}, 1000, { leading: true, trailing: false } ) )
+
 export const updateChatMessage = ( message ) => ( dispatch ) => {
 	dispatch( setChatMessage( message ) )
 	// TODO: send a typing indicator?
+	throttleTyping( { message } )
 }
 
 export const sendChatMessage = ( message ) => ( dispatch ) => {
