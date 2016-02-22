@@ -119,11 +119,34 @@ const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 	)
 }
 
+const nick = ( [ , meta ] ) => <strong>{ meta.nick }</strong>
+const nickComma = ( ... args ) => ( <span>{ nick( ... args ) }, </span> )
+
+const andRest = ( { rest } ) => <div>
+	{ rest.slice( 0, -1 ).map( nickComma ) }
+	and
+	{ rest.slice( -1 ).map( nick ) }
+	joined.
+</div>
+
+const andRestWhenMoreThanOne = when( ( { rest } ) => rest.length > 0, andRest )
+
+const renderJoinMessage = ( { item }, index ) => {
+	const [ initial, ... rest ] = item
+	return (
+		<div className="live-chat-timeline-join-message" key={ index }>
+			<div>{ nick( initial ) }{ andRestWhenMoreThanOne( { rest: rest } ) } joined.</div>
+		</div>
+	)
+}
+const itemTypeIs = ( type ) => ( { item } ) => item[0][1].type === type
+
 /*
  * Renders a chat bubble with multiple messages grouped by user.
  */
 const renderGroupedTimelineItem = first(
-	when( ( { item } ) => item[0][1].type === 'message', renderGroupedMessages ),
+	when( itemTypeIs( 'message' ), renderGroupedMessages ),
+	when( itemTypeIs( 'join' ), renderJoinMessage ),
 	( { item } ) => debug( 'no handler for message type', item[0][1].type, item )
 )
 /*

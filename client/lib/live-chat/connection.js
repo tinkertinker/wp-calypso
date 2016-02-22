@@ -22,11 +22,13 @@ const emitActionMessage = ( connection ) => ( { id, type, user, message, timesta
 	}, timestamp, message } )
 }
 
+const p = ( ... args ) => new Promise( ... args )
+
 class Connection extends EventEmitter {
 
 	connect( user ) {
-		if ( this.socket ) return new Promise( ( resolve ) => resolve() )
-		return new Promise( ( resolve ) => {
+		if ( this.socket ) return p( ( resolve ) => resolve() )
+		return p( ( resolve ) => {
 			const socket = this.socket = new IO( config( 'live_chat_server_url' ) )
 			socket
 				.once( 'connect', () => resolve( socket ) )
@@ -38,21 +40,33 @@ class Connection extends EventEmitter {
 		} )
 	}
 
+	getSocket() {
+		return p( ( resolve, reject ) => {
+			if ( !this.socket ) return reject( new Error( 'not connected' ) )
+			resolve( this.socket )
+		} )
+	}
+
 	open( user ) {
 		debug( 'open connection for user', user, config( 'live_chat_server_url' ) )
 
-		return this.connect( user ).then( ( socket ) => new Promise( ( resolve ) => {
+		return this.connect( user ).then( ( socket ) => p( ( resolve ) => {
 			debug( 'connected', socket )
 			resolve()
 		} ) )
 	}
 
+	typing( message ) {
+		this.getSocket()
+		.then( ( socket ) => socket.emit( 'typing', { message } ) )
+		.catch( debug )
+	}
+
 	send( message ) {
-		return new Promise( ( resolve, reject ) => {
-			if ( !this.socket ) return reject( new Error( 'socket not connected' ) )
-			debug( 'emit message', message )
-			this.socket.emit( 'action', { message, type: 'message' }, resolve )
-		} )
+		this.getSocket()
+		.then( ( socket ) => new Promise( ( resolve ) => {
+			socket.emit( 'action', { message, type: 'message' }, resolve )
+		} ) )
 	}
 
 }
