@@ -103,11 +103,11 @@ const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt
  */
 const renderMessage = when( propExists( 'isCurrentUser' ), messageText, messageTextWithNick )
 
-const renderGroupedMessages = ( { item, isCurrentUser } ) => {
+const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 	let [ initial, ... rest ] = item
 	let [ message, meta ] = initial
 	return (
-		<div className={ classnames( 'live-chat-timeline-message', { userMessage: isCurrentUser } ) } key={ meta.id }>
+		<div className={ classnames( 'live-chat-timeline-message', { userMessage: isCurrentUser } ) } key={ meta.id || index }>
 			<div className="message-text">
 				{ renderMessage( { isCurrentUser, message, nick: meta.nick, key: meta.id } ) }
 				{ rest.map( ( [ remaining, remaining_meta ] ) => <p key={ remaining_meta.id }>{ remaining } </p> ) }
