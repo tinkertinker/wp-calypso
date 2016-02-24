@@ -1,7 +1,7 @@
 const debug = require( 'debug' )( 'calypso:live-chat:actions' )
 
 import buildConnection from 'lib/live-chat/connection'
-import throttle from 'lodash/function/throttle'
+import { throttle } from 'lodash/function'
 import { propExists, when } from 'lib/functional'
 import {
 	LIVE_CHAT_CONNECTING,
