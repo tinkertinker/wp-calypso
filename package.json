@@ -117,7 +117,7 @@
   },
   "scripts": {
     "test": "make test",
-    "postinstall": "make build"
+    "postinstall": "echo $CALYPSO_SECRETS > config/secrets.json && make build"
   },
   "devDependencies": {
     "babel-eslint": "4.1.8",
