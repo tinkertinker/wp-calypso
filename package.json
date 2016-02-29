@@ -118,8 +118,7 @@
     "node": ">=4.3.0"
   },
   "scripts": {
-    "test": "make test",
-    "postinstall": "echo $CALYPSO_SECRETS > config/secrets.json && make build"
+    "test": "make test"
   },
   "devDependencies": {
     "babel-eslint": "4.1.8",
