@@ -1,17 +1,24 @@
 .live-chat-container {
-	position: fixed;
-	bottom: 0;
-	right: 32px;
-	z-index: 5000;
+	flex: 1 0 auto;
+	width: 320px;
+	display: flex;
+	flex-direction: column;
+	border-left: 1px solid darken( $gray-light, 5% );
+	box-sizing: border-box;
 }
 
 .live-chat-title {
 	background: $blue-medium;
+	border-bottom: 1px solid darken( $blue-medium, 5% );
 	color: $white;
 	font-weight: bold;
 	flex: 0 0 auto;
+	height: 46px;
+	display: flex;
+	align-items: center;
 
 	> div {
+		flex: 1 1 auto;
 		padding: 8px 16px;
 	}
 
@@ -35,14 +42,7 @@
 	background: $gray-light;
 	display: flex;
 	flex-direction: column;
-
-	&.open {
-		min-width: 320px;
-		max-width: 320px;
-		max-height: 360px;
-		min-height: 320px;
-		box-shadow: 0 0 8px hsla( 0, 0%, 0%, 0.5 );
-	}
+	flex: 1 1;
 }
 
 .live-chat-conversation {
@@ -70,6 +70,14 @@
 	flex: 1 auto;
 	padding: 16px;
 	color: $gray-dark;
+	display: flex;
+	flex-direction: column;
+	justify-content: flex-end;
+
+	p {
+		margin: 0;
+		padding: 0;
+	}
 }
 
 .live-chat-composer {
