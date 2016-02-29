@@ -96,7 +96,6 @@
     "rtlcss": "1.6.1",
     "sanitize-html": "1.11.1",
     "semver": "5.1.0",
-    "socket.io-client": "1.4.5",
     "source-map": "0.1.39",
     "source-map-support": "0.3.2",
     "srcset": "1.0.0",

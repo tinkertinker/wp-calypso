@@ -143,11 +143,6 @@ module.exports = React.createClass( {
 		if ( 'scrollRestoration' in history ) {
 			history.scrollRestoration = 'manual';
 		}
-		this._listContext = document.querySelector( '#primary' )
-	},
-
-	componentWillMount: function() {
-		this._listContext = document.querySelector( '#primary' )
 	},
 
 	componentWillUnmount: function() {
@@ -350,11 +345,6 @@ module.exports = React.createClass( {
 			isSelected = index === this.state.selectedIndex;
 
 		if ( postKey.isGap ) {
-			const listRef = ( c ) => {
-				if ( isSelected ) {
-					this._selectedGap = c;
-				}
-			}
 			return (
 				<ListGap
 				ref={ ( c ) => {
@@ -416,10 +406,6 @@ module.exports = React.createClass( {
 		return content;
 	},
 
-	_setListContext: function( ref ) {
-		this._list = ref
-	},
-
 	render: function() {
 		var store = this.props.store,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
@@ -429,9 +415,8 @@ module.exports = React.createClass( {
 			body = this.props.emptyContent || ( <EmptyContent /> );
 		} else {
 			body = ( <InfiniteList
-			ref={ this._setListContext }
+			ref={ ( c ) => this._list = c }
 			className="reader__content"
-			context={ this._listContext }
 			items={ this.state.posts }
 			lastPage={ this.props.store.isLastPage() }
 			fetchingNextPage={ this.props.store.isFetchingNextPage() }
@@ -450,11 +435,8 @@ module.exports = React.createClass( {
 				</MobileBackToSidebar>
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
-
-				{ header }
-
+				{ this.props.children }
 				{ body }
-
 			</Main>
 		);
 	}
