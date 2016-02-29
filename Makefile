@@ -95,6 +95,9 @@ install: node_modules
 run: welcome githooks install build
 	@$(NODE) build/bundle-$(CALYPSO_ENV).js
 
+run-fast:
+	@$(NODE) build/bundle-$(CALYPSO_ENV).js
+	
 node-version:
 	@$(BIN)/check-node-version
 
@@ -106,9 +109,12 @@ node_modules/%: | node-version
 # ensures that the `node_modules` directory is installed and up-to-date with
 # the dependencies listed in the "package.json" file.
 node_modules: package.json | node-version
+ifndef SKIP_NPM_INSTALL
 	@$(NPM) prune
 	@$(NPM) install
 	@touch node_modules
+endif
+
 
 # run `make test` in all discovered Makefiles
 test: build

@@ -118,7 +118,8 @@
     "node": ">=4.3.0"
   },
   "scripts": {
-    "test": "make test"
+    "test": "make test",
+		"postinstall": "./scripts/postinstall"
   },
   "devDependencies": {
     "babel-eslint": "4.1.8",
