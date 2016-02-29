@@ -87,6 +87,9 @@ install: node_modules
 run: welcome githooks install build
 	@$(NODE) build/bundle-$(CALYPSO_ENV).js
 
+run-fast:
+	@$(NODE) build/bundle-$(CALYPSO_ENV).js
+	
 # a helper rule to ensure that a specific module is installed,
 # without relying on a generic `npm install` command
 node_modules/%:
@@ -98,9 +101,12 @@ node-version: node_modules/semver
 # ensures that the `node_modules` directory is installed and up-to-date with
 # the dependencies listed in the "package.json" file.
 node_modules: package.json | node-version
+ifndef SKIP_NPM_INSTALL
 	@$(NPM) prune
 	@$(NPM) install
 	@touch node_modules
+endif
+
 
 test: build
 	@$(NPM) test
