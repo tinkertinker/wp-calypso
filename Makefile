@@ -89,14 +89,10 @@ welcome:
 	@printf "\033[36m               |___/|_|                  \n"
 	@printf "\033[m\n"
 
-install:
-	@echo "skipping modules"
+install: node_modules
 
 # Simply running `make run` will spawn the Node.js server instance.
-run: welcome install build
-	@$(NODE) build/bundle-$(CALYPSO_ENV).js
-
-run-fast:
+run: welcome githooks install build
 	@$(NODE) build/bundle-$(CALYPSO_ENV).js
 
 node-version:
