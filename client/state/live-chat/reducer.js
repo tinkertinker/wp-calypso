@@ -5,7 +5,8 @@ import {
 	LIVE_CHAT_SET_MESSAGE,
 	LIVE_CHAT_CLOSING,
 	LIVE_CHAT_RECEIVE_EVENT,
-	LIVE_CHAT_SET_AUTOSCROLL
+	LIVE_CHAT_SET_AUTOSCROLL,
+	LIVE_CHAT_OPEN_URL
 } from 'state/action-types'
 
 const debug = require( 'debug' )( 'calypso:live-chat:reducer' )
@@ -23,7 +24,8 @@ const timeline_event = ( state = [], action ) => {
 					nick: event.user.nick,
 					image: event.user.picture,
 					user_id: event.user.id,
-					type: event.type
+					type: event.type,
+					links: event.links
 				} )
 			]
 		default:
@@ -73,4 +75,13 @@ const autoscroll = ( state = true, action ) => {
 	}
 }
 
-export default combineReducers( { timeline, available, status, message, autoscroll } )
+const supportURL = ( state = null, action ) => {
+	switch ( action.type ) {
+		case LIVE_CHAT_OPEN_URL:
+			return action.url
+		default:
+			return state
+	}
+}
+
+export default combineReducers( { timeline, available, status, message, autoscroll, supportURL } )

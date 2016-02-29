@@ -10,7 +10,8 @@ import {
 	LIVE_CHAT_MINIMIZE,
 	LIVE_CHAT_CLOSING,
 	LIVE_CHAT_RECEIVE_EVENT,
-	LIVE_CHAT_SET_AUTOSCROLL
+	LIVE_CHAT_SET_AUTOSCROLL,
+	LIVE_CHAT_OPEN_URL
 } from 'state/action-types'
 
 export const checkAvailability = () => () => {
@@ -67,3 +68,5 @@ export const closeChat = () => ( dispatch ) => {
 }
 
 export const setLiveChatAutoScroll = ( auto ) => ( { type: LIVE_CHAT_SET_AUTOSCROLL, auto } )
+
+export const openChatURL = ( url ) => ( { type: LIVE_CHAT_OPEN_URL, url } )

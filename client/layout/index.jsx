@@ -30,7 +30,8 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	KeyboardShortcutsMenu,
 	Layout,
 	SupportUser,
-	LiveChat = require( 'components/live-chat' );
+	LiveChat = require( 'components/live-chat' ),
+	SupportBrowser = require( 'components/live-chat/browser' )
 
 import { isOffline } from 'state/application/selectors';
 
@@ -144,7 +145,8 @@ Layout = React.createClass( {
 				`focus-${this.props.focus.getCurrent()}`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
-				{ 'full-screen': this.props.isFullScreen }
+				{ 'full-screen': this.props.isFullScreen },
+				{ 'support-url': this.props.isShowingSupportURL }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -152,10 +154,26 @@ Layout = React.createClass( {
 			} );
 
 		return (
-			<div className={ sectionClass }>
-				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				{ this.renderMasterbar() }
-				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
+			<div className="app-anchor">
+				<div className={ sectionClass }>
+					{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
+					{ this.renderMasterbar() }
+					{ config.isEnabled( 'support-user' ) && <SupportUser /> }
+					<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
+					{ this.props.isOffline && <OfflineStatus /> }
+					<div id="content" className="wp-content">
+						{ this.renderWelcome() }
+						{ this.renderEmailVerificationNotice() }
+						<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section } />
+						<div id="primary" className="wp-primary wp-section" />
+						<div id="secondary" className="wp-secondary" />
+					</div>
+					<div id="tertiary" />
+					<TranslatorLauncher
+						isEnabled={ translator.isEnabled() }
+						isActive={ translator.isActivated() }/>
+				</div>
+				{ config.isEnabled( 'live-chat' ) && <SupportBrowser /> }
 				{ config.isEnabled( 'live-chat' ) && <LiveChat /> }
 				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
 				{ this.props.isOffline && <OfflineStatus /> }
@@ -178,6 +196,7 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section, hasSidebar, isFullScreen, chunkName } = state.ui;
+		const { supportURL } = state.liveChat
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
@@ -185,7 +204,8 @@ export default connect(
 			hasSidebar,
 			isFullScreen,
 			chunkName,
-			isOffline: isOffline( state )
+			isOffline: isOffline( state ),
+			isShowingSupportURL: !!supportURL
 		};
 	}
 )( Layout );
