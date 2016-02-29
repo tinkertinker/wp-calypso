@@ -12,7 +12,8 @@ import {
 	minimizeChat,
 	updateChatMessage,
 	sendChatMessage,
-	setLiveChatAutoScroll
+	setLiveChatAutoScroll,
+	openChatURL
 } from 'state/live-chat/actions'
 
 const debug = require( 'debug' )( 'calypso:live-chat:component' )
@@ -90,10 +91,29 @@ const renderComposer = ( { dispatch, message } ) => (
  */
 const messageTextWithNick = ( { message, nick, key } ) => <p key={ key }><span className="message-nick">{ nick }</span> { message }</p>
 
+const openLiveChatMessageURL = ( { dispatch, url } ) => () => {
+	dispatch( openChatURL( url ) )
+}
+
 /*
  * Renders a single line of message text.
  */
-const messageText = ( { message, key } ) => <p key={ key }>{ message }</p>
+const messageText = when( ( { links } ) => !isEmpty( links ), ( { message, key, links, dispatch } ) => {
+	// extract the links and replace with components?
+	let children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
+		if ( last < startIndex ) {
+			parts = parts.concat( <span>{ message.slice( last, startIndex ) }</span> )
+		}
+		parts = parts.concat( <a href="#" onClick={ each( preventDefault, openLiveChatMessageURL( { dispatch, url } ) ) }>{ url }</a> )
+		return { parts, last: startIndex + length }
+	}, { parts: [], last: 0 } )
+
+	if ( children.last < message.length ) {
+		children.parts = children.parts.concat( <span>{ message.slice( children.last ) }</span> )
+	}
+
+	return <p key={ key }>{ children.parts }</p>
+}, ( { message, key } ) => <p key={ key }>{ message }</p> )
 
 const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt={ meta.nick } src={ meta.image } /> )
 
@@ -103,14 +123,14 @@ const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt
  */
 const renderMessage = when( propExists( 'isCurrentUser' ), messageText, messageTextWithNick )
 
-const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
+const renderGroupedMessages = ( { item, isCurrentUser, dispatch }, index ) => {
 	let [ initial, ... rest ] = item
 	let [ message, meta ] = initial
 	return (
 		<div className={ classnames( 'live-chat-timeline-message', { userMessage: isCurrentUser } ) } key={ meta.id || index }>
 			<div className="message-text">
-				{ renderMessage( { isCurrentUser, message, nick: meta.nick, key: meta.id } ) }
-				{ rest.map( ( [ remaining, remaining_meta ] ) => <p key={ remaining_meta.id }>{ remaining } </p> ) }
+				{ renderMessage( { isCurrentUser, message, nick: meta.nick, key: meta.id, links: meta.links, dispatch } ) }
+				{ rest.map( ( [ remaining, remaining_meta ] ) => messageText( { dispatch, message: remaining, key: remaining_meta.id, links: remaining_meta.links } ) ) }
 			</div>
 			<div className="message-meta">
 				<div className="message-avatar">{ messageAvatar( { meta } ) }</div>
@@ -188,7 +208,7 @@ const autoScroll = ( { dispatch, autoscroll } ) => ( ref ) => {
 
 const renderConversation = ( { timeline, isCurrentUser, autoscroll, dispatch } ) => (
 	<div ref={ autoScroll( { dispatch, autoscroll } ) } className="live-chat-conversation">
-		{ groupMessages( timeline ).map( ( item ) => renderGroupedTimelineItem( { item, isCurrentUser: isCurrentUser( item[0] ) } ) ) }
+		{ groupMessages( timeline ).map( ( item ) => renderGroupedTimelineItem( { dispatch, item, isCurrentUser: isCurrentUser( item[0] ) } ) ) }
 	</div>
 )
 
