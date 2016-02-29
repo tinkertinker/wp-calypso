@@ -38,6 +38,7 @@ function assertValidProduct( product ) {
 function formatProduct( product ) {
 	return assign( {}, product, {
 		product_slug: product.product_slug || product.productSlug,
+		product_type: product.product_type || product.productType,
 		is_domain_registration: product.is_domain_registration !== undefined
 			? product.is_domain_registration
 			: product.isDomainRegistration,
@@ -150,9 +151,9 @@ function isDomainProduct( product ) {
 	assertValidProduct( product );
 
 	return (
+		isDomainMapping( product ) ||
 		isDomainRegistration( product ) ||
-		product.product_slug === 'domain_map' ||
-		product.product_slug === 'private_whois'
+		isPrivateRegistration( product )
 	);
 }
 
@@ -202,9 +203,9 @@ function getDomainProductRanking( product ) {
 
 	if ( isDomainRegistration( product ) ) {
 		return 0;
-	} else if ( product.product_slug === 'domain_map' ) {
+	} else if ( isDomainMapping( product ) ) {
 		return 1;
-	} else if ( product.product_slug === 'private_whois' ) {
+	} else if ( isPrivateRegistration( product ) ) {
 		return 2;
 	}
 }
@@ -302,13 +303,13 @@ module.exports = {
 	isDomainRedemption,
 	isDomainRegistration,
 	isEnterprise,
-	isFreePlan,
 	isFreeJetpackPlan,
+	isFreePlan,
 	isFreeTrial,
 	isGoogleApps,
 	isJetpackBusiness,
-	isJetpackPremium,
 	isJetpackPlan,
+	isJetpackPremium,
 	isJpphpBundle,
 	isNoAds,
 	isPlan,

@@ -42,8 +42,10 @@ var config = require( 'config' ),
 	setRouteAction = require( 'state/notices/actions' ).setRoute,
 	accessibleFocus = require( 'lib/accessible-focus' ),
 	TitleStore = require( 'lib/screen-title/store' ),
+	syncHandler = require( 'lib/wp/sync-handler' ),
 	renderWithReduxStore = require( 'lib/react-helpers' ).renderWithReduxStore,
 	bindWpLocaleState = require( 'lib/wp/localization' ).bindState,
+	supportUser = require( 'lib/user/support-user-interop' ),
 	// The following components require the i18n mixin, so must be required after i18n is initialized
 	Layout;
 
@@ -51,6 +53,9 @@ function init() {
 	var i18nLocaleStringsObject = null;
 
 	debug( 'Starting Calypso. Let\'s do this.' );
+
+	// prune sync-handler records more than two days old
+	syncHandler.pruneRecordsFrom( '2 days' );
 
 	// Initialize i18n
 	if ( window.i18nLocaleStrings ) {
@@ -89,7 +94,6 @@ function setUpContext( layout, reduxStore ) {
 	page( '*', function( context, next ) {
 		var parsed = url.parse( location.href, true );
 
-		context.layout = layout;
 		context.store = reduxStore;
 
 		// Break routing and do full page load for logout link in /me
@@ -163,9 +167,7 @@ function reduxStoreReady( reduxStore ) {
 
 	bindWpLocaleState( reduxStore );
 
-	if ( config.isEnabled( 'support-user' ) ) {
-		require( 'lib/user/support-user-interop' )( reduxStore );
-	}
+	supportUser.setReduxStore( reduxStore );
 
 	Layout = require( 'layout' );
 
@@ -203,10 +205,10 @@ function reduxStoreReady( reduxStore ) {
 
 			if ( matchedRoutes.length ) {
 				props = { routeName: matchedRoutes[0].name, match: matchedRoutes[0].match };
-				Layout = require( 'layout/logged-out-design' );
+				Layout = require( 'layout/logged-out' );
 			}
 		} else if ( startsWith( window.location.pathname, '/design' ) ) {
-			Layout = require( 'layout/logged-out-design' );
+			Layout = require( 'layout/logged-out' );
 		}
 
 		layoutElement = React.createElement( Layout, Object.assign( {}, props, {

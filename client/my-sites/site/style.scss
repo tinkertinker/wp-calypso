@@ -10,16 +10,6 @@
 	padding: 0;
 	position: relative;
 
-	// Show lock icon on private sites
-	&.is-private {
-		.site__title::before {
-			@include noticon( '\f470', 16px );
-			color: $gray;
-			margin: 0 3px 2px 0;
-			vertical-align: bottom;
-		}
-	}
-
 	&.is-redirect {
 		.site__title::before {
 			@include noticon( '\f458', 16px );
@@ -39,6 +29,11 @@
 			animation: pulse-light 0.8s ease-in-out infinite;
 			background-color: lighten( $gray, 30% );
 			color: transparent;
+			width: 95%;
+
+			&::after {
+				display: none;
+			}
 		}
 
 		.notouch .sites-popover &:hover {
@@ -75,7 +70,7 @@
 	width: 30px;
 	overflow: hidden;
 	align-self: center;
-	margin-right: 12px;
+	margin-right: 8px;
 }
 
 // The group of site title and domain
@@ -96,10 +91,7 @@
 	color: $gray;
 	display: block;
 	max-width: 95%;
-	font: {
-		size: 11px;
-		style: italic;
-	}
+	font-size: 11px;
 	line-height: 1.4;
 }
 
@@ -211,6 +203,9 @@
 	&:hover {
 		color: $blue-medium;
 	}
+	.gridicons-external {
+		top: -1px;
+	}
 }
 
 .site__star {
@@ -227,10 +222,10 @@
 	}
 }
 
-.site__star-badge {
-	align-self: center;
+.site__badge {
 	color: $gray;
-	padding-right: 16px;
+	padding-right: 4px;
 	line-height: 0;
 	position: relative;
+	vertical-align: middle;
 }

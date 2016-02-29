@@ -1,49 +1,53 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
-	classNames = require( 'classnames' ),
+var classNames = require( 'classnames' ),
 	connect = require( 'react-redux' ).connect,
 	find = require( 'lodash/find' ),
-	page = require( 'page' );
+	page = require( 'page' ),
+	React = require( 'react' );
 
 /**
  * Internal dependencies
  */
 var activated = require( 'state/themes/actions' ).activated,
-	Dispatcher = require( 'dispatcher' ),
-	Card = require( 'components/card' ),
-	Main = require( 'components/main' ),
 	analytics = require( 'analytics' ),
 	BusinessPlanDetails = require( './business-plan-details' ),
+	Card = require( 'components/card' ),
 	ChargebackDetails = require( './chargeback-details' ),
+	CheckoutThankYouFooter = require( './footer' ),
 	CheckoutThankYouHeader = require( './header' ),
+	Dispatcher = require( 'dispatcher' ),
 	DomainMappingDetails = require( './domain-mapping-details' ),
 	DomainRegistrationDetails = require( './domain-registration-details' ),
-	getReceiptById = require( 'state/receipts/selectors' ).getReceiptById,
+	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
 	GenericDetails = require( './generic-details' ),
+	getReceiptById = require( 'state/receipts/selectors' ).getReceiptById,
 	GoogleAppsDetails = require( './google-apps-details' ),
-	isDomainMapping = require( 'lib/products-values' ).isDomainMapping,
-	isDomainRegistration = require( 'lib/products-values' ).isDomainRegistration,
-	isChargeback = require( 'lib/products-values' ).isChargeback,
+	HeaderCake = require( 'components/header-cake' ),
 	isBusiness = require( 'lib/products-values' ).isBusiness,
+	isChargeback = require( 'lib/products-values' ).isChargeback,
+	isDomainMapping = require( 'lib/products-values' ).isDomainMapping,
+	isDomainProduct = require( 'lib/products-values' ).isDomainProduct,
+	isDomainRedemption = require( 'lib/products-values' ).isDomainRedemption,
+	isDomainRegistration = require( 'lib/products-values' ).isDomainRegistration,
 	isFreeTrial = require( 'lib/products-values' ).isFreeTrial,
 	isGoogleApps = require( 'lib/products-values' ).isGoogleApps,
-	isJetpackPlan = require( 'lib/products-values' ).isJetpackPlan,
-	isJetpackPremium = require( 'lib/products-values' ).isJetpackPremium,
 	isJetpackBusiness = require( 'lib/products-values' ).isJetpackBusiness,
+	isJetpackPremium = require( 'lib/products-values' ).isJetpackPremium,
 	isPlan = require( 'lib/products-values' ).isPlan,
 	isPremium = require( 'lib/products-values' ).isPremium,
 	isSiteRedirect = require( 'lib/products-values' ).isSiteRedirect,
 	isTheme = require( 'lib/products-values' ).isTheme,
-	fetchReceipt = require( 'state/receipts/actions' ).fetchReceipt,
-	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
-	i18n = require( 'lib/mixins/i18n' ),
 	JetpackBusinessPlanDetails = require( './jetpack-business-plan-details' ),
 	JetpackPremiumPlanDetails = require( './jetpack-premium-plan-details' ),
+	Main = require( 'components/main' ),
+	plansPaths = require( 'my-sites/plans/paths' ),
 	PremiumPlanDetails = require( './premium-plan-details' ),
 	PurchaseDetail = require( './purchase-detail' ),
-	SiteRedirectDetails = require( './site-redirect-details' );
+	refreshSitePlans = require( 'state/sites/plans/actions' ).refreshSitePlans,
+	SiteRedirectDetails = require( './site-redirect-details' ),
+	upgradesPaths = require( 'my-sites/upgrades/paths' );
 
 function getPurchases( props ) {
 	return props.receipt.data.purchases;
@@ -86,17 +90,27 @@ var CheckoutThankYou = React.createClass( {
 	redirectIfThemePurchased: function() {
 		if ( this.props.receipt.hasLoadedFromServer && getPurchases( this.props ).every( isTheme ) ) {
 			this.props.activatedTheme( getPurchases( this.props )[ 0 ].meta, this.props.selectedSite );
+
 			page.redirect( '/design/' + this.props.selectedSite.slug );
-			return;
 		}
 	},
 
-	getSingleProductName() {
-		if ( this.isDataLoaded() && getPurchases( this.props ).length ) {
-			return getPurchases( this.props )[ 0 ].productNameShort;
-		}
+	goBack() {
+		if ( this.isDataLoaded() ) {
+			const purchases = getPurchases( this.props );
 
-		return null;
+			if ( purchases.some( isPlan ) ) {
+				page( plansPaths.plans( this.props.selectedSite.slug ) );
+			} else if ( purchases.some( isDomainProduct ) || purchases.some( isDomainRedemption || purchases.some( isSiteRedirect ) ) ) {
+				page( upgradesPaths.domainManagementList( this.props.selectedSite.slug ) );
+			} else if ( purchases.some( isGoogleApps ) ) {
+				const purchase = find( purchases, isGoogleApps );
+
+				page( upgradesPaths.domainManagementEmail( this.props.selectedSite.slug, purchase.meta ) );
+			}
+		} else {
+			page( `/stats/insights/${ this.props.selectedSite.slug }` );
+		}
 	},
 
 	render: function() {
@@ -106,19 +120,15 @@ var CheckoutThankYou = React.createClass( {
 
 		return (
 			<Main className={ classes }>
-				<Card>
-					<CheckoutThankYouHeader
-						isDataLoaded={ this.isDataLoaded() }
-						isFreeTrial={ this.freeTrialWasPurchased() }
-						productName={ this.getSingleProductName() } />
+				<HeaderCake onClick={ this.goBack } isCompact backText={ this.translate( 'Back to my site' ) } />
 
+				<Card className="checkout-thank-you__content">
 					{ this.productRelatedMessages() }
 				</Card>
 
-				<div className="checkout-thank-you__get-support">
-					<h3>{ this.translate( 'Questions? Need Help?' ) }</h3>
-					{ this.supportRelatedMessages() }
-				</div>
+				<CheckoutThankYouFooter
+					isDataLoaded={ this.isDataLoaded() }
+					receipt={ this.props.receipt } />
 			</Main>
 		);
 	},
@@ -131,23 +141,57 @@ var CheckoutThankYou = React.createClass( {
 		return getPurchases( this.props ).some( isFreeTrial );
 	},
 
-	jetpackPlanWasPurchased: function() {
-		if ( ! this.props.receiptId ) {
-			return false;
+	/**
+	 * Retrieves the component (and any corresponding data) that should be displayed according to the type of purchase
+	 * just performed by the user.
+	 *
+	 * @returns {*[]} an array of varying size with the component instance, then an optional purchase object possibly followed by a domain name
+	 */
+	getComponentAndPrimaryPurchaseAndDomain: function() {
+		if ( this.isDataLoaded() ) {
+			const purchases = getPurchases( this.props );
+
+			const findPurchaseAndDomain = ( purchases, predicate ) => {
+				const purchase = find( purchases, predicate );
+
+				return [ purchase, purchase.meta ];
+			};
+
+			if ( purchases.some( isJetpackPremium ) ) {
+				return [ JetpackPremiumPlanDetails, find( purchases, isJetpackPremium ) ];
+			} else if ( purchases.some( isJetpackBusiness ) ) {
+				return [ JetpackBusinessPlanDetails, find( purchases, isJetpackBusiness ) ];
+			} else if ( purchases.some( isPremium ) ) {
+				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
+			} else if ( purchases.some( isBusiness ) ) {
+				return [ BusinessPlanDetails, find( purchases, isBusiness ) ];
+			} else if ( purchases.some( isGoogleApps ) ) {
+				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
+			} else if ( purchases.some( isDomainRegistration ) ) {
+				return [ DomainRegistrationDetails, ...findPurchaseAndDomain( purchases, isDomainRegistration ) ];
+			} else if ( purchases.some( isDomainMapping ) ) {
+				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
+			} else if ( purchases.some( isSiteRedirect ) ) {
+				return [ SiteRedirectDetails, ...findPurchaseAndDomain( purchases, isSiteRedirect ) ];
+			} else if ( purchases.some( isChargeback ) ) {
+				return [ ChargebackDetails, find( purchases, isChargeback ) ];
+			}
 		}
 
-		return getPurchases( this.props ).some( isJetpackPlan );
+		return [ GenericDetails ];
 	},
 
 	productRelatedMessages: function() {
 		var selectedSite = this.props.selectedSite,
-			purchases,
-			componentClass,
-			domain;
+			[ ComponentClass, primaryPurchase, domain ] = this.getComponentAndPrimaryPurchaseAndDomain();
 
 		if ( ! this.isDataLoaded() ) {
 			return (
 				<div>
+					<CheckoutThankYouHeader
+						isDataLoaded={ false }
+						selectedSite={ this.props.selectedSite } />
+
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
 					<PurchaseDetail isPlaceholder />
@@ -155,93 +199,24 @@ var CheckoutThankYou = React.createClass( {
 			);
 		}
 
-		if ( this.props.receiptId ) {
-			purchases = getPurchases( this.props );
-
-			if ( purchases.some( isJetpackPremium ) ) {
-				componentClass = JetpackPremiumPlanDetails;
-			} else if ( purchases.some( isJetpackBusiness ) ) {
-				componentClass = JetpackBusinessPlanDetails;
-			} else if ( purchases.some( isPremium ) ) {
-				componentClass = PremiumPlanDetails;
-			} else if ( purchases.some( isBusiness ) ) {
-				componentClass = BusinessPlanDetails;
-			} else if ( purchases.some( isGoogleApps ) ) {
-				domain = find( purchases, isGoogleApps ).meta;
-
-				componentClass = GoogleAppsDetails;
-			} else if ( purchases.some( isDomainRegistration ) ) {
-				domain = find( purchases ).meta;
-
-				componentClass = DomainRegistrationDetails;
-			} else if ( purchases.some( isDomainMapping ) ) {
-				domain = find( purchases, isDomainMapping ).meta;
-
-				componentClass = DomainMappingDetails;
-			} else if ( purchases.some( isSiteRedirect ) ) {
-				domain = find( purchases, isSiteRedirect ).meta;
-
-				componentClass = SiteRedirectDetails;
-			} else if ( purchases.some( isChargeback ) ) {
-				componentClass = ChargebackDetails;
-			} else {
-				componentClass = GenericDetails;
-			}
-		} else {
-			componentClass = GenericDetails;
-		}
-
 		return (
 			<div>
-				{ React.createElement( componentClass, {
-					selectedSite: selectedSite,
-					isFreeTrial: this.freeTrialWasPurchased(),
-					locale: i18n.getLocaleSlug(),
-					domain: domain
-				} ) }
+				<CheckoutThankYouHeader
+					isDataLoaded={ this.isDataLoaded() }
+					primaryPurchase={ primaryPurchase }
+					selectedSite={ this.props.selectedSite } />
+
+				<div className="checkout-thank-you__features-header">
+					{ this.translate( "Get started with your site's new features" ) }
+				</div>
+
+				<div className="checkout-thank-you__purchase-details-list">
+					<ComponentClass
+						selectedSite={ selectedSite }
+						isFreeTrial={ this.freeTrialWasPurchased() }
+						domain={ domain } />
+				</div>
 			</div>
-		);
-	},
-
-	supportRelatedMessages: function() {
-		var localeSlug = i18n.getLocaleSlug();
-
-		if ( ! this.isDataLoaded() ) {
-			return <p>{ this.translate( 'Loading…' ) }</p>;
-		}
-
-		if ( this.jetpackPlanWasPurchased() ) {
-			return (
-				<p>
-					{ this.translate(
-						'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} ' +
-						'or {{contactLink}}contact us{{/contactLink}}.',
-						{
-							components: {
-								supportDocsLink: <a href={ 'http://jetpack.me/support/' } target="_blank" />,
-								contactLink: <a href={ 'http://jetpack.me/contact-support/' } target="_blank" />
-							}
-						}
-					) }
-				</p>
-			);
-		}
-
-		return (
-			<p>
-				{ this.translate(
-					'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}}, ' +
-					'search for tips and tricks in {{forumLink}}the forum{{/forumLink}}, ' +
-					'or {{contactLink}}contact us{{/contactLink}}.',
-					{
-						components: {
-							supportDocsLink: <a href={ 'http://' + localeSlug + '.support.wordpress.com' } target="_blank" />,
-							forumLink: <a href={ 'http://' + localeSlug + '.forums.wordpress.com' } target="_blank" />,
-							contactLink: <a href={ '/help/contact' } />
-						}
-					}
-				) }
-			</p>
 		);
 	}
 } );

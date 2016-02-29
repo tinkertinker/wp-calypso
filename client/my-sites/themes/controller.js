@@ -12,6 +12,7 @@ import SingleSiteComponent from 'my-sites/themes/single-site';
 import MultiSiteComponent from 'my-sites/themes/multi-site';
 import LoggedOutComponent from 'my-sites/themes/logged-out';
 import { ThemeSheet as ThemeSheetComponent } from 'my-sites/themes/sheet';
+import ThemeDetailsComponent from 'components/data/theme-details';
 import analytics from 'analytics';
 import i18n from 'lib/mixins/i18n';
 import trackScrollPage from 'lib/track-scroll-page';
@@ -20,6 +21,7 @@ import { getAnalyticsData } from './helpers';
 import { getCurrentUser } from 'state/current-user/selectors';
 import { setSection } from 'state/ui/actions';
 import ClientSideEffects from 'components/client-side-effects';
+import LayoutLoggedOut from 'layout/logged-out';
 
 function getProps( context ) {
 	const { tier, site_id: siteId } = context.params;
@@ -66,6 +68,20 @@ function makeElement( ThemesComponent, Head, store, props ) {
 			</Head>
 		</ReduxProvider>
 	);
+};
+
+// Where do we put this? It's client/server-agnostic, so not in client/controller,
+// which requires ReactDom... Maybe in lib/react-helpers?
+export function makeLoggedOutLayout( context, next ) {
+	const { store, primary, secondary, tertiary } = context;
+	context.layout = (
+		<ReduxProvider store={ store }>
+			<LayoutLoggedOut primary={ primary }
+				secondary={ secondary }
+				tertiary={ tertiary } />
+		</ReduxProvider>
+	);
+	next();
 };
 
 export function singleSite( context, next ) {
@@ -130,7 +146,16 @@ export function details( context, next ) {
 		isFullScreen: true
 	} ) );
 
-	context.primary = makeElement( ThemeSheetComponent, Head, context.store, props );
 	context.secondary = null; // When we're logged in, we need to remove the sidebar.
+	//TODO: use makeElement()
+	context.primary = (
+		<ReduxProvider store={ context.store } >
+			<Head title={ props.title } isSheet>
+				<ThemeDetailsComponent id={ props.themeSlug } section={ props.contentSection } >
+					<ThemeSheetComponent />
+				</ThemeDetailsComponent>
+			</Head>
+		</ReduxProvider>
+	);
 	next();
 }

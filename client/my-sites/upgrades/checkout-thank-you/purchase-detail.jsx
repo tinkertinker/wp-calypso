@@ -23,7 +23,7 @@ const PurchaseDetail = ( {
 	} );
 
 	return (
-		<li className={ classes }>
+		<div className={ classes }>
 			<div className="checkout-thank-you__purchase-detail-text">
 				<h3 className="checkout-thank-you__purchase-detail-title">{ title }</h3>
 				<p className="checkout-thank-you__purchase-detail-description">{ description }</p>
@@ -35,14 +35,17 @@ const PurchaseDetail = ( {
 				primary>
 				{ buttonText }
 			</Button>
-		</li>
+		</div>
 	);
 };
 
 PurchaseDetail.propTypes = {
 	additionalClass: React.PropTypes.string,
 	buttonText: React.PropTypes.string,
-	description: React.PropTypes.string,
+	description: React.PropTypes.oneOfType( [
+		React.PropTypes.array,
+		React.PropTypes.string,
+	] ),
 	href: React.PropTypes.string,
 	isPlaceholder: React.PropTypes.bool,
 	target: React.PropTypes.string,

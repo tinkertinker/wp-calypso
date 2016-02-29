@@ -68,7 +68,11 @@ export default React.createClass( {
 		this.closeSelector();
 		this.props.onSiteSelect( siteSlug );
 		this.props.onClose( event );
-		ReactDom.findDOMNode( this.refs.selector ).scrollTop = 0;
+
+		let node = ReactDom.findDOMNode( this.refs.selector );
+		if ( node ) {
+			node.scrollTop = 0;
+		}
 
 		// ignore mouse events as the default page() click event will handle navigation
 		if ( this.props.siteBasePath && event.type !== 'mouseup' ) {
@@ -133,7 +137,7 @@ export default React.createClass( {
 			sites = this.props.sites.search( this.state.search );
 		} else {
 			sites = this.shouldShowGroups()
-				? this.props.sites.getVisibleAndNotRecentNorStarred()
+				? this.props.sites.getVisibleAndNotRecent()
 				: this.props.sites.getVisible();
 		}
 
@@ -234,7 +238,11 @@ export default React.createClass( {
 			);
 		}, this );
 
-		return recentSites;
+		if ( ! recentSites ) {
+			return null;
+		}
+
+		return <div className="site-selector__recent">{ recentSites }</div>;
 	},
 
 	renderStarredSites() {
