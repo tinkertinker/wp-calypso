@@ -31,7 +31,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	Layout,
 	SupportUser,
 	LiveChat = require( 'components/live-chat' ),
-	SupportBrowser = require( 'components/live-chat/browser' )
+	SupportBrowser = require( 'components/live-chat/browser' );
 
 import { isOffline } from 'state/application/selectors';
 
@@ -175,19 +175,6 @@ Layout = React.createClass( {
 				</div>
 				{ config.isEnabled( 'live-chat' ) && <SupportBrowser /> }
 				{ config.isEnabled( 'live-chat' ) && <LiveChat /> }
-				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
-				{ this.props.isOffline && <OfflineStatus /> }
-				<div id="content" className="wp-content">
-					{ this.renderWelcome() }
-					{ this.renderEmailVerificationNotice() }
-					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section } />
-					<div id="primary" className="wp-primary wp-section" />
-					<div id="secondary" className="wp-secondary" />
-				</div>
-				<div id="tertiary" />
-				<TranslatorLauncher
-					isEnabled={ translator.isEnabled() }
-					isActive={ translator.isActivated() }/>
 			</div>
 		);
 	}
