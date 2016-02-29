@@ -34,7 +34,8 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	KeyboardShortcutsMenu,
 	Layout,
 	SupportUser,
-	LiveChat = require( 'components/live-chat' );
+	LiveChat = require( 'components/live-chat' ),
+	SupportBrowser = require( 'components/live-chat/browser' );
 
 import { isOffline } from 'state/application/selectors';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
@@ -183,7 +184,9 @@ Layout = React.createClass( {
 				`is-section-${this.props.section.name}`,
 				`focus-${this.props.focus.getCurrent()}`,
 				{ 'is-support-user': this.props.isSupportUser },
-				{ 'has-no-sidebar': ! this.props.section.secondary }
+				{ 'has-no-sidebar': ! this.props.hasSidebar },
+				{ 'full-screen': this.props.isFullScreen },
+				{ 'support-url': this.props.isShowingSupportURL }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -191,31 +194,30 @@ Layout = React.createClass( {
 			} );
 
 		return (
-			<div className={ sectionClass }>
-				{ config.isEnabled( 'guided-tours' ) && this.props.tourState.shouldShow ? <GuidedTours /> : null }
-				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-				{ this.renderMasterbar() }
-				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
-<<<<<<< 209397017578ed58edc0a5d61687866b6df73abd
-				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
-=======
-				{ config.isEnabled( 'live-chat' ) && <LiveChat /> }
-				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
->>>>>>> Prototype of a live-chat support UI
-				{ this.props.isOffline && <OfflineStatus /> }
-				<div id="content" className="wp-content">
-					{ this.renderWelcome() }
-					{ this.renderEmailVerificationNotice() }
-					{ this.renderPushNotificationPrompt() }
-					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
-					<div id="primary" className="wp-primary wp-section" />
-					<div id="secondary" className="wp-secondary" />
+			<div className="app-anchor">
+				<div className={ sectionClass }>
+					{ config.isEnabled( 'guided-tours' ) && this.props.tourState.shouldShow ? <GuidedTours /> : null }
+					{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
+					{ this.renderMasterbar() }
+					{ config.isEnabled( 'support-user' ) && <SupportUser /> }
+					{ config.isEnabled( 'live-chat' ) && <LiveChat /> }
+					<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
+					{ this.props.isOffline && <OfflineStatus /> }
+					<div id="content" className="wp-content">
+						{ this.renderWelcome() }
+						{ this.renderEmailVerificationNotice() }
+						{ this.renderPushNotificationPrompt() }
+						<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
+						<div id="primary" className="wp-primary wp-section" />
+						<div id="secondary" className="wp-secondary" />
+					</div>
+					<div id="tertiary" />
+					<TranslatorLauncher
+						isEnabled={ translator.isEnabled() }
+						isActive={ translator.isActivated() }/>
+					{ this.renderPreview() }
+					{ config.isEnabled( 'live-chat' ) && <SupportBrowser /> }
 				</div>
-				<div id="tertiary" />
-				<TranslatorLauncher
-					isEnabled={ translator.isEnabled() }
-					isActive={ translator.isActivated() }/>
-				{ this.renderPreview() }
 			</div>
 		);
 	}
@@ -224,12 +226,14 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section } = state.ui;
+		const { supportURL } = state.liveChat;
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
 			section,
 			isOffline: isOffline( state ),
 			tourState: getGuidedTourState( state ),
+			isShowingSupportURL: !!supportURL
 		};
 	}
 )( Layout );

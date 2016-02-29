@@ -4,6 +4,7 @@ import IO from 'socket.io-client'
 import { EventEmitter } from 'events'
 import { pick, mapKeys, get } from 'lodash/object'
 import config from 'config'
+import { v4 as uuid } from 'uuid'
 
 const USER_KEY_MAP = {
 	avatar_URL: 'picture',
@@ -13,12 +14,12 @@ const USER_KEY_MAP = {
 
 const mapWPComUserKeys = ( value, key ) => get( USER_KEY_MAP, key, key )
 
-const emitActionMessage = ( connection ) => ( { id, type, user, message, timestamp } ) => {
-	debug( 'received socket action', { id, type } )
-	connection.emit( 'event', { id, type, user: {
+const emitActionMessage = ( connection ) => ( { id, type, user, message, timestamp, links } ) => {
+	debug( 'received socket action', { id, type, links } )
+	connection.emit( 'event', { id, type, links, user: {
 		nick: user.name,
 		picture: user.picture,
-		id: user.id
+		id: user.id,
 	}, timestamp, message } )
 }
 
@@ -65,7 +66,7 @@ class Connection extends EventEmitter {
 	send( message ) {
 		this.getSocket()
 		.then( ( socket ) => new Promise( ( resolve ) => {
-			socket.emit( 'action', { message, type: 'message' }, resolve )
+			socket.emit( 'action', { message, type: 'message', id: uuid() }, resolve )
 		} ) )
 	}
 
