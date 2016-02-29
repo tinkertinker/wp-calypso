@@ -182,8 +182,7 @@ Layout = React.createClass( {
 					{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
 					{ this.renderMasterbar() }
 					{ config.isEnabled( 'support-user' ) && <SupportUser /> }
-					{ config.isEnabled( 'live-chat' ) && <LiveChat /> }
-					<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.chunkName } /></div>
+					<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
 					{ this.props.isOffline && <OfflineStatus /> }
 					<div id="content" className="wp-content">
 						{ this.renderWelcome() }
@@ -203,6 +202,7 @@ Layout = React.createClass( {
 					isActive={ translator.isActivated() }/>
 				{ this.renderPreview() }
 				{ config.isEnabled( 'live-chat' ) && <SupportBrowser /> }
+				{ config.isEnabled( 'live-chat' ) && <LiveChat /> }
 			</div>
 		);
 	}
