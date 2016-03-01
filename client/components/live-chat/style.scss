@@ -1,10 +1,44 @@
 .live-chat-container {
-	flex: 1 0 auto;
+	height: 100%;
+}
+
+// chat, when collapsed is little floating bit. @todo: may move to bottom of sidebar
+.live-chat {
+	position: absolute;
+	bottom: 12px;
+	right: 30px;
+}
+
+// chat defaults to panel when opened
+.live-chat.open {
+	background: $gray-light;
 	width: 320px;
-	display: flex;
-	flex-direction: column;
-	border-left: 1px solid darken( $gray-light, 5% );
-	box-sizing: border-box;
+	bottom: 0;
+}
+
+// on big screens, dock to sidebar
+@include breakpoint( ">1040px" ) {
+
+	.live-chat.open {
+		border-left: 1px solid darken( $gray-light, 5% );
+		position: inherit;
+		height: 100%;
+		bottom: auto;
+		right: auto;
+		flex: 1 0 auto;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+	}
+	
+}
+
+@include breakpoint( "<1040px" ) {
+
+	.live-chat {
+		width: 260px;
+	}
+	
 }
 
 .live-chat-title {
@@ -36,13 +70,6 @@
 		}
 	}
 
-}
-
-.live-chat {
-	background: $gray-light;
-	display: flex;
-	flex-direction: column;
-	flex: 1 1;
 }
 
 .live-chat-conversation {
@@ -209,9 +236,18 @@
 
 }
 
-// For live-chat sidebar demonstration purposes
-// in order to put livechat as a peer to the entire calypso UI
-// the main calypso app needs to be contained within it's own node
+/**
+ * For live-chat sidebar demonstration purposes
+ * in order to put livechat as a peer to the entire calypso UI
+ * the main calypso app needs to be contained within it's own node
+ *
+ * @todo: submit this refactor as separate calypso pr to fix ticket to 
+ * start scrollbar under masterbar. Needs inf scroll to work first.
+ */
+
+html {
+	overflow-y: hidden;
+}
 
 body {
 	overflow: hidden;
