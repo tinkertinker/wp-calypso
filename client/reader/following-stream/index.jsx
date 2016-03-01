@@ -408,6 +408,10 @@ module.exports = React.createClass( {
 		return content;
 	},
 
+	_setListContext: function( ref ) {
+		this.setState( { listContext: ref } )
+	},
+
 	render: function() {
 		var store = this.props.store,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
@@ -421,6 +425,7 @@ module.exports = React.createClass( {
 			body = ( <InfiniteList
 			ref={ ( c ) => this._list = c }
 			className="reader__content"
+			context={ this.state.listContext }
 			items={ this.state.posts }
 			lastPage={ this.props.store.isLastPage()}
 			fetchingNextPage={ this.props.store.isFetchingNextPage()}
@@ -429,22 +434,25 @@ module.exports = React.createClass( {
 			getItemRef= { this.getPostRef }
 			renderItem={ this.renderPost }
 			selectedIndex={ this.props.store.getSelectedIndex()}
+			getScrollTop={ () => this.getScrollTop() }
 			renderLoadingPlaceholders={ this.renderLoadingPlaceholders } /> );
 		}
 
 		return (
-			<Main className={ classnames( 'following', this.props.className ) }>
-				<MobileBackToSidebar>
-					<h1>{ this.props.listName }</h1>
-				</MobileBackToSidebar>
+			<div className="scrollable-reader" ref={ this._setListContext }>
+				<Main className={ classnames( 'following', this.props.className ) }>
+					<MobileBackToSidebar>
+						<h1>{ this.props.listName }</h1>
+					</MobileBackToSidebar>
 
-				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
+					<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
 
-				{ header }
+					{ header }
 
-				{ body }
+					{ body }
 
-			</Main>
+				</Main>
+			</div>
 			);
 	}
 
