@@ -277,6 +277,7 @@ body {
 	position: relative;
 	flex: 1 1 100%;
 	display: flex;
+	flex-direction: column;
 
 	&.support-url {
 		display: none;
@@ -285,14 +286,62 @@ body {
 }
 
 .wp-content {
-	overflow: auto;
-	position: absolute;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
+	overflow: hidden;
+	padding: 0;
+	margin: 0;
+	display: flex;
+	flex: 1 1 auto;
 }
 
 header.masterbar {
+	position: relative;
+	flex: 0 0 auto;
+}
+
+ul.sidebar {
+	position: relative;
+	width: auto;
+	top: 0px;
+	flex: 1 1 auto;
+	align-self: flex;
+}
+
+#primary {
+	flex: 1 1 auto;
+	position: relative;
+	display: flex;
+	flex-direction: column;
+}
+
+#secondary {
+	flex: 1 1 auto;
+	order: -1;
+	position: relative;
+	display: flex;
+	max-width: 272px;
+}
+
+.wp-secondary .site-selector {
 	position: absolute;
+	width: 100%;
+	right: 100%;
+	left: auto;
+	top: 0px;
+}
+
+.focus-sites .wp-secondary .site-selector {
+	transform: translateX(100%);
+}
+
+.sites-navigation {
+	position: relative;
+	flex: 1 1 auto;
+	align-self: stretch;
+	display: flex;
+}
+
+.scrollable-reader {
+	flex: 1 1 auto;
+	align-self: stretch;
+	overflow: auto;
 }
