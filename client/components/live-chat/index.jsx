@@ -47,16 +47,15 @@ const availabilityTitle = when(
 	() => <div>Live Support Unavailable</div>
 )
 
-const connectingTitle = ( { dispatch } ) => <div className="live-chat-active-toolar">
-	<div>Starting chat</div>
-	<div onClick={ dispatchCloseChat( dispatch ) }><GridIcon icon="cross" /></div>
+const connectingTitle = ( { dispatch } ) => <div className="live-chat__active-toolbar">
+	<span>Starting chat</span>
+	<GridIcon icon="cross" onClick={ dispatchCloseChat( dispatch ) } />
 </div>
 
 const connectedTitle = ( { dispatch } ) => (
-	<div className="live-chat-active-toolar">
-		<div>Howdy, how may we help?</div>
-		<div onClick={ dispatchMinimizeChat( dispatch ) }><GridIcon icon="minus" /></div>
-		<div onClick={ dispatchCloseChat( dispatch ) }><GridIcon icon="cross" /></div>
+	<div className="live-chat__active-toolbar">
+		<span>Howdy, how may we help?</span>
+		<GridIcon icon="cross" onClick={ dispatchCloseChat( dispatch ) } />
 	</div>
 )
 
@@ -226,7 +225,7 @@ const renderTimeline = first(
  */
 const component = ( { available, connectionStatus, message, dispatch, timeline, isCurrentUser, user, autoscroll } ) => (
 	<div className={ classnames( 'live-chat', { open: isChatOpen( { connectionStatus, available } ) } ) }>
-		<div className="live-chat-title">{ title( { available, connectionStatus, user, dispatch } ) }</div>
+		<div className="live-chat__title">{ title( { available, connectionStatus, user, dispatch } ) }</div>
 		{ renderTimeline( { connectionStatus, timeline, isCurrentUser, dispatch, autoscroll } ) }
 		{ when( isConnected, renderComposer )( { connectionStatus, dispatch, message } ) }
 	</div>
