@@ -337,6 +337,8 @@ ul.sidebar {
 	}
 
 	.focus-sidebar #secondary {
+		position: absolute;
+		z-index: 20;	// something in stats is z-index 19
 		width: 100%;
 		height: 100%;
 		max-width: none;
@@ -363,7 +365,9 @@ ul.sidebar {
 	display: flex;
 }
 
-.scrollable-reader {
+// make all the primary section containers scrollable. @todo: make this cleaner
+#primary .main-column,
+#primary .scrollable-reader {
 	flex: 1 1 auto;
 	align-self: stretch;
 	overflow: auto;
@@ -372,12 +376,23 @@ ul.sidebar {
 
 @include breakpoint( "<960px" ) {
 
-	.scrollable-reader {
+	#primary .main-column,
+	#primary .scrollable-reader {
 		padding: 24px;
 	}
 
 }
 
+@include breakpoint( "<660px" ) {
+
+	#primary .main-column,
+	#primary .scrollable-reader {
+		padding: 0px;
+	}
+
+}
+
+// remove clearifix, both unnecessary with flex, but it also breaks the layout
 .wp-content:after {
-    content: none;	// both unnecessary with flex, but it also breaks the layout
+    content: none;
 }
