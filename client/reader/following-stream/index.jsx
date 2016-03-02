@@ -303,7 +303,7 @@ module.exports = React.createClass( {
 			placeholders = [];
 
 		times( count, function( i ) {
-			placeholders.push( <PostPlaceholder key={'feed-post-placeholder-' + i} /> );
+			placeholders.push( <PostPlaceholder key={ 'feed-post-placeholder-' + i } /> );
 		} );
 
 		return placeholders;
@@ -325,13 +325,12 @@ module.exports = React.createClass( {
 		}
 	},
 
-	showFullPost: function( post, options ) {
-		options = options || {};
+	showFullPost: function( post, { comments, replaceHistory } ) {
 		var hashtag = '';
-		if ( options[ 'comments' ] ) {
+		var method = replaceHistory ? 'replace' : 'show';
+		if ( comments ) {
 			hashtag += '#comments';
 		}
-		var method = options && options.replaceHistory ? 'replace' : 'show';
 		if ( post.feed_ID && post.feed_item_ID ) {
 			page[ method ]( '/read/post/feed/' + post.feed_ID + '/' + post.feed_item_ID + hashtag );
 		} else {
@@ -348,14 +347,15 @@ module.exports = React.createClass( {
 			isSelected = index === this.state.selectedIndex;
 
 		if ( postKey.isGap ) {
+			const listRef = ( c ) => {
+				if ( isSelected ) {
+					this._selectedGap = c;
+				}
+			}
 			return (
 				<ListGap
-				ref={ ( c ) => {
-					if ( isSelected ) {
-						this._selectedGap = c;
-					}
-				}}
-				key={'gap-' + postKey.from + '-' + postKey.to}
+				ref={ listRef }
+				key={ 'gap-' + postKey.from + '-' + postKey.to }
 				gap={ postKey }
 				selected={ isSelected }
 				store={ this.props.store } />
@@ -373,10 +373,10 @@ module.exports = React.createClass( {
 
 		switch ( postState ) {
 			case 'pending':
-				content = <PostPlaceholder key={'feed-post-placeholder-' + itemKey} />;
+				content = <PostPlaceholder key={ 'feed-post-placeholder-' + itemKey } />;
 				break;
 			case 'error':
-				content = <PostUnavailable key={'feed-post-unavailable-' + itemKey} post={ post } />;
+				content = <PostUnavailable key={ 'feed-post-unavailable-' + itemKey } post={ post } />;
 				break;
 			default:
 				PostClass = cardClassForPost( post );
@@ -409,7 +409,8 @@ module.exports = React.createClass( {
 	},
 
 	_setListContext: function( ref ) {
-		this.setState( { listContext: ref } )
+		this._list = ref
+		this.setState( { listContext: ref ? ReactDom.findDOMNode( ref ) : null } )
 	},
 
 	render: function() {
@@ -423,18 +424,17 @@ module.exports = React.createClass( {
 		} else {
 			header = this.props.children;
 			body = ( <InfiniteList
-			ref={ ( c ) => this._list = c }
+			ref={ this._setListContext }
 			className="reader__content"
 			context={ this.state.listContext }
 			items={ this.state.posts }
-			lastPage={ this.props.store.isLastPage()}
-			fetchingNextPage={ this.props.store.isFetchingNextPage()}
+			lastPage={ this.props.store.isLastPage() }
+			fetchingNextPage={ this.props.store.isFetchingNextPage() }
 			guessedItemHeight={ GUESSED_POST_HEIGHT }
 			fetchNextPage={ this.fetchNextPage }
 			getItemRef= { this.getPostRef }
 			renderItem={ this.renderPost }
-			selectedIndex={ this.props.store.getSelectedIndex()}
-			getScrollTop={ () => this.getScrollTop() }
+			selectedIndex={ this.props.store.getSelectedIndex() }
 			renderLoadingPlaceholders={ this.renderLoadingPlaceholders } /> );
 		}
 
