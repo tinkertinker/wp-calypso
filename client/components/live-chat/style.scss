@@ -344,4 +344,17 @@ ul.sidebar {
 	flex: 1 1 auto;
 	align-self: stretch;
 	overflow: auto;
+	padding: 32px;
+}
+
+@include breakpoint( "<960px" ) {
+
+	.scrollable-reader {
+		padding: 24px;
+	}
+
+}
+
+.wp-content:after {
+    content: none;	// both unnecessary with flex, but it also breaks the layout
 }
