@@ -345,6 +345,11 @@ module.exports = React.createClass( {
 			isSelected = index === this.state.selectedIndex;
 
 		if ( postKey.isGap ) {
+			const listRef = ( c ) => {
+				if ( isSelected ) {
+					this._selectedGap = c;
+				}
+			}
 			return (
 				<ListGap
 				ref={ ( c ) => {
@@ -407,7 +412,8 @@ module.exports = React.createClass( {
 	},
 
 	_setListContext: function( ref ) {
-		this.setState( { listContext: ref } )
+		this._list = ref
+		this.setState( { listContext: ref ? ReactDom.findDOMNode( ref ) : null } )
 	},
 
 	render: function() {
@@ -419,7 +425,7 @@ module.exports = React.createClass( {
 			body = this.props.emptyContent || ( <EmptyContent /> );
 		} else {
 			body = ( <InfiniteList
-			ref={ ( c ) => this._list = c }
+			ref={ this._setListContext }
 			className="reader__content"
 			context={ this.state.listContext }
 			items={ this.state.posts }
