@@ -434,21 +434,19 @@ module.exports = React.createClass( {
 		}
 
 		return (
-			<div className="scrollable-reader" ref={ this._setListContext }>
-				<Main className={ classnames( 'following', this.props.className ) }>
-					<MobileBackToSidebar>
-						<h1>{ this.props.listName }</h1>
-					</MobileBackToSidebar>
+			<Main className={ classnames( 'following', this.props.className ) }>
+				<MobileBackToSidebar>
+					<h1>{ this.props.listName }</h1>
+				</MobileBackToSidebar>
 
-					<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
+				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
 
-					{ header }
+				{ header }
 
-					{ body }
+				{ body }
 
-				</Main>
-			</div>
-			);
+			</Main>
+		);
 	}
 
 } );

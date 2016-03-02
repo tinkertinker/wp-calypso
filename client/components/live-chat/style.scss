@@ -336,8 +336,13 @@ ul.sidebar {
 
 @include breakpoint( "<660px" ) {
 
+	#primary {
+		flex: 1 0 auto; // don't let primary shrink
+	}
+
 	#secondary {
 		width: 0;
+		flex: 0; // in some cases the #primary doesn't take full width
 	}
 
 	.focus-sidebar #secondary {
@@ -360,7 +365,7 @@ ul.sidebar {
 // make all the primary section containers scrollable. @todo: make this cleaner
 .is-section-sites #primary,
 .is-section-me #primary,
-.is-section-reader #primary .scrollable-reader {
+.is-section-reader #primary {
 	flex: 1 1 auto;
 	align-self: stretch;
 	overflow: auto;
@@ -371,7 +376,7 @@ ul.sidebar {
 
 	.is-section-sites #primary,
 	.is-section-me #primary,
-	.is-section-reader #primary .scrollable-reader {
+	.is-section-reader #primary {
 		padding: 24px;
 	}
 
