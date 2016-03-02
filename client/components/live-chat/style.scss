@@ -286,6 +286,10 @@ body {
 
 }
 
+#primary .main {
+	margin-top: 0px;	// if set to auto under flex, it vertically centers things
+}
+
 .wp-content {
 	overflow: hidden;
 	padding: 0;
@@ -346,18 +350,6 @@ ul.sidebar {
 
 }
 
-.wp-secondary .site-selector {
-	position: absolute;
-	width: 100%;
-	right: 100%;
-	left: auto;
-	top: 0px;
-}
-
-.focus-sites .wp-secondary .site-selector {
-	transform: translateX(100%);
-}
-
 .sites-navigation {
 	position: relative;
 	flex: 1 1 auto;
@@ -366,8 +358,9 @@ ul.sidebar {
 }
 
 // make all the primary section containers scrollable. @todo: make this cleaner
-#primary .main-column,
-#primary .scrollable-reader {
+.is-section-sites #primary,
+.is-section-me #primary,
+.is-section-reader #primary .scrollable-reader {
 	flex: 1 1 auto;
 	align-self: stretch;
 	overflow: auto;
@@ -376,8 +369,9 @@ ul.sidebar {
 
 @include breakpoint( "<960px" ) {
 
-	#primary .main-column,
-	#primary .scrollable-reader {
+	.is-section-sites #primary,
+	.is-section-me #primary,
+	.is-section-reader #primary .scrollable-reader {
 		padding: 24px;
 	}
 
@@ -385,8 +379,9 @@ ul.sidebar {
 
 @include breakpoint( "<660px" ) {
 
-	#primary .main-column,
-	#primary .scrollable-reader {
+	.is-section-sites #primary,
+	.is-section-me #primary,
+	.is-section-reader #primary .scrollable-reader {
 		padding: 0px;
 	}
 
