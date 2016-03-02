@@ -245,6 +245,7 @@
 
 }
 
+
 /**
  * For live-chat sidebar demonstration purposes
  * in order to put livechat as a peer to the entire calypso UI
@@ -300,10 +301,18 @@ header.masterbar {
 
 ul.sidebar {
 	position: relative;
-	width: auto;
+	width: 273px;
 	top: 0px;
 	flex: 1 1 auto;
 	align-self: flex;
+}
+
+@include breakpoint( "<960px" ) {
+
+	ul.sidebar {
+		width: 228px;
+	}
+
 }
 
 #primary {
@@ -319,6 +328,20 @@ ul.sidebar {
 	position: relative;
 	display: flex;
 	max-width: 272px;
+}
+
+@include breakpoint( "<660px" ) {
+
+	#secondary {
+		width: 0;
+	}
+
+	.focus-sidebar #secondary {
+		width: 100%;
+		height: 100%;
+		max-width: none;
+	}
+
 }
 
 .wp-secondary .site-selector {
