@@ -20,7 +20,7 @@ const CheckoutThankYouFooter = React.createClass( {
 			return this.translate( 'Loading…' );
 		}
 
-		if ( this.props.receipt.data.purchases.some( isJetpackPlan ) ) {
+		if ( this.props.receipt.data && this.props.receipt.data.purchases.some( isJetpackPlan ) ) {
 			return this.translate(
 				'Check out our {{supportDocsLink}}support docs{{/supportDocsLink}} ' +
 				'or {{contactLink}}contact us{{/contactLink}}.',
@@ -49,13 +49,13 @@ const CheckoutThankYouFooter = React.createClass( {
 
 	render() {
 		return (
-			<Card className="checkout-thank-you-footer">
-				<div className="checkout-thank-you-footer__content">
-					<h3 className="checkout-thank-you-footer__heading">
+			<Card className="checkout-thank-you__footer">
+				<div className="checkout-thank-you__footer-content">
+					<h3 className="checkout-thank-you__footer-heading">
 						{ this.translate( 'Questions? Need Help?' ) }
 					</h3>
 
-					<p className="checkout-thank-you-footer__text">
+					<p className="checkout-thank-you__footer-text">
 						{ this.getText() }
 					</p>
 				</div>

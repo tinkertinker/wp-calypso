@@ -22,7 +22,7 @@ const CheckoutThankYouHeader = React.createClass( {
 			return this.translate( 'Loading…' );
 		}
 
-		if ( isFreeTrial( this.props.primaryPurchase ) ) {
+		if ( this.props.primaryPurchase && isFreeTrial( this.props.primaryPurchase ) ) {
 			return this.translate( 'Way to go, your 14 day free trial starts now!' );
 		}
 
@@ -30,7 +30,7 @@ const CheckoutThankYouHeader = React.createClass( {
 	},
 
 	getText() {
-		if ( ! this.props.isDataLoaded ) {
+		if ( ! this.props.isDataLoaded || ! this.props.primaryPurchase ) {
 			return this.translate( "You will receive an email confirmation shortly. What's next?" );
 		}
 
@@ -64,23 +64,23 @@ const CheckoutThankYouHeader = React.createClass( {
 
 	render() {
 		const classes = {
-			'checkout-thank-you-header': true,
+			'checkout-thank-you__header': true,
 			'is-placeholder': ! this.props.isDataLoaded
 		};
 
 		return (
 			<div className={ classNames( classes ) }>
-				<div className="checkout-thank-you-header__content">
-					<span className="checkout-thank-you-header__icon">
+				<div className="checkout-thank-you__header-content">
+					<span className="checkout-thank-you__header-icon">
 						<Gridicon icon="trophy" size={ 72 } />
 					</span>
 
-					<div className="checkout-thank-you-header__copy">
-						<h1 className="checkout-thank-you-header__heading">
+					<div className="checkout-thank-you__header-copy">
+						<h1 className="checkout-thank-you__header-heading">
 							{ this.getHeading() }
 						</h1>
 
-						<h2 className="checkout-thank-you-header__text">
+						<h2 className="checkout-thank-you__header-text">
 							{ this.getText() }
 						</h2>
 					</div>

@@ -3,6 +3,7 @@
  */
 import range from 'lodash/range';
 import createSelector from 'lib/create-selector';
+import filter from 'lodash/filter';
 
 /**
  * Internal dependencies
@@ -26,17 +27,16 @@ export function getPost( state, globalId ) {
 }
 
 /**
- * Returns true if the specified posts query is being tracked for the site, or
- * false otherwise.
+ * Returns an array of post objects by site ID.
  *
- * @param  {Object}  state  Global state tree
- * @param  {Number}  siteId Site ID
- * @param  {Object}  query  Post query object
- * @return {Boolean}        Whether posts query is tracked for site
+ * @param  {Object} state  Global state tree
+ * @param  {Number} siteId Site ID
+ * @return {Array}         Site posts
  */
-export function isTrackingSitePostsQuery( state, siteId, query ) {
-	return !! state.posts.queries[ getSerializedPostsQuery( query, siteId ) ];
-}
+export const getSitePosts = createSelector(
+	( state, siteId ) => filter( state.posts.items, { site_ID: siteId } ),
+	( state ) => [ state.posts.items ]
+);
 
 /**
  * Returns an array of posts for the posts query, or null if no posts have been
@@ -48,16 +48,12 @@ export function isTrackingSitePostsQuery( state, siteId, query ) {
  * @return {?Array}         Posts for the post query
  */
 export function getSitePostsForQuery( state, siteId, query ) {
-	if ( ! isTrackingSitePostsQuery( state, siteId, query ) ) {
-		return null;
-	}
-
 	const serializedQuery = getSerializedPostsQuery( query, siteId );
-	if ( ! state.posts.queries[ serializedQuery ].posts ) {
+	if ( ! state.posts.queries[ serializedQuery ] ) {
 		return null;
 	}
 
-	return state.posts.queries[ serializedQuery ].posts.map( ( globalId ) => {
+	return state.posts.queries[ serializedQuery ].map( ( globalId ) => {
 		return getPost( state, globalId );
 	} );
 }
@@ -72,12 +68,8 @@ export function getSitePostsForQuery( state, siteId, query ) {
  * @return {Boolean}        Whether posts are being requested
  */
 export function isRequestingSitePostsForQuery( state, siteId, query ) {
-	if ( ! isTrackingSitePostsQuery( state, siteId, query ) ) {
-		return false;
-	}
-
 	const serializedQuery = getSerializedPostsQuery( query, siteId );
-	return state.posts.queries[ serializedQuery ].fetching;
+	return !! state.posts.queryRequests[ serializedQuery ];
 }
 
 /**

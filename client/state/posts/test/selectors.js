@@ -8,7 +8,7 @@ import { expect } from 'chai';
  */
 import {
 	getPost,
-	isTrackingSitePostsQuery,
+	getSitePosts,
 	getSitePostsForQuery,
 	isRequestingSitePostsForQuery,
 	getSitePostsLastPageForQuery,
@@ -33,43 +33,26 @@ describe( 'selectors', () => {
 		} );
 	} );
 
-	describe( '#isTrackingSitePostsQuery()', () => {
-		it( 'should return false if the site has not been queried', () => {
-			const isTracking = isTrackingSitePostsQuery( {
-				posts: {
-					queries: {}
-				}
-			}, 2916284, { search: 'Hello' } );
-
-			expect( isTracking ).to.be.false;
+	describe( '#getSitePosts()', () => {
+		beforeEach( () => {
+			getSitePosts.memoizedSelector.cache.clear();
 		} );
 
-		it( 'should return false if the site has not been queried for the specific query', () => {
-			const isTracking = isTrackingSitePostsQuery( {
+		it( 'should return an array of post objects for the site', () => {
+			const state = {
 				posts: {
-					queries: {
-						'2916284:{"search":"hel"}': {
-							fetching: true
-						}
+					items: {
+						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' },
+						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' },
+						'0fcb4eb16f493c19b627438fdc18d57c': { ID: 120, site_ID: 77203074, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak & Eggs' }
 					}
 				}
-			}, 2916284, { search: 'Hello' } );
+			};
 
-			expect( isTracking ).to.be.false;
-		} );
-
-		it( 'should return true if the site has been queried for the specific query', () => {
-			const isTracking = isTrackingSitePostsQuery( {
-				posts: {
-					queries: {
-						'2916284:{"search":"hello"}': {
-							fetching: true
-						}
-					}
-				}
-			}, 2916284, { search: 'Hello' } );
-
-			expect( isTracking ).to.be.true;
+			expect( getSitePosts( state, 2916284 ) ).to.have.members( [
+				state.posts.items[ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+				state.posts.items[ '6c831c187ffef321eb43a67761a525a3' ]
+			] );
 		} );
 	} );
 
@@ -84,20 +67,6 @@ describe( 'selectors', () => {
 			expect( sitePosts ).to.be.null;
 		} );
 
-		it( 'should return null if the queried posts have not been received', () => {
-			const sitePosts = getSitePostsForQuery( {
-				posts: {
-					queries: {
-						'2916284:{"search":"hello"}': {
-							fetching: true
-						}
-					}
-				}
-			}, 2916284, { search: 'Hello' } );
-
-			expect( sitePosts ).to.be.null;
-		} );
-
 		it( 'should return an array of the known queried posts', () => {
 			const sitePosts = getSitePostsForQuery( {
 				posts: {
@@ -105,10 +74,7 @@ describe( 'selectors', () => {
 						'3d097cb7c5473c169bba0eb8e3c6cb64': { ID: 841, site_ID: 2916284, global_ID: '3d097cb7c5473c169bba0eb8e3c6cb64', title: 'Hello World' }
 					},
 					queries: {
-						'2916284:{"search":"hello"}': {
-							fetching: false,
-							posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-						}
+						'2916284:{"search":"hello"}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
 					}
 				}
 			}, 2916284, { search: 'Hello' } );
@@ -120,23 +86,21 @@ describe( 'selectors', () => {
 	} );
 
 	describe( '#isRequestingSitePostsForQuery()', () => {
-		it( 'should return false if the site query is not tracked', () => {
+		it( 'should return false if the site has not been queried', () => {
 			const isRequesting = isRequestingSitePostsForQuery( {
 				posts: {
-					queries: {}
+					queryRequests: {}
 				}
 			}, 2916284, { search: 'Hello' } );
 
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return false if the site query is not fetching', () => {
+		it( 'should return false if the site has not been queried for the specific query', () => {
 			const isRequesting = isRequestingSitePostsForQuery( {
 				posts: {
-					queries: {
-						'2916284:{"search":"hello"}': {
-							fetching: false
-						}
+					queryRequests: {
+						'2916284:{"search":"hel"}': true
 					}
 				}
 			}, 2916284, { search: 'Hello' } );
@@ -144,18 +108,28 @@ describe( 'selectors', () => {
 			expect( isRequesting ).to.be.false;
 		} );
 
-		it( 'should return true if the site query is fetching', () => {
+		it( 'should return true if the site has been queried for the specific query', () => {
 			const isRequesting = isRequestingSitePostsForQuery( {
 				posts: {
-					queries: {
-						'2916284:{"search":"hello"}': {
-							fetching: true
-						}
+					queryRequests: {
+						'2916284:{"search":"hello"}': true
 					}
 				}
 			}, 2916284, { search: 'Hello' } );
 
 			expect( isRequesting ).to.be.true;
+		} );
+
+		it( 'should return false if the site has previously, but is not currently, querying for the specified query', () => {
+			const isRequesting = isRequestingSitePostsForQuery( {
+				posts: {
+					queryRequests: {
+						'2916284:{"search":"hello"}': false
+					}
+				}
+			}, 2916284, { search: 'Hello' } );
+
+			expect( isRequesting ).to.be.false;
 		} );
 	} );
 
@@ -262,14 +236,8 @@ describe( 'selectors', () => {
 						'6c831c187ffef321eb43a67761a525a3': { ID: 413, site_ID: 2916284, global_ID: '6c831c187ffef321eb43a67761a525a3', title: 'Ribs & Chicken' }
 					},
 					queries: {
-						'2916284:{"number":1}': {
-							fetching: false,
-							posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-						},
-						'2916284:{"number":1,"page":2}': {
-							fetching: false,
-							posts: [ '6c831c187ffef321eb43a67761a525a3' ]
-						}
+						'2916284:{"number":1}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+						'2916284:{"number":1,"page":2}': [ '6c831c187ffef321eb43a67761a525a3' ]
 					},
 					queriesLastPage: {
 						'2916284:{"number":1}': 2
@@ -308,18 +276,9 @@ describe( 'selectors', () => {
 						'f0cb4eb16f493c19b627438fdc18d57c': { ID: 120, site_ID: 2916284, global_ID: 'f0cb4eb16f493c19b627438fdc18d57c', title: 'Steak & Eggs', parent: { ID: 413 } } // eslint-disable-line
 					},
 					queries: {
-						'2916284:{"number":1}': {
-							fetching: false,
-							posts: [ '3d097cb7c5473c169bba0eb8e3c6cb64' ]
-						},
-						'2916284:{"number":1,"page":2}': {
-							fetching: false,
-							posts: [ '6c831c187ffef321eb43a67761a525a3' ]
-						},
-						'2916284:{"number":1,"page":3}': {
-							fetching: false,
-							posts: [ 'f0cb4eb16f493c19b627438fdc18d57c' ]
-						}
+						'2916284:{"number":1}': [ '3d097cb7c5473c169bba0eb8e3c6cb64' ],
+						'2916284:{"number":1,"page":2}': [ '6c831c187ffef321eb43a67761a525a3' ],
+						'2916284:{"number":1,"page":3}': [ 'f0cb4eb16f493c19b627438fdc18d57c' ]
 					},
 					queriesLastPage: {
 						'2916284:{"number":1}': 3

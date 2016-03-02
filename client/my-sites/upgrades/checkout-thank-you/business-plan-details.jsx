@@ -7,47 +7,36 @@ import React from 'react';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
-import PurchaseDetail from './purchase-detail';
+import PurchaseDetail from 'components/purchase-detail';
 
-const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
-	const showGetFreeDomainTip = ! isFreeTrial;
-
+const BusinessPlanDetails = ( { selectedSite } ) => {
 	return (
 		<div>
-			{ showGetFreeDomainTip
-			? <PurchaseDetail
-					additionalClass="get-free-domain"
-					title={ i18n.translate( 'Get your custom domain' ) }
-					description={
-						i18n.translate(
-							"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
-							'A free domain is included with your plan.',
-							{
-								args: { siteDomain: selectedSite.domain },
-								components: { em: <em /> }
-							}
-						)
-					}
-					buttonText={ i18n.translate( 'Claim your free domain' ) }
-					href={ '/domains/add/' + selectedSite.slug } />
-			: <PurchaseDetail
-					additionalClass="live-chat"
-					title={ i18n.translate( 'Start a Live Chat' ) }
-					description={ i18n.translate( 'Have a question? Chat live with WordPress.com Happiness Engineers.' ) }
-					buttonText={ i18n.translate( 'Talk to an Operator' ) }
-					href="//support.wordpress.com/live-chat/"
-					target="_blank" />
-			}
+			<PurchaseDetail
+				icon="globe"
+				title={ i18n.translate( 'Get your custom domain' ) }
+				description={
+					i18n.translate(
+						"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
+						'A free domain is included with your plan.',
+						{
+							args: { siteDomain: selectedSite.domain },
+							components: { em: <em /> }
+						}
+					)
+				}
+				buttonText={ i18n.translate( 'Claim your free domain' ) }
+				href={ '/domains/add/' + selectedSite.slug } />
 
 			<PurchaseDetail
-				additionalClass="unlimited-premium-themes"
+				icon="customize"
 				title={ i18n.translate( 'Find a new theme' ) }
-				description={ i18n.translate( 'All our premium themes, normally ranging $18 to $175 in price, are now available at no extra cost.' ) }
+				description={ i18n.translate( 'All our premium themes are now available at no extra cost. Try them out now.' ) }
 				buttonText={ i18n.translate( 'Browse premium themes' ) }
 				href={ '/design/' + selectedSite.slug } />
 
 			<PurchaseDetail
-				additionalClass="connect-google-analytics"
+				icon="stats-alt"
 				title={ i18n.translate( 'Stats from Google Analytics' ) }
 				description={ i18n.translate( 'Connect to Google Analytics for the perfect complement to WordPress.com stats.' ) }
 				buttonText={ i18n.translate( 'Connect Google Analytics' ) }
@@ -57,7 +46,6 @@ const BusinessPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 };
 
 BusinessPlanDetails.propTypes = {
-	isFreeTrial: React.PropTypes.bool.isRequired,
 	selectedSite: React.PropTypes.object.isRequired
 };
 

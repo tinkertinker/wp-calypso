@@ -56,6 +56,7 @@ module.exports = React.createClass( {
 		store: React.PropTypes.object.isRequired,
 		trackScrollPage: React.PropTypes.func.isRequired,
 		suppressSiteNameLink: React.PropTypes.bool,
+		showPostHeader: React.PropTypes.bool,
 		showFollowInHeader: React.PropTypes.bool,
 		onUpdatesShown: React.PropTypes.func,
 		emptyContent: React.PropTypes.object,
@@ -64,6 +65,7 @@ module.exports = React.createClass( {
 
 	getDefaultProps: function() {
 		return {
+			showPostHeader: true,
 			suppressSiteNameLink: false,
 			showFollowInHeader: false,
 			onShowUpdates: noop,
@@ -232,8 +234,7 @@ module.exports = React.createClass( {
 	},
 
 	isPostFullScreen: function() {
-		return window.location.href.indexOf( '/read/post/feed/' ) > -1 ||
-			window.location.href.indexOf( '/read/post/id' ) > -1;
+		return !! window.location.pathname.match( /^\/read\/(blogs|feeds)\/([0-9]+)\/posts\/([0-9]+)$/i );
 	},
 
 	selectNextItem: function() {
@@ -326,15 +327,15 @@ module.exports = React.createClass( {
 	},
 
 	showFullPost: function( post, { comments, replaceHistory } ) {
-		var hashtag = '';
-		var method = replaceHistory ? 'replace' : 'show';
+		let hashtag = '';
 		if ( comments ) {
 			hashtag += '#comments';
 		}
+		const method = replaceHistory ? 'replace' : 'show';
 		if ( post.feed_ID && post.feed_item_ID ) {
-			page[ method ]( '/read/post/feed/' + post.feed_ID + '/' + post.feed_item_ID + hashtag );
+			page[ method ]( '/read/feeds/' + post.feed_ID + '/posts/' + post.feed_item_ID + hashtag );
 		} else {
-			page[ method ]( '/read/post/id/' + post.site_ID + '/' + post.ID + hashtag );
+			page[ method ]( '/read/blogs/' + post.site_ID + '/posts/' + post.ID + hashtag );
 		}
 	},
 
@@ -399,6 +400,7 @@ module.exports = React.createClass( {
 						isSelected: isSelected,
 						xPostedTo: this.props.store.getSitesCrossPostedTo( post.URL ),
 						suppressSiteNameLink: this.props.suppressSiteNameLink,
+						showPostHeader: this.props.showPostHeader,
 						showFollowInHeader: this.props.showFollowInHeader,
 						handleClick: this.showFullPost
 					} );
@@ -416,13 +418,11 @@ module.exports = React.createClass( {
 	render: function() {
 		var store = this.props.store,
 			hasNoPosts = store.isLastPage() && ( ( ! this.state.posts ) || this.state.posts.length === 0 ),
-			header, body;
+			body;
 
 		if ( hasNoPosts || store.hasRecentError( 'invalid_tag' ) ) {
-			header = null;
 			body = this.props.emptyContent || ( <EmptyContent /> );
 		} else {
-			header = this.props.children;
 			body = ( <InfiniteList
 			ref={ this._setListContext }
 			className="reader__content"
@@ -445,11 +445,8 @@ module.exports = React.createClass( {
 				</MobileBackToSidebar>
 
 				<UpdateNotice count={ this.state.updateCount } onClick={ this.handleUpdateClick } />
-
-				{ header }
-
+				{ this.props.children }
 				{ body }
-
 			</Main>
 		);
 	}

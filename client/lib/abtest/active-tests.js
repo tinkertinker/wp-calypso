@@ -65,15 +65,6 @@ module.exports = {
 		},
 		defaultVariation: 'description'
 	},
-	headstart: {
-		datestamp: '20160215',
-		variations: {
-			original: 20,
-			notTested: 60,
-			headstart: 20
-		},
-		defaultVariation: 'original'
-	},
 	checkoutFooter: {
 		datestamp: '20160215',
 		variations: {
@@ -81,23 +72,6 @@ module.exports = {
 			noFooter: 50
 		},
 		defaultVariation: 'original'
-	},
-	altThemes: {
-		datestamp: '20160215',
-		variations: {
-			original: 20,
-			altThemes: 20,
-			notTested: 60
-		},
-		defaultVariation: 'original'
-	},
-	freePlansDefault: {
-		datestamp: '20160219',
-		variations: {
-			allPlans: 90,
-			skipForFree: 10
-		},
-		defaultVariation: 'allPlans'
 	},
 	domainSearchResultsCount: {
 		datestamp: '20160223',
@@ -107,4 +81,14 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
+	promoteFreeDomain: {
+		datestamp: '20160302',
+		variations: {
+			original: 50,
+			freeDomain: 50
+		},
+		defaultVariation: 'original',
+		excludeSitesWithPaidPlan: true
+	},
+
 };

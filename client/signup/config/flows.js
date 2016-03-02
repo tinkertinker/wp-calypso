@@ -11,7 +11,6 @@ var assign = require( 'lodash/assign' ),
 var config = require( 'config' ),
 	stepConfig = require( './steps' ),
 	abtest = require( 'lib/abtest' ).abtest,
-	getABTestVariation = require( 'lib/abtest' ).getABTestVariation,
 	user = require( 'lib/user' )();
 
 function getCheckoutUrl( dependencies ) {
@@ -64,6 +63,13 @@ const flows = {
 		},
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
 		lastModified: '2016-01-21'
+	},
+
+	free: {
+		steps: [ 'themes', 'domains', 'user' ],
+		destination: getSiteDestination,
+		description: 'Create an account and a blog and default to the free plan.',
+		lastModified: '2016-02-29'
 	},
 
 	businessv2: {
@@ -165,6 +171,13 @@ const flows = {
 		lastModified: null
 	},
 
+	'delta-new': {
+		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		destination: getSiteDestination,
+		description: 'A copy of the `main` flow for the delta-new landing campaign',
+		lastModified: '2016-03-01'
+	},
+
 	'site-user': {
 		steps: [ 'site', 'user' ],
 		destination: '/me/next?welcome',
@@ -211,20 +224,6 @@ const flows = {
 		description: 'Signup flow for free trials',
 		lastModified: '2015-12-18'
 	},
-
-	'website-altthemes': {
-		steps: [ 'survey', 'altthemes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'Alternative theme selection for the users who clicked "Create Website" on the two-button homepage.',
-		lastModified: '2016-02-12'
-	},
-
-	'blog-altthemes': {
-		steps: [ 'survey', 'altthemes', 'domains', 'plans', 'user' ],
-		destination: getSiteDestination,
-		description: 'Alternative theme selection for the users who clicked "Create blog" on the two-button homepage.',
-		lastModified: '2016-02-12'
-	},
 };
 
 function removeUserStepFromFlow( flow ) {
@@ -238,33 +237,6 @@ function removeUserStepFromFlow( flow ) {
 }
 
 function filterFlowName( flowName ) {
-	const headstartFlows = [ 'blog', 'website' ];
-	if ( includes( headstartFlows, flowName ) && 'headstart' === abtest( 'headstart' ) ) {
-		return 'headstart';
-	}
-
-	const altThemesFlows = [ 'blog', 'website' ];
-	if ( includes( altThemesFlows, flowName ) && 'notTested' === getABTestVariation( 'headstart' ) ) {
-		if ( 'altThemes' === abtest( 'altThemes' ) ) {
-			return ( 'blog' === flowName ) ? 'blog-altthemes' : 'website-altthemes';
-		}
-	}
-
-	let isInPreviousTest = false;
-
-	if ( getABTestVariation( 'headstart' ) && getABTestVariation( 'headstart' ) !== 'notTested' ) {
-		isInPreviousTest = true;
-	}
-
-	if ( getABTestVariation( 'altThemes' ) && getABTestVariation( 'altThemes' ) !== 'notTested' ) {
-		isInPreviousTest = true;
-	}
-
-	const freePlansTestFlows = [ 'blog', 'website', 'main' ];
-	if ( includes( freePlansTestFlows, flowName ) && ! isInPreviousTest ) {
-		return 'skipForFree' === abtest( 'freePlansDefault' ) ? 'upgrade' : flowName;
-	}
-
 	return flowName;
 }
 

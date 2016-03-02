@@ -20,7 +20,7 @@ var FeedHeader = require( 'reader/feed-header' ),
 function checkForRedirect( site ) {
 	if ( site && site.get( 'prefer_feed' ) && site.get( 'feed_ID' ) ) {
 		setTimeout( function() {
-			page.replace( '/read/blog/feed/' + site.get( 'feed_ID' ) )
+			page.replace( '/read/feeds/' + site.get( 'feed_ID' ) )
 		}, 0 );
 	}
 }
@@ -141,7 +141,7 @@ const SiteStream = React.createClass( {
 		}
 
 		return (
-			<FollowingStream { ...this.props } listName={ title } emptyContent={ emptyContent }>
+			<FollowingStream { ...this.props } listName={ title } emptyContent={ emptyContent } showPostHeader={ false }>
 				{ this.props.showBack && <HeaderBack /> }
 				<FeedHeader site={ this.state.site } feed={ this.state.feed }/>
 				{ featuredContent }

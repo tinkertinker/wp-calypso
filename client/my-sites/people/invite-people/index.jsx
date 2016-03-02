@@ -7,6 +7,9 @@ import get from 'lodash/get';
 import debugModule from 'debug';
 import includes from 'lodash/includes';
 import some from 'lodash/some';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import uniqueId from 'lodash/uniqueId';
 
 /**
  * Internal dependencies
@@ -24,21 +27,24 @@ import HeaderCake from 'components/header-cake';
 import CountedTextarea from 'components/forms/counted-textarea';
 import { createInviteValidation } from 'lib/invites/actions';
 import InvitesCreateValidationStore from 'lib/invites/stores/invites-create-validation';
+import InvitesSentStore from 'lib/invites/stores/invites-sent';
 
 /**
  * Module variables
  */
 const debug = debugModule( 'calypso:my-sites:people:invite' );
 
-export default React.createClass( {
+const InvitePeople = React.createClass( {
 	displayName: 'InvitePeople',
 
 	componentDidMount() {
 		InvitesCreateValidationStore.on( 'change', this.refreshValidation );
+		InvitesSentStore.on( 'change', this.refreshFormState );
 	},
 
 	componentWillUnmount() {
 		InvitesCreateValidationStore.off( 'change', this.refreshValidation );
+		InvitesSentStore.off( 'change', this.refreshFormState );
 	},
 
 	componentWillReceiveProps() {
@@ -54,22 +60,35 @@ export default React.createClass( {
 			usernamesOrEmails: [],
 			role: 'follower',
 			message: '',
-			response: false,
 			sendingInvites: false,
-			getTokenStatus: () => {}
+			getTokenStatus: () => {},
+			errorToDisplay: false
 		} );
 	},
 
+	refreshFormState() {
+		const sendInvitesSuccess = InvitesSentStore.getSuccess( this.state.formId );
+
+		if ( sendInvitesSuccess ) {
+			this.setState( this.resetState() );
+		} else {
+			this.setState( { sendingInvites: false } );
+		}
+	},
+
 	onTokensChange( tokens ) {
-		const { role } = this.state;
-		const filteredTokens = tokens.map( ( value ) => {
+		const { role, errorToDisplay } = this.state;
+		const filteredTokens = tokens.map( value => {
 			if ( 'object' === typeof value ) {
 				return value.value;
 			}
 			return value;
 		} );
 
-		this.setState( { usernamesOrEmails: filteredTokens } );
+		this.setState( {
+			usernamesOrEmails: filteredTokens,
+			errorToDisplay: includes( filteredTokens, errorToDisplay ) && errorToDisplay
+		} );
 		createInviteValidation( this.props.site.ID, filteredTokens, role );
 	},
 
@@ -84,33 +103,44 @@ export default React.createClass( {
 	},
 
 	refreshValidation() {
-		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID, this.state.role ) || [];
-		let success = InvitesCreateValidationStore.getSuccess( this.props.site.ID, this.state.role ) || [];
+		const errors = InvitesCreateValidationStore.getErrors( this.props.site.ID, this.state.role ) || {},
+			success = InvitesCreateValidationStore.getSuccess( this.props.site.ID, this.state.role ) || [],
+			errorsKeys = Object.keys( errors ),
+			errorToDisplay = this.state.errorToDisplay || ( errorsKeys.length > 0 && errorsKeys[0] );
 
 		this.setState( {
+			errorToDisplay,
 			errors,
 			success
 		} );
 	},
 
+	getTooltip( value ) {
+		const { errors, errorToDisplay } = this.state;
+		if ( errorToDisplay && value !== errorToDisplay ) {
+			return null;
+		}
+		return get( errors, [ value, 'message' ] );
+	},
+
 	getTokensWithStatus() {
 		const { success, errors } = this.state;
 
-		const tokens = this.state.usernamesOrEmails.map( ( value ) => {
-			let status;
+		const tokens = this.state.usernamesOrEmails.map( value => {
 			if ( errors && errors[ value ] ) {
-				status = 'error';
-			} else if ( ! includes( success, value ) ) {
-				status = 'validating';
-			}
-
-			if ( status ) {
-				value = {
+				return {
+					status: 'error',
 					value,
-					status
+					tooltip: this.getTooltip( value ),
+					onMouseEnter: () => this.setState( { errorToDisplay: value } ),
 				};
 			}
-
+			if ( ! includes( success, value ) ) {
+				return {
+					value,
+					status: 'validating'
+				};
+			}
 			return value;
 		} );
 
@@ -122,19 +152,16 @@ export default React.createClass( {
 		event.preventDefault();
 		debug( 'Submitting invite form. State: ' + JSON.stringify( this.state ) );
 
-		this.setState( { sendingInvites: true } );
-		sendInvites( this.props.site.ID, this.state.usernamesOrEmails, this.state.role, this.state.message, ( error, data ) => {
-			if ( error ) {
-				debug( 'Send invite error:' + JSON.stringify( error ) );
-			} else {
-				debug( 'Send invites response: ' + JSON.stringify( data ) );
-			}
+		const formId = uniqueId();
 
-			this.setState( {
-				sendingInvites: false,
-				response: error ? error : data
-			} );
-		} );
+		this.setState( { sendingInvites: true, formId } );
+		this.props.sendInvites(
+			this.props.site.ID,
+			this.state.usernamesOrEmails,
+			this.state.role,
+			this.state.message,
+			formId
+		);
 	},
 
 	isSubmitDisabled() {
@@ -238,3 +265,8 @@ export default React.createClass( {
 		);
 	}
 } );
+
+export default connect(
+	null,
+	dispatch => bindActionCreators( { sendInvites }, dispatch )
+)( InvitePeople );

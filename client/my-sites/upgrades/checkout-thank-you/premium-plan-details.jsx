@@ -8,43 +8,32 @@ import React from 'react';
  */
 import config from 'config';
 import i18n from 'lib/mixins/i18n';
-import PurchaseDetail from './purchase-detail';
+import PurchaseDetail from 'components/purchase-detail';
 
-const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
+const PremiumPlanDetails = ( { selectedSite } ) => {
 	const adminUrl = selectedSite.URL + '/wp-admin/',
-		customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href ),
-		showGetFreeDomainTip = ! isFreeTrial;
+		customizeLink = config.isEnabled( 'manage/customize' ) ? '/customize/' + selectedSite.slug : adminUrl + 'customize.php?return=' + encodeURIComponent( window.location.href );
 
 	return (
 		<div>
-			{
-				showGetFreeDomainTip
-				? <PurchaseDetail
-						additionalClass="get-free-domain"
-						title={ i18n.translate( 'Get your custom domain' ) }
-						description={
-							i18n.translate(
-								"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
-								'A free domain is included with your plan.',
-								{
-									args: { siteDomain: selectedSite.domain },
-									components: { em: <em /> }
-								}
-							)
+			<PurchaseDetail
+				icon="globe"
+				title={ i18n.translate( 'Get your custom domain' ) }
+				description={
+					i18n.translate(
+						"Replace your site's address, {{em}}%(siteDomain)s{{/em}}, with a custom domain. " +
+						'A free domain is included with your plan.',
+						{
+							args: { siteDomain: selectedSite.domain },
+							components: { em: <em /> }
 						}
-						buttonText={ i18n.translate( 'Claim your free domain' ) }
-						href={ '/domains/add/' + selectedSite.slug } />
-				: <PurchaseDetail
-						additionalClass="ads-have-been-removed"
-						title={ i18n.translate( 'Ads have been removed!' ) }
-						description={ i18n.translate( 'WordPress.com ads will not show up on your blog.' ) }
-						buttonText={ i18n.translate( 'View your site' ) }
-						href={ selectedSite.URL }
-						target="_blank" />
-			}
+					)
+				}
+				buttonText={ i18n.translate( 'Claim your free domain' ) }
+				href={ '/domains/add/' + selectedSite.slug } />
 
 			<PurchaseDetail
-				additionalClass="customize-fonts-and-colors"
+				icon="customize"
 				title={ i18n.translate( 'Customize your theme' ) }
 				description={
 					i18n.translate(
@@ -57,7 +46,7 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 				target={ config.isEnabled( 'manage/customize' ) ? undefined : '_blank' } />
 
 			<PurchaseDetail
-				additionalClass="upload-to-videopress"
+				icon="image-multiple"
 				title={ i18n.translate( 'Video and audio posts' ) }
 				description={
 					i18n.translate(
@@ -73,7 +62,6 @@ const PremiumPlanDetails = ( { isFreeTrial, selectedSite } ) => {
 };
 
 PremiumPlanDetails.propTypes = {
-	isFreeTrial: React.PropTypes.bool.isRequired,
 	selectedSite: React.PropTypes.object.isRequired
 };
 

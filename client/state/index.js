@@ -21,6 +21,7 @@ import themes from './themes/reducer';
 import users from './users/reducer';
 import currentUser from './current-user/reducer';
 import ui from './ui/reducer';
+import comments from './comments/reducer';
 import liveChat from './live-chat/reducer'
 
 /**
@@ -41,6 +42,7 @@ export const reducer = combineReducers( {
 	users,
 	currentUser,
 	ui,
+	comments,
 	liveChat
 } );
 
