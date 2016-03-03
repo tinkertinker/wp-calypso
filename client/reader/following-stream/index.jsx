@@ -147,6 +147,11 @@ module.exports = React.createClass( {
 		if ( 'scrollRestoration' in history ) {
 			history.scrollRestoration = 'manual';
 		}
+		this._listContext = document.querySelector( '#primary' )
+	},
+
+	componentWillMount: function() {
+		this._listContext = document.querySelector( '#primary' )
 	},
 
 	componentWillUnmount: function() {
@@ -412,7 +417,6 @@ module.exports = React.createClass( {
 
 	_setListContext: function( ref ) {
 		this._list = ref
-		this.setState( { listContext: ref ? ReactDom.findDOMNode( ref ) : null } )
 	},
 
 	render: function() {
@@ -426,7 +430,7 @@ module.exports = React.createClass( {
 			body = ( <InfiniteList
 			ref={ this._setListContext }
 			className="reader__content"
-			context={ this.state.listContext }
+			context={ this._listContext }
 			items={ this.state.posts }
 			lastPage={ this.props.store.isLastPage() }
 			fetchingNextPage={ this.props.store.isFetchingNextPage() }
