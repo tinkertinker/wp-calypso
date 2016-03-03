@@ -1,5 +1,8 @@
 .live-chat-container {
-	height: 100%;
+	align-self: stretch;
+	display: flex;
+	flex-direction: column;
+	flex: 1 0 auto;
 }
 
 // chat, when collapsed is little floating bit. @todo: may move to bottom of sidebar
