@@ -372,6 +372,7 @@ ul.sidebar {
 	flex: 1 1 auto;
 	align-self: stretch;
 	overflow: auto;
+	-webkit-overflow-scrolling: touch;
 	padding: 32px;
 }
 
