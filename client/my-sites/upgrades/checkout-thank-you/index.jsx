@@ -15,15 +15,15 @@ import analytics from 'analytics';
 import BusinessPlanDetails from './business-plan-details';
 import Card from 'components/card';
 import ChargebackDetails from './chargeback-details';
-import CheckoutThankYouFooter from './footer';
+import CheckoutThankYouFeaturesHeader from './features-header';
 import CheckoutThankYouHeader from './header';
 import Dispatcher from 'dispatcher';
 import DomainMappingDetails from './domain-mapping-details';
 import DomainRegistrationDetails from './domain-registration-details';
 import { fetchReceipt } from 'state/receipts/actions';
-import GenericDetails from './generic-details';
 import { getReceiptById } from 'state/receipts/selectors';
 import GoogleAppsDetails from './google-apps-details';
+import HappinessSupport from 'components/happiness-support';
 import HeaderCake from 'components/header-cake';
 import {
 	isBusiness,
@@ -68,6 +68,8 @@ const CheckoutThankYou = React.createClass( {
 		}
 
 		analytics.tracks.recordEvent( 'calypso_checkout_thank_you_view' );
+
+		window.scrollTo( 0, 0 );
 	},
 
 	componentWillReceiveProps() {
@@ -127,6 +129,12 @@ const CheckoutThankYou = React.createClass( {
 			'is-placeholder': ! this.isDataLoaded()
 		} );
 
+		let purchases = null;
+
+		if ( this.isDataLoaded() && ! this.isGenericReceipt() ) {
+			purchases = getPurchases( this.props );
+		}
+
 		return (
 			<Main className={ classes }>
 				<HeaderCake onClick={ this.goBack } isCompact backText={ this.translate( 'Back to my site' ) } />
@@ -135,9 +143,9 @@ const CheckoutThankYou = React.createClass( {
 					{ this.productRelatedMessages() }
 				</Card>
 
-				<CheckoutThankYouFooter
-					isDataLoaded={ this.isDataLoaded() }
-					receipt={ this.props.receipt } />
+				<Card className="checkout-thank-you__footer">
+					<HappinessSupport isJetpack={ purchases && purchases.some( isJetpackPlan ) } />
+				</Card>
 			</Main>
 		);
 	},
@@ -158,10 +166,10 @@ const CheckoutThankYou = React.createClass( {
 				return [ PremiumPlanDetails, find( purchases, isPremium ) ];
 			} else if ( purchases.some( isBusiness ) ) {
 				return [ BusinessPlanDetails, find( purchases, isBusiness ) ];
-			} else if ( purchases.some( isGoogleApps ) ) {
-				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
 			} else if ( purchases.some( isDomainRegistration ) ) {
 				return [ DomainRegistrationDetails, ...findPurchaseAndDomain( purchases, isDomainRegistration ) ];
+			} else if ( purchases.some( isGoogleApps ) ) {
+				return [ GoogleAppsDetails, ...findPurchaseAndDomain( purchases, isGoogleApps ) ];
 			} else if ( purchases.some( isDomainMapping ) ) {
 				return [ DomainMappingDetails, ...findPurchaseAndDomain( purchases, isDomainMapping ) ];
 			} else if ( purchases.some( isSiteRedirect ) ) {
@@ -171,7 +179,7 @@ const CheckoutThankYou = React.createClass( {
 			}
 		}
 
-		return [ GenericDetails ];
+		return [];
 	},
 
 	productRelatedMessages() {
@@ -185,11 +193,21 @@ const CheckoutThankYou = React.createClass( {
 						isDataLoaded={ false }
 						selectedSite={ this.props.selectedSite } />
 
-					<PurchaseDetail isPlaceholder />
-					<PurchaseDetail isPlaceholder />
-					<PurchaseDetail isPlaceholder />
+					<CheckoutThankYouFeaturesHeader isDataLoaded={ false } />
+
+					<div className="checkout-thank-you__purchase-details-list">
+						<PurchaseDetail isPlaceholder />
+						<PurchaseDetail isPlaceholder />
+						<PurchaseDetail isPlaceholder />
+					</div>
 				</div>
 			);
+		}
+
+		let purchases;
+
+		if ( ! this.isGenericReceipt() ) {
+			purchases = getPurchases( this.props );
 		}
 
 		return (
@@ -199,15 +217,20 @@ const CheckoutThankYou = React.createClass( {
 					primaryPurchase={ primaryPurchase }
 					selectedSite={ this.props.selectedSite } />
 
-				<div className="checkout-thank-you__features-header">
-					{ this.translate( "Get started with your site's new features" ) }
-				</div>
+				<CheckoutThankYouFeaturesHeader
+					isDataLoaded={ this.isDataLoaded() }
+					isGenericReceipt={ this.isGenericReceipt() }
+					purchases={ this.isGenericReceipt() ? false : getPurchases( this.props ) } />
 
-				<div className="checkout-thank-you__purchase-details-list">
-					<ComponentClass
-						selectedSite={ selectedSite }
-						domain={ domain } />
-				</div>
+				{ ComponentClass && (
+					<div className="checkout-thank-you__purchase-details-list">
+						<ComponentClass
+							purchases={ purchases }
+							registrarSupportUrl={ this.isGenericReceipt() ? null : primaryPurchase.registrarSupportUrl }
+							selectedSite={ selectedSite }
+							domain={ domain } />
+					</div>
+				) }
 			</div>
 		);
 	}

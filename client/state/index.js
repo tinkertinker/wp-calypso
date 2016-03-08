@@ -22,7 +22,8 @@ import users from './users/reducer';
 import currentUser from './current-user/reducer';
 import ui from './ui/reducer';
 import comments from './comments/reducer';
-import liveChat from './live-chat/reducer'
+import liveChat from './live-chat/reducer';
+import googleAppsUsers from './google-apps-users/reducer';
 
 /**
  * Module variables
@@ -43,7 +44,8 @@ export const reducer = combineReducers( {
 	currentUser,
 	ui,
 	comments,
-	liveChat
+	liveChat,
+	googleAppsUsers
 } );
 
 let middleware = [ thunkMiddleware ];

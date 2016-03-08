@@ -8,9 +8,7 @@ const React = require( 'react' ),
 // Internal dependencies
 const Search = require( 'components/search' ),
 	FollowingEditSubscribeFormResult = require( './subscribe-form-result' ),
-	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' ),
-	Gridicon = require( 'components/gridicon' ),
-	stats = require( 'reader/stats' );
+	FeedSubscriptionActions = require( 'lib/reader-feed-subscriptions/actions' );
 
 const minSearchLength = 8; // includes protocol
 
@@ -53,10 +51,6 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 		// Call onFollow method on the parent
 		this.props.onFollow( this.state.searchString );
-	},
-
-	handleFollowIconClick: function() {
-		this.refs.followingEditSubscriptionSearch.focus();
 	},
 
 	handleKeyDown: function( event ) {
@@ -112,6 +106,12 @@ var FollowingEditSubscribeForm = React.createClass( {
 			return false;
 		}
 
+		// Make sure the hostname has at least two parts separated by a dot
+		const hostnameParts = parsedUrl.hostname.split( '.' ).filter( Boolean );
+		if ( hostnameParts.length < 2 ) {
+			return false;
+		}
+
 		return true;
 	},
 
@@ -142,7 +142,6 @@ var FollowingEditSubscribeForm = React.createClass( {
 
 		return (
 			<div className="following-edit__subscribe-form">
-				<Gridicon icon="add-outline" onClick={ this.handleFollowIconClick } />
 				<Search
 					isOpen={ true }
 					key="newSubscriptionSearch"

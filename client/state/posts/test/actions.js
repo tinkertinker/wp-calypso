@@ -3,13 +3,13 @@
  */
 import nock from 'nock';
 import sinon from 'sinon';
-import sinonChai from 'sinon-chai';
-import Chai, { expect } from 'chai';
+import { expect } from 'chai';
 
 /**
  * Internal dependencies
  */
 import {
+	POST_EDIT,
 	POST_REQUEST,
 	POST_REQUEST_SUCCESS,
 	POST_REQUEST_FAILURE,
@@ -23,22 +23,19 @@ import {
 	receivePosts,
 	requestSitePosts,
 	requestSitePost,
-	requestPosts
+	requestPosts,
+	editPost
 } from '../actions';
 
 describe( 'actions', () => {
 	const spy = sinon.spy();
-
-	before( () => {
-		Chai.use( sinonChai );
-	} );
 
 	beforeEach( () => {
 		spy.reset();
 	} );
 
 	after( () => {
-		nock.restore();
+		nock.cleanAll();
 	} );
 
 	describe( '#receivePost()', () => {
@@ -88,10 +85,6 @@ describe( 'actions', () => {
 					error: 'authorization_required',
 					message: 'User cannot access this private blog.'
 				} );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch fetch action when thunk triggered', () => {
@@ -171,10 +164,6 @@ describe( 'actions', () => {
 				} );
 		} );
 
-		after( () => {
-			nock.cleanAll();
-		} );
-
 		it( 'should dispatch posts receive action when request completes', () => {
 			return requestPosts()( spy ).then( () => {
 				expect( spy ).to.have.been.calledWith( {
@@ -199,10 +188,6 @@ describe( 'actions', () => {
 					error: 'unknown_post',
 					message: 'Unknown post'
 				} );
-		} );
-
-		after( () => {
-			nock.cleanAll();
 		} );
 
 		it( 'should dispatch request action when thunk triggered', () => {
@@ -244,6 +229,34 @@ describe( 'actions', () => {
 					postId: 420,
 					error: sinon.match( { message: 'Unknown post' } )
 				} );
+			} );
+		} );
+	} );
+
+	describe( '#editPost()', () => {
+		it( 'should return an action object for a new post', () => {
+			const action = editPost( {
+				title: 'Hello World'
+			}, 2916284 );
+
+			expect( action ).to.eql( {
+				type: POST_EDIT,
+				siteId: 2916284,
+				postId: undefined,
+				post: { title: 'Hello World' }
+			} );
+		} );
+
+		it( 'should return an action object for an existing post', () => {
+			const action = editPost( {
+				title: 'Hello World'
+			}, 2916284, 413 );
+
+			expect( action ).to.eql( {
+				type: POST_EDIT,
+				siteId: 2916284,
+				postId: 413,
+				post: { title: 'Hello World' }
 			} );
 		} );
 	} );

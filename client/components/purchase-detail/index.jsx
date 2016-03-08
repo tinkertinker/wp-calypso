@@ -16,6 +16,8 @@ const PurchaseDetail = ( {
 	href,
 	icon,
 	isPlaceholder,
+	isRequired,
+	requiredText,
 	target,
 	title
 } ) => {
@@ -39,14 +41,26 @@ const PurchaseDetail = ( {
 
 	return (
 		<div className={ classes }>
-			{ icon && <div className="purchase-detail__icon"><Gridicon icon={ icon } /></div> }
+			{ requiredText && (
+				<div className="purchase-detail__required-notice">
+					<em>{ requiredText }</em>
+				</div>
+			) }
+			<div className="purchase-detail__content">
+				{ icon && (
+					<div className="purchase-detail__icon">
+						<Gridicon icon={ icon } />
+						{ isRequired && <Gridicon className="purchase-detail__notice-icon" icon="notice" /> }
+					</div>
+				) }
 
-			<div className="purchase-detail__text">
-				<h3 className="purchase-detail__title">{ title }</h3>
-				<p className="purchase-detail__description">{ description }</p>
+				<div className="purchase-detail__text">
+					<h3 className="purchase-detail__title">{ title }</h3>
+					<div className="purchase-detail__description">{ description }</div>
+				</div>
+
+				{ buttonElement }
 			</div>
-
-			{ buttonElement }
 		</div>
 	);
 };
@@ -56,10 +70,13 @@ PurchaseDetail.propTypes = {
 	description: React.PropTypes.oneOfType( [
 		React.PropTypes.array,
 		React.PropTypes.string,
+		React.PropTypes.object
 	] ),
 	href: React.PropTypes.string,
 	icon: React.PropTypes.string,
 	isPlaceholder: React.PropTypes.bool,
+	isRequired: React.PropTypes.bool,
+	requiredText: React.PropTypes.string,
 	target: React.PropTypes.string,
 	title: React.PropTypes.string
 };

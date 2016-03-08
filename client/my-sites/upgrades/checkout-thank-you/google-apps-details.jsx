@@ -7,12 +7,13 @@ import React from 'react';
  * Internal dependencies
  */
 import i18n from 'lib/mixins/i18n';
+import supportUrls from 'lib/url/support';
 import PurchaseDetail from 'components/purchase-detail';
 import userFactory from 'lib/user';
 
 const user = userFactory();
 
-const GoogleAppsDetails = ( { selectedSite } ) => {
+const GoogleAppsDetails = () => {
 	return (
 		<PurchaseDetail
 			icon="cog"
@@ -24,13 +25,11 @@ const GoogleAppsDetails = ( { selectedSite } ) => {
 				)
 			}
 			buttonText={ i18n.translate( 'Learn more about Google Apps' ) }
-			href="https://apps.google.com/learning-center/"
-			target="_blank" />
+			href={ supportUrls.GOOGLE_APPS_LEARNING_CENTER }
+			target="_blank"
+			requiredText={ i18n.translate( 'Almost done! One step remaining…' ) }
+			isRequired />
 	);
-};
-
-GoogleAppsDetails.propTypes = {
-	selectedSite: React.PropTypes.object.isRequired
 };
 
 export default GoogleAppsDetails;

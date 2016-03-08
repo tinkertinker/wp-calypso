@@ -1,5 +1,4 @@
 .following-edit {
-	position: relative;
 
 	ul {
 		list-style-type: none;
@@ -15,7 +14,8 @@
 		margin-bottom: 13px;
 	}
 
-	.foldable-card.card, .foldable-card.card.is-expanded {
+	.foldable-card.card,
+	.foldable-card.card.is-expanded {
 		margin-bottom: 0;
 	}
 
@@ -40,7 +40,6 @@
 	}
 }
 
-
 .section-header.following-edit__header {
 	margin-bottom: 24px;
 
@@ -60,7 +59,6 @@
 		}
 	}
 }
-
 
 // More Options
 .following-edit__more-options {
@@ -107,16 +105,14 @@
 
 // Add to Following
 .following-edit__subscribe-form {
-	position: absolute;
-		top: 0;
-		right: 0;
-		left: 0;
+	position: relative;
+	margin-top: -58px;
 	opacity: 0;
 	pointer-events: none;
 	transition: all 0.15s ease-in-out;
 
-	@include breakpoint( "<480px" ) {
-		top: 62px;
+	@include breakpoint( ">480px" ) {
+		margin-top: -74px;
 	}
 
 	.search {
@@ -126,6 +122,7 @@
 	.search__input[type="search"] {
 		height: 50px;
 		border: 1px solid transparent;
+		padding-left: 20px;
 
 		&:focus {
 			border-color: $blue-wordpress;
@@ -135,19 +132,6 @@
 
 	.search-open__icon {
 		display: none;
-	}
-
-	.gridicons-add-outline {
-		position: absolute;
-			top: 13px;
-			left: 18px;
-		fill: $blue-medium;
-		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .gridicons-add-outline' );
-	}
-
-	.gridicons-add-outline {
-		transform: translateX( 30px );
-		transition: all 0.15s ease-in-out;
 	}
 
 	.is-adding & {
@@ -161,26 +145,30 @@
 
 	.card.is-search-result {
 		position: absolute;
-			top: 68px;
+			top: 51px;
 		width: 100%;
-		z-index: z-index( '.following-edit', '.following-edit__subscribe-form .card.is-search-result' );
-
-		@include breakpoint( "<480px" ) {
-			top: 59px;
-		}
-
-		.gridicon__follow {
-			fill: lighten( $gray, 20% );
-		}
 
 		.follow-button {
 			cursor: default;
-			color: lighten( $gray, 20% );
+
+			.gridicon {
+				cursor: default;
+				fill: lighten( $gray, 20% );
+			}
+
+			.follow-button__label {
+				color: lighten( $gray, 20% );
+			}
 		}
 
 		&.is-valid {
-			.gridicon__follow {
+			.gridicon {
 				fill: $blue-medium;
+
+				&:hover,
+				&:active {
+					cursor: pointer;
+				}
 			}
 
 			.follow-button {
@@ -199,38 +187,43 @@
 	}
 }
 
-
 // Search Followed Sites
 .following-edit .search-card {
-	margin-bottom: 1px;
-}
+	margin: 30px 0 1px;
 
+	@include breakpoint( ">660px" ) {
+		margin-top: 50px;
+	}
+}
 
 // Search Results Placeholder
 .following-edit__subscribe-form-blank {
 	position: absolute;
-		top: 68px;
+		top: 51px;
 	width: 100%;
-	height: 75px;
 	box-sizing: border-box;
-	padding: 26px 32px 0 32px;
+	padding: 30px 32px;
 	text-align: center;
-	color: darken( $gray, 10 );
-	background: lighten( $gray, 30 );
-	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20 ), .5 );
+	color: darken( $gray, 10% );
+	background: lighten( $gray, 30% );
+	box-shadow: 0 0 0 1px transparentize( lighten( $gray, 20% ), .5 );
 
-	@include breakpoint( "<480px" ) {
-		padding: 16px 42px 0 42px;
-		top: 59px;
+	@include breakpoint( ">480px" ) {
+		padding: 26px 32px;
 	}
 }
-
 
 // Followed Sites and Search Transitions
 .following-edit__sites,
 .following-edit .search-card,
 .following-edit .no-results {
 	transition: all 0.2s ease-in-out;
+}
+
+.following-edit .no-results {
+	@include breakpoint( "<660px" ) {
+		text-align: center;
+	}
 }
 
 .is-adding .following-edit__sites,
@@ -249,12 +242,15 @@
 .following-edit .reader-list-item__card {
 
 	&.is-placeholder {
+
+		height: 74px;
+
 		.reader-list-item__title,
 		.reader-list-item__description {
-			margin-left: 92px;
+			margin: 1px 0 0 91px;
 
-			@include breakpoint( ">660px" ) {
-				margin-left: 80px;
+			@include breakpoint( ">480px" ) {
+				margin-left: 83px;
 			}
 		}
 
@@ -266,13 +262,17 @@
 			margin-top: 4px;
 			width: 25%;
 		}
+
+		.reader-list-item__icon {
+			left: 42px;
+		}
 	}
 
 	.reader-list-item__title,
 	.reader-list-item__description {
 		padding-left: 12px;
-		margin-left: 80px;
 		margin-right: 100px;
+
 		@include breakpoint( ">660px" ) {
 			padding-left: 0;
 		}
@@ -280,7 +280,6 @@
 
 	.reader-list-item__icon {
 		top: 14px;
-		left: 40px;
 	}
 }
 
@@ -296,11 +295,11 @@
 .following-edit__notification-settings-card {
 	background-color: $gray-light;
 	position: relative;
-	color: #2e4453;
+	color: $gray-dark;
 
 	&.is-compact {
-		padding-top: 10px;
-		padding-bottom: 10px;
+		padding: 10px 0;
+
 		@include breakpoint( ">660px" ) {
 			padding-left: 105px;
 		}
@@ -325,7 +324,7 @@
 
 	.following-edit__form-toggle-wrapper {
 		position: absolute;
-		right: 16px;
+			right: 16px;
 	}
 
 	.following-edit__form-toggle-status {
@@ -352,23 +351,22 @@
 		left: 0;
 		top: 0;
 	cursor: pointer;
-	padding: 26px 8px 20px 8px;
+	padding: 26px 8px 20px;
 
 	.gridicon {
 		fill: $gray;
-		transform: rotate(0deg);
-		transition: transform .15s cubic-bezier(0.175, .885, .32, 1.275), color .20s ease-in;
+		transform: rotate( 0deg );
+		transition: transform .15s cubic-bezier( 0.175, .885, .32, 1.275 ), color .20s ease-in;
 
 		.is-expanded & {
-			transform: rotate(90deg);
+			transform: rotate( 90deg );
 		}
 	}
 }
 
 .following-edit__notification-settings-error {
-	margin-top: 12px;
+	margin-top: 14px;
 }
-
 
 @include breakpoint( ">660px" ) {
 	.following-edit {
@@ -379,6 +377,7 @@
 		.reader-list-item__title,
 		.reader-list-item__description {
 			margin-right: 100px;
+			padding-left: 3px;
 		}
 	}
 }

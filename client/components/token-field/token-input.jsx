@@ -8,14 +8,16 @@ var TokenInput = React.createClass( {
 	propTypes: {
 		onChange: React.PropTypes.func,
 		onBlur: React.PropTypes.func,
-		value: React.PropTypes.string
+		value: React.PropTypes.string,
+		disabled: React.PropTypes.bool
 	},
 
 	getDefaultProps: function() {
 		return {
 			onChange: function() {},
 			onBlur: function() {},
-			value: ''
+			value: '',
+			disabled: false
 		};
 	},
 
@@ -26,8 +28,9 @@ var TokenInput = React.createClass( {
 			<input
 				ref="input"
 				type="text"
+				disabled={ this.props.disabled }
 				value={ this.props.value }
-			 	size={ this.props.value.length + 1 }
+				size={ this.props.value.length + 1 }
 				onBlur={ this.props.onBlur }
 				onChange={ this._onChange }
 				className="token-field__input"

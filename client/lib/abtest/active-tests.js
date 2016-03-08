@@ -45,17 +45,6 @@ module.exports = {
 		},
 		defaultVariation: 'yearly'
 	},
-	plansUpgradeButton: {
-		datestamp: '20160212', // Update to the day of deploy
-		variations: {
-			original: 20,
-			free: 20,
-			add: 20,
-			info: 20,
-			change: 20
-		},
-		defaultVariation: 'original'
-	},
 	plansFeatureList: {
 		datestamp: '20160215',
 		variations: {
@@ -90,5 +79,20 @@ module.exports = {
 		defaultVariation: 'original',
 		excludeSitesWithPaidPlan: true
 	},
-
+	domainSearchPlaceholderText: {
+		datestamp: '20160304',
+		variations: {
+			original: 50,
+			searchForADomain: 50
+		},
+		defaultVariation: 'original'
+	},
+	sidebarOnCheckoutOfOneProduct: {
+		datestamp: '20160308',
+		variations: {
+			original: 50,
+			hidden: 50,
+		},
+		defaultVariation: 'original'
+	},
 };

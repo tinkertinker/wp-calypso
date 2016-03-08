@@ -8,7 +8,6 @@ import DnsStore from 'lib/domains/dns/store';
 import domainsAssembler from 'lib/domains/assembler';
 import DomainsStore from 'lib/domains/store';
 import EmailForwardingStore from 'lib/domains/email-forwarding/store';
-import googleAppsUsersAssembler from 'lib/domains/google-apps-users/assembler';
 import i18n from 'lib/mixins/i18n';
 import NameserversStore from 'lib/domains/nameservers/store';
 import sitesFactory from 'lib/sites-list';
@@ -117,7 +116,6 @@ function deleteEmailForwarding( domainName, mailbox, onComplete ) {
 	} );
 }
 
-let _activefetchDomainsForSite = {};
 function fetchDomains( siteId ) {
 	if ( ! isDomainInitialized( DomainsStore.get(), siteId ) ) {
 		Dispatcher.handleViewAction( {
@@ -126,17 +124,17 @@ function fetchDomains( siteId ) {
 		} );
 	}
 
+	const domains = DomainsStore.getBySite( siteId );
+	if ( domains.isFetching ) {
+		return;
+	}
+
 	Dispatcher.handleViewAction( {
 		type: ActionTypes.DOMAINS_FETCH,
 		siteId
 	} );
 
-	if ( _activefetchDomainsForSite[ siteId ] ) {
-		return;
-	}
-	_activefetchDomainsForSite[ siteId ] = true;
 	wpcom.site( siteId ).domains( function( error, data ) {
-		delete _activefetchDomainsForSite[ siteId ];
 		if ( error ) {
 			Dispatcher.handleServerAction( {
 				type: ActionTypes.DOMAINS_FETCH_FAILED,
@@ -323,26 +321,6 @@ function resendIcannVerification( domainName, onComplete ) {
 		}
 
 		onComplete( error );
-	} );
-}
-
-function fetchGoogleAppsUsers( domainName ) {
-	Dispatcher.handleViewAction( {
-		type: ActionTypes.GOOGLE_APPS_USERS_FETCH,
-		domainName
-	} );
-
-	wpcom.googleAppsListAll( domainName, ( error, data ) => {
-		if ( error ) {
-			// TODO: handle error
-			return;
-		}
-
-		Dispatcher.handleServerAction( {
-			type: ActionTypes.GOOGLE_APPS_USERS_FETCH_COMPLETED,
-			domainName,
-			users: googleAppsUsersAssembler.createDomainObject( data )
-		} );
 	} );
 }
 
@@ -556,7 +534,6 @@ export {
 	fetchDns,
 	fetchDomains,
 	fetchEmailForwarding,
-	fetchGoogleAppsUsers,
 	fetchNameservers,
 	fetchSiteRedirect,
 	fetchWapiDomainInfo,

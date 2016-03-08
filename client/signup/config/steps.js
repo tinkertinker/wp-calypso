@@ -20,6 +20,17 @@ module.exports = {
 		stepName: 'themes-headstart',
 		props: {
 			useHeadstart: true,
+			themes: [
+				{ name: 'Boardwalk', slug: 'boardwalk' },
+				{ name: 'Cubic', slug: 'cubic' },
+				{ name: 'Edin', slug: 'edin' },
+				{ name: 'Cols', slug: 'cols' },
+				{ name: 'Minnow', slug: 'minnow' },
+				{ name: 'Sequential', slug: 'sequential' },
+				{ name: 'Penscratch', slug: 'penscratch' },
+				{ name: 'Intergalactic', slug: 'intergalactic' },
+				{ name: 'Eighties', slug: 'eighties' },
+			],
 		},
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme' ]
@@ -72,13 +83,6 @@ module.exports = {
 
 	'select-plan': {
 		stepName: 'select-plan',
-		apiRequestFunction: stepActions.addPlanToCart,
-		dependencies: [ 'siteSlug' ],
-		providesDependencies: [ 'cartItem' ]
-	},
-
-	'select-plan-or-skip': {
-		stepName: 'select-plan-or-skip',
 		apiRequestFunction: stepActions.addPlanToCart,
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'cartItem' ]

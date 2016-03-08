@@ -10,7 +10,7 @@ import flowRight from 'lodash/flowRight';
  */
 import KeyboardShortcuts from 'lib/keyboard-shortcuts';
 import SupportUserLoginDialog from './login-dialog';
-import supportUser from 'lib/user/support-user-interop';
+import { fetchToken, rebootNormally } from 'lib/user/support-user-interop';
 
 import { supportUserToggleDialog } from 'state/support/actions';
 
@@ -25,7 +25,11 @@ const SupportUser = React.createClass( {
 		KeyboardShortcuts.off( 'open-support-user', this.onKeyboardShortcut );
 	},
 
-	onKeyboardShortcut: function() {
+	onKeyboardShortcut: function( e ) {
+		// Because the username field is auto-focused, this prevents
+		// the shortcut key being entered into the field
+		e.preventDefault();
+
 		if ( this.props.isSupportUser ) {
 			this.props.supportUserRestore();
 		} else {
@@ -59,8 +63,8 @@ const mapStateToProps = ( state ) => {
 
 const mapDispatchToProps = ( dispatch ) => {
 	return {
-		supportUserTokenFetch: supportUser.fetchToken.bind( supportUser ),
-		supportUserRestore: supportUser.rebootNormally,
+		supportUserTokenFetch: fetchToken,
+		supportUserRestore: rebootNormally,
 		supportUserToggleDialog: flowRight( dispatch, supportUserToggleDialog ),
 	};
 }
