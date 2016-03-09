@@ -47,7 +47,6 @@ class Connection extends EventEmitter {
 					mapKeys( pick( user, [ 'ID', 'avatar_URL', 'display_name', 'username' ] ), mapWPComUserKeys )
 				) )
 				.on( 'token', () => socket.emit( 'token', user ) )
-				.on( 'action', emitActionMessage( this ) )
 				.on( 'message', emitMessage( this ) )
 		} )
 	}
