@@ -9215,6 +9215,86 @@
           "version": "1.0.0"
         }
       }
+    },
+    "socket.io-client": {
+      "version": "1.4.5",
+      "dependencies": {
+        "backo2": {
+          "version": "1.0.2"
+        },
+        "component-bind": {
+          "version": "1.0.0"
+        },
+        "component-emitter": {
+          "version": "1.2.0"
+        },
+        "engine.io-client": {
+          "version": "1.6.8",
+          "dependencies": {
+            "component-inherit": {
+              "version": "0.0.3"
+            },
+            "component-emitter": {
+              "version": "1.1.2"
+            },
+            "engine.io-parser": {
+              "version": "1.2.4",
+              "dependencies": {
+                "has-binary": {
+                  "version": "0.1.6"
+                }
+              }
+            },
+            "has-cors": {
+              "version": "1.1.0"
+            },
+            "parsejson": {
+              "version": "0.0.1"
+            },
+            "parseqs": {
+              "version": "0.0.2"
+            },
+            "ws": {
+              "version": "1.0.1"
+            },
+            "xmlhttprequest-ssl": {
+              "version": "1.5.1"
+            },
+            "yeast": {
+              "version": "0.1.2"
+            }
+          }
+        },
+        "has-binary": {
+          "version": "0.1.7"
+        },
+        "indexof": {
+          "version": "0.0.1"
+        },
+        "object-component": {
+          "version": "0.0.3"
+        },
+        "parseuri": {
+          "version": "0.0.4"
+        },
+        "socket.io-parser": {
+          "version": "2.2.6",
+          "dependencies": {
+            "json3": {
+              "version": "3.3.2"
+            },
+            "component-emitter": {
+              "version": "1.1.2"
+            }
+          }
+        },
+        "to-array": {
+          "version": "0.1.4"
+        }
+      }
+    },
+    "uuid": {
+      "version": "2.0.1"
     }
   }
 }
