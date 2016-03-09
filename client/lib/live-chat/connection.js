@@ -76,8 +76,9 @@ class Connection extends EventEmitter {
 	send( message ) {
 		this.getSocket()
 		.then( ( socket ) => new Promise( ( resolve ) => {
-			socket.emit( 'action', { message, type: 'message', id: uuid() }, resolve )
-			socket.emit( 'message', message, resolve )
+			const id = uuid()
+			socket.emit( 'action', { message, type: 'message', id }, resolve )
+			socket.emit( 'message', { message, id }, resolve )
 		} ) )
 	}
 
