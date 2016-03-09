@@ -49,7 +49,7 @@
     "immutable": "3.7.5",
     "imports-loader": "0.6.5",
     "inherits": "2.0.1",
-    "jade": "pugjs/jade#29784fd",
+    "jade": "1.11.0",
     "jed": "1.0.2",
     "jquery": "1.11.3",
     "jshashes": "1.0.5",
