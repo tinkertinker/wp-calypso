@@ -23,6 +23,15 @@ const emitActionMessage = ( connection ) => ( { id, type, user, message, timesta
 	}, timestamp, message } )
 }
 
+const emitMessage = ( connection ) => ( { id, text, timestamp, user } ) => {
+	debug( 'received message', text )
+	connection.emit( 'event', { id, type: 'message', timestamp, message: text, user: {
+		nick: user.displayName,
+		picture: user.avatarURL,
+		id: user.id
+	} } )
+}
+
 const p = ( ... args ) => new Promise( ... args )
 
 class Connection extends EventEmitter {
@@ -37,7 +46,9 @@ class Connection extends EventEmitter {
 				.on( 'identify', () => socket.emit( 'user',
 					mapKeys( pick( user, [ 'ID', 'avatar_URL', 'display_name', 'username' ] ), mapWPComUserKeys )
 				) )
+				.on( 'token', () => socket.emit( 'token', user ) )
 				.on( 'action', emitActionMessage( this ) )
+				.on( 'message', emitMessage( this ) )
 		} )
 	}
 
@@ -67,6 +78,7 @@ class Connection extends EventEmitter {
 		this.getSocket()
 		.then( ( socket ) => new Promise( ( resolve ) => {
 			socket.emit( 'action', { message, type: 'message', id: uuid() }, resolve )
+			socket.emit( 'message', message, resolve )
 		} ) )
 	}
 
