@@ -121,8 +121,7 @@
   "scripts": {
     "test": "make test",
     "lint": "bin/run-lint",
-    "postinstall": "./scripts/postinstall",
-    "preinstall": "make clean"
+    "postinstall": "./scripts/postinstall"
   },
   "devDependencies": {
     "babel-eslint": "4.1.8",
