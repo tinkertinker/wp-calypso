@@ -1,10 +1,7 @@
-# get Makefile directory name: http://stackoverflow.com/a/5982798/376773
-THIS_MAKEFILE_PATH:=$(word $(words $(MAKEFILE_LIST)),$(MAKEFILE_LIST))
-THIS_DIR:=$(shell cd $(dir $(THIS_MAKEFILE_PATH));pwd)
+SINGLE_QUOTE := '
+# We need to escape single quote as '\''
+THIS_DIR := '$(subst $(SINGLE_QUOTE),$(SINGLE_QUOTE)\$(SINGLE_QUOTE)$(SINGLE_QUOTE),$(CURDIR))'
 
-empty:=
-space:=$(empty) $(empty)
-THIS_DIR:= $(subst $(space),\$(space),$(THIS_DIR))
 ifeq ($(OS),Windows_NT)
 SEPARATOR := ;
 else
@@ -26,9 +23,8 @@ RTLCSS ?= $(NODE_BIN)/rtlcss
 AUTOPREFIXER ?= $(NODE_BIN)/autoprefixer
 RECORD_ENV ?= $(BIN)/record-env
 GET_I18N ?= $(BIN)/get-i18n
-I18NLINT ?= $(BIN)/i18nlint
 LIST_ASSETS ?= $(BIN)/list-assets
-ALL_DEVDOCS_JS ?= $(THIS_DIR)/server/devdocs/bin/generate-devdocs-index
+ALL_DEVDOCS_JS ?= server/devdocs/bin/generate-devdocs-index
 
 # files used as prereqs
 SASS_FILES := $(shell \
@@ -118,6 +114,8 @@ endif
 
 # run `make test` in all discovered Makefiles
 test: build
+	@npm run test-client
+	@npm run test-server
 	@$(BIN)/run-all-tests
 
 lint: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint mixedindentlint
@@ -127,11 +125,6 @@ eslint: lint
 
 eslint-branch: node_modules/eslint node_modules/eslint-plugin-react node_modules/babel-eslint
 	@git diff --name-only $$(git merge-base $$(git rev-parse --abbrev-ref HEAD) master)..HEAD | grep '\.jsx\?$$' | xargs $(NODE_BIN)/eslint --cache
-
-# Skip test directories (with the sed regex) for i18nlint in lieu of proper
-# ignore functionality
-i18n-lint:
-	@echo "$(JS_FILES)" | sed 's/\([^ ]*\/test\/[^ ]* *\)//g' | xargs -n1 $(I18NLINT)
 
 # Skip files that are auto-generated
 mixedindentlint: node_modules/mixedindentlint

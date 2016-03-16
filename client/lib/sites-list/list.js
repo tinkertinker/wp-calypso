@@ -19,7 +19,8 @@ var wpcom = require( 'lib/wp' ),
 	isPlan = require( 'lib/products-values' ).isPlan,
 	PreferencesActions = require( 'lib/preferences/actions' ),
 	PreferencesStore = require( 'lib/preferences/store' ),
-	user = require( 'lib/user' )();
+	user = require( 'lib/user' )(),
+	userUtils = require( 'lib/user/utils' );
 
 /**
  * SitesList component
@@ -72,26 +73,22 @@ SitesList.prototype.get = function() {
  * @api public
  */
 SitesList.prototype.fetch = function() {
-	var currentUser = user.get(),
-		siteVisiblity = 'all';
-
-	if ( this.fetching ) {
+	if ( ! userUtils.isLoggedIn() || this.fetching ) {
 		return;
 	}
 
-	// If the user has too many sites the endpoint fails to resolve
-	if ( currentUser && currentUser.site_count > 300 ) {
-		siteVisiblity = 'visible';
-	}
-
 	this.fetching = true;
+
 	debug( 'getting SitesList from api' );
-	wpcom.me().sites( { site_visibility: siteVisiblity }, function( error, data ) {
+
+	wpcom.me().sites( { site_visibility: 'all' }, function( error, data ) {
 		if ( error ) {
 			debug( 'error fetching SitesList from api', error );
 			this.fetching = false;
+
 			return;
 		}
+
 		this.sync( data );
 		this.fetching = false;
 	}.bind( this ) );

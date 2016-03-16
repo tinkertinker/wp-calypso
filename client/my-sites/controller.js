@@ -4,6 +4,7 @@
 var page = require( 'page' ),
 	ReactDom = require( 'react-dom' ),
 	React = require( 'react' );
+import { Provider as ReduxProvider } from 'react-redux';
 
 /**
  * Internal Dependencies
@@ -20,6 +21,7 @@ var user = require( 'lib/user' )(),
 	config = require( 'config' ),
 	analytics = require( 'analytics' ),
 	siteStatsStickyTabActions = require( 'lib/site-stats-sticky-tab/actions' ),
+	utils = require( 'lib/site/utils' ),
 	trackScrollPage = require( 'lib/track-scroll-page' );
 
 /**
@@ -27,28 +29,24 @@ var user = require( 'lib/user' )(),
  * the site selector list and the sidebar section items
  */
 function renderNavigation( context, allSitesPath, siteBasePath ) {
-	context.store.dispatch( uiActions.setSection( 'sites' ) );
-
 	// Render the My Sites navigation in #secondary
 	ReactDom.render(
-		React.createElement( NavigationComponent, {
-			layoutFocus: layoutFocus,
-			path: context.path,
-			allSitesPath: allSitesPath,
-			siteBasePath: siteBasePath,
-			user: user,
-			sites: sites
-		} ),
+		React.createElement( ReduxProvider, { store: context.store },
+			React.createElement( NavigationComponent, {
+				layoutFocus: layoutFocus,
+				path: context.path,
+				allSitesPath: allSitesPath,
+				siteBasePath: siteBasePath,
+				user: user,
+				sites: sites
+			} )
+		),
 		document.getElementById( 'secondary' )
 	);
 }
 
 function removeSidebar( context ) {
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-
-	context.store.dispatch( uiActions.setSection( 'sites', {
-		hasSidebar: false
-	} ) );
 }
 
 function renderEmptySites( context ) {
@@ -127,9 +125,8 @@ module.exports = {
 			if ( sites.initialized ) {
 				redirectToPrimary();
 				return;
-			} else {
-				sites.once( 'change', redirectToPrimary );
 			}
+			sites.once( 'change', redirectToPrimary );
 		}
 
 		// If the path fragment does not resemble a site, set all sites to visible
@@ -212,7 +209,7 @@ module.exports = {
 			var site = sites.getSite( siteFragment );
 			if ( ! site ) {
 				sites.once( 'change', checkSiteShouldFetch );
-			} else if ( site.jetpack && site.user_can_manage ) {
+			} else if ( site.jetpack && utils.userCan( 'manage_options', site ) ) {
 				site.fetchSettings();
 			}
 		}
@@ -271,8 +268,9 @@ module.exports = {
 		 * Sites is rendered on #primary but it doesn't expect a sidebar to exist
 		 * so section needs to be set explicitly and #secondary cleaned up
 		 */
-		context.store.dispatch( uiActions.setSection( 'sites', {
-			hasSidebar: false
+		context.store.dispatch( uiActions.setSection( {
+			group: 'sites',
+			secondary: false
 		} ) );
 		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 		layoutFocus.set( 'content' );

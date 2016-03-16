@@ -27,11 +27,11 @@ var TokenField = React.createClass( {
 		displayTransform: React.PropTypes.func,
 		saveTransform: React.PropTypes.func,
 		onChange: React.PropTypes.func,
-		tokenStatus: React.PropTypes.func,
 		isBorderless: React.PropTypes.bool,
 		maxLength: React.PropTypes.number,
 		onFocus: React.PropTypes.func,
 		disabled: React.PropTypes.bool,
+		tokenizeOnSpace: React.PropTypes.bool,
 		value: function( props ) {
 			const value = props.value;
 			if ( ! Array.isArray( value ) ) {
@@ -60,9 +60,9 @@ var TokenField = React.createClass( {
 				return token.trim();
 			},
 			onChange: function() {},
-			tokenStatus: function() {},
 			isBorderless: false,
-			disabled: false
+			disabled: false,
+			tokenizeOnSpace: false
 		};
 	},
 
@@ -172,14 +172,22 @@ var TokenField = React.createClass( {
 
 	_renderInput: function() {
 		const { maxLength, value } = this.props;
+
+		let props = {
+			ref: 'input',
+			key: 'input',
+			disabled: this.props.disabled,
+			value: this.state.incompleteTokenValue
+		};
+
+		if ( ! ( maxLength && value.length >= maxLength ) ) {
+			Object.assign( props, {
+				onChange: this._onInputChange
+			} );
+		}
+
 		return (
-			<TokenInput
-				ref="input"
-				key="input"
-				disabled={ maxLength && value.length >= maxLength || this.props.disabled }
-				value={ this.state.incompleteTokenValue }
-				onChange={ this._onInputChange }
-			/>
+			<TokenInput { ...props } />
 		);
 	},
 
@@ -316,6 +324,11 @@ var TokenField = React.createClass( {
 				break;
 			case 46: // delete (to right)
 				preventDefault = this._handleDeleteKey( this._deleteTokenAfterInput );
+				break;
+			case 32: // space
+				if ( this.props.tokenizeOnSpace ) {
+					preventDefault = this._addCurrentToken();
+				}
 				break;
 			default:
 				break;

@@ -1,5 +1,11 @@
+/**
+ * External dependencies
+ */
 import React from 'react';
 
+/**
+ * Internal dependencies
+ */
 import Card from 'components/card';
 import ConnectHeader from './connect-header';
 import Dialog from 'components/dialog';
@@ -9,7 +15,11 @@ import Main from 'components/main';
 import JetpackConnectNotices from './jetpack-connect-notices';
 import SiteURLInput from './site-url-input';
 
+/**
+ * Constants
+ */
 const pluginURL = '/wp-admin/plugin-install.php?tab=plugin-information&plugin=jetpack';
+const authURL = '/wp-admin/admin.php?page=jetpack&connect_url_redirect=true'
 
 export default React.createClass( {
 	displayName: 'JetpackConnectSiteURLStep',
@@ -17,7 +27,8 @@ export default React.createClass( {
 	getInitialState() {
 		return {
 			showDialog: false,
-			siteStatus: false
+			siteStatus: false,
+			isFetching: false,
 		};
 	},
 
@@ -30,26 +41,37 @@ export default React.createClass( {
 	},
 
 	goToPluginInstall() {
-		window.location = 'http://' + this.refs.siteUrlInputRef.state.value + pluginURL;
+		window.location = this.getCurrentUrl() + pluginURL;
+	},
+
+	goToRemoteAuth() {
+		window.location = this.getCurrentUrl() + authURL;
+	},
+
+	showNotExistsError() {
+		this.setState( { siteStatus: 'notExist', isFetching: false } );
+	},
+
+	checkIfUrlIsReadyForJetpack( url ) {
+		return new Promise( function( resolve, reject ) {
+			// we need to develop the backend endpoint for this check. Meanwhile, it always succeed
+			resolve();
+		} );
+	},
+
+	getCurrentUrl() {
+		let url = this.refs.siteUrlInputRef.state.value;
+		if ( url.substr( 0, 4 ) !== 'http' ) {
+			url = 'http://' + url;
+		}
+		return url;
 	},
 
 	onURLEnter() {
-		const stepToShow = Math.floor( ( Math.random() * 5 ) + 1 );
-
-		if ( stepToShow === 1 ) {
-			this.setState( { siteStatus: 'notExist' } );
-		} else if ( stepToShow === 2 ) {
-			this.setState( {
-				siteStatus: 'jetpackNotInstalled',
-				showDialog: true
-			} );
-		} else if ( stepToShow === 3 ) {
-			this.setState( { siteStatus: 'jetpackIsDeactivated' } );
-		} else if ( stepToShow === 4 ) {
-			this.setState( { siteStatus: 'jetpackIsDisconnected' } );
-		} else if ( stepToShow === 5 ) {
-			this.setState( { siteStatus: 'jetpackIsValid' } );
-		}
+		this.setState( { isFetching: true } );
+		this.checkIfUrlIsReadyForJetpack( this.getCurrentUrl() )
+			.then( this.goToRemoteAuth )
+			.catch( this.showNotExistsError )
 	},
 
 	onDismissClick() {
@@ -110,7 +132,8 @@ export default React.createClass( {
 						<SiteURLInput ref="siteUrlInputRef"
 							onClick={ this.onURLEnter }
 							onDismissClick={ this.onDismissClick }
-							isError={ this.state.isError } />
+							isError={ this.state.isError }
+							isFetching={ this.state.isFetching } />
 					</Card>
 
 					<LoggedOutFormLinks>

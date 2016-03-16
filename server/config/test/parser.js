@@ -3,27 +3,20 @@
  */
 import { expect } from 'chai';
 import mockery from 'mockery';
+import useMockery from 'test/helpers/use-mockery';
 
 /**
  * Internal dependencies
  */
 import mocks from './data/mocks';
 
-describe( 'config/parser', () => {
+describe( 'parser', () => {
 	let parser;
 
+	useMockery();
+
 	before( () => {
-		mockery.enable( {
-			warnOnReplace: false,
-			warnOnUnregistered: false,
-			useCleanCache: true
-		} );
-
 		mockery.registerAllowable( 'fs', true );
-	} );
-
-	after( () => {
-		mockery.deregisterAll();
 	} );
 
 	beforeEach( () => {

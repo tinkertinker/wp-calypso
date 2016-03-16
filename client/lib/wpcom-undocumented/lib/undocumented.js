@@ -7,7 +7,8 @@ var debug = require( 'debug' )( 'calypso:wpcom-undocumented:undocumented' ),
 	omit = require( 'lodash/omit' ),
 	camelCase = require( 'lodash/camelCase' ),
 	snakeCase = require( 'lodash/snakeCase' ),
-	pick = require( 'lodash/pick' );
+	pick = require( 'lodash/pick' ),
+	url = require( 'url' );
 
 /**
  * Internal dependencies.
@@ -273,6 +274,26 @@ Undocumented.prototype.disconnectJetpack = function( siteId, fn ) {
 Undocumented.prototype.testConnectionJetpack = function( siteId, fn ) {
 	debug( '/jetpack-blogs/:site_id:/test-connection query' );
 	this.wpcom.req.get( { path: '/jetpack-blogs/' + siteId + '/test-connection' }, fn );
+};
+
+Undocumented.prototype.jetpackLogin = function( queryObject, fn ) {
+	debug( '/jetpack-blogs/:site_id:/jetpack-login query' );
+	this.wpcom.req.get( { path: '/jetpack-blogs/' + queryObject.client_id + '/jetpack-login' }, {
+		_wp_nonce: queryObject._wp_nonce,
+		redirect_uri: queryObject.redirect_uri,
+		scope: queryObject.scope,
+		state: queryObject.state
+	}, fn );
+};
+
+Undocumented.prototype.jetpackAuthorize = function( siteId, code, state, redirect, secret, fn ) {
+	debug( '/jetpack-blogs/:site_id:/authorize query' );
+	this.wpcom.req.post( { path: '/jetpack-blogs/' + siteId + '/authorize' }, {}, {
+		code: code,
+		state: state,
+		redirect_uri: redirect,
+		secret: secret
+	}, fn );
 };
 
 Undocumented.prototype.invitesList = function( siteId, number, offset, fn ) {
@@ -1903,6 +1924,29 @@ Undocumented.prototype.getExport = function( siteId, exportId, fn ) {
 		apiVersion: '1.1',
 		path: `/sites/${ siteId }/exports/${ exportId }`
 	}, fn );
+}
+
+/**
+ * Check different info about WordPress and Jetpack status on a url
+ *
+ * @param {String}    targetUrl          The url of the site to check
+ * @param {String}    filters            Comma separated string with the filters to run
+ * @returns {Promise}
+ */
+Undocumented.prototype.getSiteConnectInfo = function( targetUrl, filters ) {
+	return new Promise( ( resolve, reject ) => {
+		const resolver = ( error, data ) => {
+			error ? reject( error ) : resolve( data );
+		};
+		const parsedUrl = url.parse( targetUrl );
+		const endpointUrl = `/connect/site-info/${ parsedUrl.protocol.slice( 0, -1 ) }/${ parsedUrl.host }`;
+
+		this.wpcom.req.get( `${ endpointUrl }`, {
+			filters: filters,
+			path: parsedUrl.path,
+			apiVersion: '1.1',
+		}, resolver );
+	} );
 }
 
 /**

@@ -70,7 +70,7 @@ export function getSitePostsForQuery( state, siteId, query ) {
 
 	return state.posts.queries[ serializedQuery ].map( ( globalId ) => {
 		return getPost( state, globalId );
-	} );
+	} ).filter( Boolean );
 }
 
 /**
@@ -199,11 +199,11 @@ export function isRequestingSitePost( state, siteId, postId ) {
  */
 export function getEditedPost( state, siteId, postId ) {
 	const post = getSitePost( state, siteId, postId );
-	if ( ! state.editor.posts[ siteId ] ) {
+	if ( ! state.posts.edits[ siteId ] ) {
 		return post;
 	}
 
-	const edits = state.editor.posts[ siteId ][ postId || '' ];
+	const edits = state.posts.edits[ siteId ][ postId || '' ];
 	if ( ! postId ) {
 		return edits || null;
 	}

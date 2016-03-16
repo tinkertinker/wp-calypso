@@ -464,6 +464,8 @@ function spaceUpgradeItem( slug ) {
  * @returns {Object} the new item as `CartItemValue` object
  */
 function getItemForPlan( plan, properties ) {
+	properties = properties || {};
+
 	switch ( plan.product_slug ) {
 		case 'value_bundle':
 		case 'jetpack_premium':
@@ -681,6 +683,7 @@ module.exports = {
 	getAllSorted,
 	getDomainMappings,
 	getDomainRegistrations,
+	getDomainRegistrationsWithoutPrivacy,
 	getDomainRegistrationTld,
 	getGoogleApps,
 	getIncludedDomain,

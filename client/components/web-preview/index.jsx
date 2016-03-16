@@ -48,13 +48,13 @@ const WebPreview = React.createClass( {
 		return {
 			showExternal: true,
 			showDeviceSwitcher: true,
-			previewUrl: 'about:blank'
+			previewUrl: null
 		}
 	},
 
 	getInitialState() {
 		return {
-			iframeUrl: 'about:blank',
+			iframeUrl: null,
 			device: this.props.defaultViewportDevice || 'computer',
 			loaded: false
 		};
@@ -67,8 +67,12 @@ const WebPreview = React.createClass( {
 	},
 
 	componentDidMount() {
-		if ( this.props.previewUrl !== 'about:blank' ) {
+		if ( this.props.previewUrl ) {
 			this.setIframeUrl( this.props.previewUrl );
+		}
+
+		if ( this.props.showPreview ) {
+			document.documentElement.classList.add( 'no-scroll' );
 		}
 	},
 
@@ -79,7 +83,7 @@ const WebPreview = React.createClass( {
 
 		if ( ! this.shouldRenderIframe() ) {
 			this.setState( {
-				iframeUrl: 'about:blank',
+				iframeUrl: null,
 				loaded: false,
 			} );
 		}
@@ -90,13 +94,16 @@ const WebPreview = React.createClass( {
 		}
 		if ( showPreview ) {
 			window.addEventListener( 'keydown', this.keyDown );
+			document.documentElement.classList.add( 'no-scroll' );
 		} else {
 			window.removeEventListener( 'keydown', this.keyDown );
+			document.documentElement.classList.remove( 'no-scroll' );
 		}
 	},
 
 	componentWillUnmount() {
 		window.removeEventListener( 'keydown', this.keyDown );
+		document.documentElement.classList.remove( 'no-scroll' );
 	},
 
 	keyDown( event ) {
@@ -116,7 +123,9 @@ const WebPreview = React.createClass( {
 		if ( iframeUrl === this.state.iframeUrl ) {
 			return;
 		}
+
 		debug( 'setIframeUrl', iframeUrl );
+		this.refs.iframe.contentWindow.location.replace( iframeUrl );
 		this.setState( {
 			loaded: false,
 			iframeUrl: iframeUrl,
@@ -134,7 +143,7 @@ const WebPreview = React.createClass( {
 	},
 
 	setLoaded() {
-		if ( this.state.iframeUrl === 'about:blank' ) {
+		if ( ! this.state.iframeUrl ) {
 			return;
 		}
 		debug( 'preview loaded:', this.state.iframeUrl );
@@ -173,8 +182,9 @@ const WebPreview = React.createClass( {
 						}
 						{ this.shouldRenderIframe() &&
 							<iframe
+								ref="iframe"
 								className="web-preview__frame"
-								src={ this.state.iframeUrl }
+								src="about:blank"
 								onLoad={ this.setLoaded }
 								title={ this.props.iframeTitle || this.translate( 'Preview' ) }
 							/>

@@ -95,4 +95,23 @@ module.exports = {
 		},
 		defaultVariation: 'original'
 	},
+	privacyCheckbox: {
+		datestamp: '20160310',
+		variations: {
+			original: 50,
+			checkbox: 50
+		},
+		defaultVariation: 'original'
+	},
+	readerShorterFeatures: {
+		datestamp: '20160315',
+		variations: {
+			original: 80,
+			fifty: 10,
+			twentyfive: 10
+		},
+		defaultVariation: 'original',
+		allowAnyLocale: true,
+		allowExistingUsers: true
+	}
 };

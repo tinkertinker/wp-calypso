@@ -62,7 +62,7 @@ const flows = {
 		description: 'Create an account and a blog and then add the business plan to the users cart.',
 		lastModified: '2016-01-21'
 	},
-
+	
 	free: {
 		steps: [ 'themes', 'domains', 'user' ],
 		destination: getSiteDestination,
@@ -142,17 +142,17 @@ const flows = {
 	},
 
 	'delta-blog': {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `main` flow for the Delta email campaigns',
-		lastModified: null
+		description: 'A copy of the `blog` flow for the Delta email campaigns',
+		lastModified: `2016-03-09`
 	},
 
 	'delta-site': {
-		steps: [ 'themes', 'domains', 'plans', 'user' ],
+		steps: [ 'survey', 'themes', 'domains', 'plans', 'survey-user' ],
 		destination: getSiteDestination,
-		description: 'A copy of the `main` flow for the Delta email campaigns',
-		lastModified: null
+		description: 'A copy of the `website` flow for the Delta email campaigns',
+		lastModified: `2016-03-09`
 	},
 
 	'delta-bloggingu': {
@@ -216,6 +216,13 @@ const flows = {
 		lastModified: '2015-12-18'
 	},
 };
+
+if ( config.isEnabled( 'jetpack-connect' ) ) {
+	flows['jetpack-connect'] = {
+		steps: [ 'user', 'authorize-site' ],
+		destination: '/'
+	};
+}
 
 function removeUserStepFromFlow( flow ) {
 	if ( ! flow ) {

@@ -88,7 +88,7 @@ const EditorPostFormats = React.createClass( {
 							onChange={ this.onChange } />
 						<span className="editor-post-formats__format-label">
 							<span className={ 'editor-post-formats__format-icon' } >
-								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 20 } />
+								<Gridicon icon={ this.getPostFormatIcon( postFormat ) } size={ 24 } />
 							</span>
 							{ postFormat.label }
 						</span>
@@ -111,5 +111,7 @@ const EditorPostFormats = React.createClass( {
 
 export default connect(
 	null,
-	dispatch => bindActionCreators( { setPostFormat }, dispatch )
+	dispatch => bindActionCreators( { setPostFormat }, dispatch ),
+	null,
+	{ pure: false }
 )( EditorPostFormats );

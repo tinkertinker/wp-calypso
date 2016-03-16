@@ -19,18 +19,7 @@ module.exports = {
 	'themes-headstart': {
 		stepName: 'themes-headstart',
 		props: {
-			useHeadstart: true,
-			themes: [
-				{ name: 'Boardwalk', slug: 'boardwalk' },
-				{ name: 'Cubic', slug: 'cubic' },
-				{ name: 'Edin', slug: 'edin' },
-				{ name: 'Cols', slug: 'cols' },
-				{ name: 'Minnow', slug: 'minnow' },
-				{ name: 'Sequential', slug: 'sequential' },
-				{ name: 'Penscratch', slug: 'penscratch' },
-				{ name: 'Intergalactic', slug: 'intergalactic' },
-				{ name: 'Eighties', slug: 'eighties' },
-			],
+			useHeadstart: true
 		},
 		dependencies: [ 'siteSlug' ],
 		providesDependencies: [ 'theme' ]
@@ -61,7 +50,7 @@ module.exports = {
 	survey: {
 		stepName: 'survey',
 		props: {
-			surveySiteType: ( current && current.toString().match( /\/start\/blog/ ) ) ? 'blog' : 'site'
+			surveySiteType: ( current && current.toString().match( /\/start\/(blog|delta-blog)/ ) ) ? 'blog' : 'site'
 		},
 		providesDependencies: [ 'surveySiteType', 'surveyQuestion' ]
 	},
@@ -112,5 +101,12 @@ module.exports = {
 			subHeaderText: i18n.translate( 'You\'re moments away from connecting Jetpack.' )
 		},
 		providesDependencies: [ 'bearer_token', 'username' ]
+	},
+
+	'authorize-site': {
+		stepName: 'authorize-site',
+		props: {
+			headerText: i18n.translate( 'Howdy! Jetpack would like to connect to your WordPress.com account.' ),
+		},
 	}
 };

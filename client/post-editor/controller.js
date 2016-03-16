@@ -20,7 +20,6 @@ var actions = require( 'lib/posts/actions' ),
 	titleActions = require( 'lib/screen-title/actions' ),
 	sites = require( 'lib/sites-list' )(),
 	user = require( 'lib/user' )(),
-	setSection = require( 'state/ui/actions' ).setSection,
 	analytics = require( 'analytics' );
 
 import {
@@ -29,6 +28,8 @@ import {
 	startEditingExisting,
 	EDITING_MODES
 } from 'state/ui/editor/post/actions';
+import { setEditorPostId } from 'state/ui/editor/actions';
+import { editPost } from 'state/posts/actions';
 
 function getPostID( context ) {
 	if ( ! context.params.post ) {
@@ -44,8 +45,6 @@ function determinePostType( context ) {
 }
 
 function renderEditor( context, postType ) {
-	context.store.dispatch( setSection( 'post' ) );
-
 	ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
 	ReactDom.render(
 		React.createElement( ReduxProvider, { store: context.store },
@@ -112,6 +111,9 @@ module.exports = {
 			if ( maybeRedirect( context, postType, site ) ) {
 				return;
 			}
+
+			context.store.dispatch( setEditorPostId( postID ) );
+			context.store.dispatch( editPost( { type: postType }, site.ID, postID ) );
 
 			let titleStrings;
 			if ( 'page' === postType ) {

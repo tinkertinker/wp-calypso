@@ -5,6 +5,7 @@ import { assert } from 'chai';
 import React from 'react';
 import ReactDomServer from 'react-dom/server';
 import mockery from 'mockery';
+import useMockery from 'test/helpers/use-mockery';
 import noop from 'lodash/noop';
 
 /**
@@ -12,14 +13,11 @@ import noop from 'lodash/noop';
  */
 import { createReduxStore } from 'state';
 
-describe( 'Server pages:', function() {
+describe( 'index', function() {
 	context( 'when trying to renderToString() LayoutLoggedOut ', function() {
-		before( function() {
-			mockery.enable( {
-				warnOnReplace: false,
-				warnOnUnregistered: false
-			} );
+		useMockery();
 
+		before( function() {
 			mockery.registerMock( 'analytics', noop );
 
 			const LayoutLoggedOut = require( 'layout/logged-out' );
@@ -27,10 +25,6 @@ describe( 'Server pages:', function() {
 			this.props = {
 				store: createReduxStore(),
 			};
-		} );
-
-		after( function() {
-			mockery.deregisterAll();
 		} );
 
 		it( "doesn't throw an exception", function() {
