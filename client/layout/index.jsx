@@ -166,8 +166,7 @@ Layout = React.createClass( {
 				`is-section-${this.props.section.name}`,
 				`focus-${this.props.focus.getCurrent()}`,
 				{ 'is-support-user': this.props.isSupportUser },
-				{ 'has-no-sidebar': ! this.props.hasSidebar },
-				{ 'full-screen': this.props.isFullScreen },
+				{ 'has-no-sidebar': ! this.props.section.secondary },
 				{ 'support-url': this.props.isShowingSupportURL }
 			),
 			loadingClass = classnames( {
