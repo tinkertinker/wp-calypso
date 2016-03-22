@@ -23,18 +23,22 @@
 		display: flex;
 		flex: 1 1 auto;
 
-		:first-child {
+		>:first-child {
 			flex: 1;
 			margin-left: 12px;
 		}
 
-		svg {
+		> div {
 			padding: 11px;
 			cursor: pointer;
 		}
 
-		svg:hover {
+		> div:hover {
 			background: lighten( $blue-medium, 5% );
+		}
+
+		svg {
+			display: block;
 		}
 
 	}
@@ -360,7 +364,7 @@
 
 		.live-chat__active-toolbar {
 	
-			svg {
+			> div {
 				padding: 4px 11px;
 			}
 	
