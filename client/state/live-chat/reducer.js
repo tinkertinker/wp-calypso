@@ -6,6 +6,7 @@ import {
 	LIVE_CHAT_CLOSING,
 	LIVE_CHAT_RECEIVE_EVENT,
 	LIVE_CHAT_SET_AUTOSCROLL,
+	LIVE_CHAT_OPEN,
 	LIVE_CHAT_OPEN_URL
 } from 'state/action-types'
 
@@ -84,4 +85,12 @@ const supportURL = ( state = null, action ) => {
 	}
 }
 
-export default combineReducers( { timeline, available, status, message, autoscroll, supportURL } )
+const isOpen = ( state = false, action ) => {
+	switch ( action.type ) {
+		case LIVE_CHAT_OPEN:
+			return action.isOpen !== undefined ? action.isOpen : state
+	}
+	return state
+}
+
+export default combineReducers( { timeline, available, status, message, autoscroll, supportURL, isOpen } )

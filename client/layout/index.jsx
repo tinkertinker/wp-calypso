@@ -185,7 +185,8 @@ Layout = React.createClass( {
 				`focus-${this.props.focus.getCurrent()}`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.section.secondary },
-				{ 'support-url': this.props.isShowingSupportURL }
+				{ 'support-url': this.props.isShowingSupportURL },
+				{ 'has-chat': this.props.chatIsOpen }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -225,14 +226,15 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section } = state.ui;
-		const { supportURL } = state.liveChat;
+		const { supportURL, isOpen: chatIsOpen } = state.liveChat;
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
 			section,
 			isOffline: isOffline( state ),
 			tourState: getGuidedTourState( state ),
-			isShowingSupportURL: !!supportURL
+			isShowingSupportURL: !!supportURL,
+			chatIsOpen
 		};
 	}
 )( Layout );
