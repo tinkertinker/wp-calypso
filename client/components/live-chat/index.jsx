@@ -49,13 +49,17 @@ const availabilityTitle = when(
 
 const connectingTitle = ( { dispatch } ) => <div className="live-chat__active-toolbar">
 	<span>Starting chat</span>
-	<GridIcon icon="cross" onClick={ dispatchCloseChat( dispatch ) } />
+	<div onClick={ dispatchCloseChat( dispatch ) }>
+		<GridIcon icon="cross" />
+	</div>
 </div>
 
 const connectedTitle = ( { dispatch } ) => (
 	<div className="live-chat__active-toolbar">
-		<span>Support Chat</span>
-		<GridIcon icon="cross" onClick={ dispatchCloseChat( dispatch ) } />
+		<h4>Support Chat</h4>
+		<div onClick={ dispatchCloseChat( dispatch ) }>
+			<GridIcon icon="cross" />
+		</div>
 	</div>
 )
 
