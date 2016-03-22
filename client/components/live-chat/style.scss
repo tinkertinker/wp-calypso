@@ -319,6 +319,7 @@
 		height: calc( 100% - 47px );
 		bottom: 0;
 		right: 0;
+		width: 272px;
 		display: flex;
 		flex-direction: column;
 		box-sizing: border-box;
@@ -332,6 +333,11 @@
 			border-left: 1px solid darken( $blue-medium, 1% );
 		}
 
+	}
+
+	// add space in the main column for the docked sidebar
+	.has-chat .wp-content {
+		padding: 32px 304px;
 	}
 
 }
