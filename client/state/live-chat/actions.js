@@ -7,11 +7,11 @@ import {
 	LIVE_CHAT_CONNECTING,
 	LIVE_CHAT_CONNECTED,
 	LIVE_CHAT_SET_MESSAGE,
-	LIVE_CHAT_MINIMIZE,
 	LIVE_CHAT_CLOSING,
 	LIVE_CHAT_RECEIVE_EVENT,
 	LIVE_CHAT_SET_AUTOSCROLL,
-	LIVE_CHAT_OPEN_URL
+	LIVE_CHAT_OPEN_URL,
+	LIVE_CHAT_OPEN
 } from 'state/action-types'
 
 export const checkAvailability = () => () => {
@@ -34,8 +34,13 @@ const clearChatMessage = () => setChatMessage( '' )
 
 const receiveChatEvent = ( event ) => ( { type: LIVE_CHAT_RECEIVE_EVENT, event } )
 
+const setChatOpen = ( isOpen ) => {
+	return { type: LIVE_CHAT_OPEN, isOpen }
+}
+
 export const openChat = ( user ) => ( dispatch ) => {
 	dispatch( setChatConnecting() )
+	dispatch( setChatOpen( true ) )
 	debug( 'connecting, now attempt to connect' )
 	connection.open( user ).then( () => {
 		debug( 'connected' )
@@ -61,9 +66,9 @@ export const sendChatMessage = ( message ) => ( dispatch ) => {
 	connection.send( message )
 }
 
-export const minimizeChat = () => ( { type: LIVE_CHAT_MINIMIZE } )
 export const closeChat = () => ( dispatch ) => {
 	debug( 'time to close the current chat session' )
+	dispatch( setChatOpen( false ) )
 	dispatch( setChatClosing() )
 }
 

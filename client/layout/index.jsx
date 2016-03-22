@@ -167,7 +167,8 @@ Layout = React.createClass( {
 				`focus-${this.props.focus.getCurrent()}`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.section.secondary },
-				{ 'support-url': this.props.isShowingSupportURL }
+				{ 'support-url': this.props.isShowingSupportURL },
+				{ 'has-chat': this.props.chatIsOpen }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -175,25 +176,19 @@ Layout = React.createClass( {
 			} );
 
 		return (
-			<div className="app-anchor">
-				<div className={ sectionClass }>
-					{ config.isEnabled( 'guided-tours' ) && this.props.tourState.shouldShow ? <GuidedTours /> : null }
-					{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-					{ this.renderMasterbar() }
-					{ config.isEnabled( 'support-user' ) && <SupportUser /> }
-					<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
-					{ this.props.isOffline && <OfflineStatus /> }
-					<div id="content" className="wp-content">
-						{ this.renderWelcome() }
-						{ this.renderEmailVerificationNotice() }
-						<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
-						<div id="primary" className="wp-primary wp-section" />
-						<div id="secondary" className="wp-secondary" />
-					</div>
-					<div id="tertiary" />
-					<TranslatorLauncher
-						isEnabled={ translator.isEnabled() }
-						isActive={ translator.isActivated() }/>
+			<div className={ sectionClass }>
+				{ config.isEnabled( 'guided-tours' ) && this.props.tourState.shouldShow ? <GuidedTours /> : null }
+				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
+				{ this.renderMasterbar() }
+				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
+				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
+				{ this.props.isOffline && <OfflineStatus /> }
+				<div id="content" className="wp-content">
+					{ this.renderWelcome() }
+					{ this.renderEmailVerificationNotice() }
+					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
+					<div id="primary" className="wp-primary wp-section" />
+					<div id="secondary" className="wp-secondary" />
 				</div>
 				<div id="tertiary" />
 				<TranslatorLauncher
@@ -210,14 +205,15 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section } = state.ui;
-		const { supportURL } = state.liveChat;
+		const { supportURL, isOpen: chatIsOpen } = state.liveChat;
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
 			section,
 			isOffline: isOffline( state ),
 			tourState: getGuidedTourState( state ),
-			isShowingSupportURL: !!supportURL
+			isShowingSupportURL: !!supportURL,
+			chatIsOpen
 		};
 	}
 )( Layout );
