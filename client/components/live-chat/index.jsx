@@ -54,7 +54,7 @@ const connectingTitle = ( { dispatch } ) => <div className="live-chat__active-to
 
 const connectedTitle = ( { dispatch } ) => (
 	<div className="live-chat__active-toolbar">
-		<span>Howdy, how may we help?</span>
+		<span>Support Chat</span>
 		<GridIcon icon="cross" onClick={ dispatchCloseChat( dispatch ) } />
 	</div>
 )
@@ -73,6 +73,7 @@ const renderComposer = ( { dispatch, message } ) => (
 		<div className="live-chat-message">
 			<textarea
 				type="text"
+				placeholder="Ask a question..."
 				onChange={ dispatchUpdateChatMessageOnChange( dispatch ) }
 				onKeyDown={ when( returnPressed, each( preventDefault, dispatchSendMessage( pure( message ) )( dispatch ) ) ) }
 				value={ message } />
@@ -81,7 +82,7 @@ const renderComposer = ( { dispatch, message } ) => (
 				tabIndex="-1"
 				className="live-chat-submit"
 				onClick={ dispatchSendMessage( pure( message ) )( dispatch ) }
-				>Send</div>
+				><svg viewBox="0 0 24 24" width="24" height="24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></div>
 	</div>
 )
 
