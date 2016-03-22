@@ -1,16 +1,9 @@
-.live-chat-container {
-	align-self: stretch;
-	display: flex;
-	flex-direction: column;
-	flex: 1 0 auto;
-}
+/**
+ * Live Chat
+ */
 
-// chat, when collapsed is little floating bit. @todo: may move to bottom of sidebar
-.live-chat {
-	position: absolute;
-	bottom: 12px;
-	right: 30px;
-	font-size: 14px;
+
+.live-chat-container {
 }
 
 .live-chat__title {
@@ -48,7 +41,23 @@
 
 }
 
-// chat defaults to panel when opened
+
+/**
+ * Collapsed button @todo: move to bottom of sidebar
+ */
+
+.live-chat {
+	position: fixed;
+	bottom: 12px;
+	right: 30px;
+	font-size: 14px;
+}
+
+
+/**
+ * Panel mode
+ */
+
 .live-chat.open {
 	background: lighten( $gray, 30% );
 	width: 280px;
@@ -61,7 +70,11 @@
 
 }
 
-// on big screens, dock to sidebar
+
+/**
+ * Sidebar mode
+ */
+
 @include breakpoint( ">1040px" ) {
 
 	.live-chat.open {
@@ -73,13 +86,7 @@
 		display: flex;
 		flex-direction: column;
 		box-sizing: border-box;
-
-		.live-chat-welcome,
-		.live-chat-conversation,
-		.live-chat-composer {
-			border-left: 1px solid lighten( $gray, 25% );
-		}
-
+		border-left: 1px solid lighten( $gray, 25% );
 	}
 
 }
@@ -87,6 +94,7 @@
 .live-chat-conversation {
 	flex: 1 1 auto;
 	overflow: auto;
+	overflow-y: scroll; // temp
 	display: flex;
 	flex-direction: column;
 	position: relative;
@@ -94,6 +102,25 @@
 	&::before {
 		content: '';
 		flex: 1 1 auto;
+	}
+
+	// experiment: style scrollbars
+	&::-webkit-scrollbar {
+		width: 12px;
+	}
+
+	&::-webkit-scrollbar-track {
+	}
+
+	&::-webkit-scrollbar-thumb {
+		border-radius: 10px;
+		background: lighten( $gray, 10% );
+		border: 3px solid lighten( $gray, 30% );
+
+		&:hover {
+			background: $gray;
+		}
+
 	}
 
 }
@@ -246,157 +273,4 @@
 		background: hsla( 0, 0%, 0%, 0.1 );
 	}
 
-}
-
-
-/**
- * For live-chat sidebar demonstration purposes
- * in order to put livechat as a peer to the entire calypso UI
- * the main calypso app needs to be contained within it's own node
- *
- * @todo: submit this refactor as separate calypso pr to fix ticket to 
- * start scrollbar under masterbar. Needs inf scroll to work first.
- */
-
-html {
-	overflow-y: hidden;
-}
-
-body {
-	overflow: hidden;
-}
-
-.app-anchor {
-	position: fixed;
-	top: 0;
-	right: 0;
-	bottom: 0;
-	left: 0;
-	overflow: hidden;
-	display: flex;
-	flex-direction: row;
-}
-
-.wp.layout {
-	position: relative;
-	flex: 1 1 100%;
-	display: flex;
-	flex-direction: column;
-
-	&.support-url {
-		display: none;
-	}
-
-}
-
-#primary .main {
-	margin-top: 0px;	// if set to auto under flex, it vertically centers things
-}
-
-.wp-content {
-	overflow: hidden;
-	padding: 0;
-	margin: 0;
-	display: flex;
-	flex: 1 1 auto;
-}
-
-header.masterbar {
-	position: relative;
-	flex: 0 0 auto;
-}
-
-ul.sidebar {
-	position: relative;
-	width: 273px;
-	top: 0px;
-	flex: 1 1 auto;
-	align-self: flex;
-}
-
-@include breakpoint( "<960px" ) {
-
-	ul.sidebar {
-		width: 228px;
-	}
-
-}
-
-#primary {
-	flex: 1 1 auto;
-	position: relative;
-	display: flex;
-	flex-direction: column;
-}
-
-#secondary {
-	flex: 1 1 auto;
-	order: -1;
-	position: relative;
-	display: flex;
-	max-width: 272px;
-}
-
-@include breakpoint( "<660px" ) {
-
-	#primary {
-		flex: 1 0 auto; // don't let primary shrink
-	}
-
-	#secondary {
-		width: 0;
-		flex: 0; // in some cases the #primary doesn't take full width
-	}
-
-	.focus-sidebar #secondary {
-		position: absolute;
-		z-index: 20;	// something in stats is z-index 19
-		width: 100%;
-		height: 100%;
-		max-width: none;
-	}
-
-}
-
-.sites-navigation {
-	position: relative;
-	flex: 1 1 auto;
-	align-self: stretch;
-	display: flex;
-}
-
-// make all the primary section containers scrollable. @todo: make this cleaner
-.is-section-sites #primary,
-.is-section-me #primary,
-.is-section-reader #primary {
-	flex: 1 1 auto;
-	align-self: stretch;
-	overflow: auto;
-	-webkit-overflow-scrolling: touch;
-	padding: 32px;
-}
-
-@include breakpoint( "<960px" ) {
-
-	.is-section-sites #primary,
-	.is-section-me #primary,
-	.is-section-reader #primary {
-		padding: 24px;
-	}
-
-}
-
-@include breakpoint( "<660px" ) {
-
-	.is-section-sites #primary,
-	.is-section-me #primary,
-	.is-section-reader #primary .scrollable-reader {
-		padding: 0px;
-	}
-
-}
-
-// remove clearifix, both unnecessary with flex, but it also breaks the layout
-.wp-content:after {
-    content: none;
 }
