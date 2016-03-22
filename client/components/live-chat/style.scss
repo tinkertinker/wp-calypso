@@ -94,7 +94,6 @@
 .live-chat-conversation {
 	flex: 1 1 auto;
 	overflow: auto;
-	overflow-y: scroll; // temp
 	display: flex;
 	flex-direction: column;
 	position: relative;
@@ -203,11 +202,26 @@
 		border-radius: 8px 8px 8px 0;
 		color: $white;
 		background: $blue-medium;
+		position: relative;
 
 		p {
 			margin: 8px 0;
 			&:first-child { margin-top: 0 }
 			&:last-child { margin-bottom: 0 }
+		}
+
+		&:after {
+			content: "";
+			display: block;
+			position: absolute;
+			bottom: 0;
+			left: -6px;
+
+			// draw a triangle
+			width: 0;
+			height: 0;
+			border-bottom: 6px solid $blue-medium;
+			border-left: 6px solid transparent;
 		}
 
 	}
@@ -218,7 +232,7 @@
 
 	.message-meta {
 		align-self: flex-end;
-		margin: 0 4px;
+		margin: 0 8px 0 0;
 	}
 
 	.message-avatar {
@@ -242,6 +256,24 @@
 			background: $white;
 			color: $gray-dark;
 			border-radius: 8px 8px 0 8px;
+
+			&:after {
+				left: auto;
+				right: -6px;
+	
+				// draw a triangle
+				width: 0;
+				height: 0;
+				border-bottom: 6px solid $white;
+				border-left: none;
+				border-right: 6px solid transparent;
+			}
+
+		}
+
+		.message-meta {
+			align-self: flex-end;
+			margin: 0 0 0 8px;
 		}
 
 	}
