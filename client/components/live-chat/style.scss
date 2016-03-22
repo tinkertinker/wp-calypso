@@ -47,6 +47,7 @@
  */
 
 .live-chat {
+	overflow: hidden;
 	position: fixed;
 	bottom: 12px;
 	right: 30px;
@@ -86,7 +87,16 @@
 		display: flex;
 		flex-direction: column;
 		box-sizing: border-box;
-		border-left: 1px solid lighten( $gray, 25% );
+
+		.live-chat-conversation,
+		.live-chat-composer {
+			border-left: 1px solid lighten( $gray, 25% );
+		}
+
+		.live-chat__active-toolbar {
+			border-left: 1px solid darken( $blue-medium, 3% );
+		}
+
 	}
 
 }
@@ -145,10 +155,16 @@
 	}
 }
 
+
+/**
+ * Chat composer
+ */
+
 .live-chat-composer {
 	display: flex;
-	padding: 8px;
 	flex: 0 0 auto;
+	background: $white;
+	box-shadow: 0 0 5px 1px rgba( 0,0,0, .05)
 }
 
 .live-chat-message {
@@ -158,15 +174,17 @@
 	border: 0;
 
 	> textarea {
+		padding: 12px 12px 32px 12px  ;
 		border: none;
 		background: transparent;
 		font-size: 14px;
 		min-height: initial;
-		padding: 4px;
 		align-self: stretch;
+		resize: none;
 
 		&:focus, &:active {
 			outline: none;
+			box-shadow: none;
 		}
 	}
 }
@@ -174,11 +192,22 @@
 .live-chat-submit {
 	align-self: flex-start;
 	flex: 0 0 auto;
-	border-radius: 4px;
+	border-radius: 8px;
 	background: $blue-medium;
 	color: $white;
-	padding: 8px 16px;
-	margin-left: 8px;
+	padding: 4px 8px;
+	margin: 8px 12px 0 0;
+	cursor: pointer;
+
+	> svg {
+		fill: currentColor;
+		display: block;
+	}
+
+	&:hover {
+		background: lighten( $blue-medium, 10% );
+	}
+
 }
 
 .live-chat-timeline-join-message {
@@ -193,7 +222,7 @@
 	display: flex;
 	flex-direction: row-reverse;
 	padding: 4px 8px;
-	margin: 4px 0;
+	margin: 6px 0;
 
 	.message-text {
 		font-size: 14px;
