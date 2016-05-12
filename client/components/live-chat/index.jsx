@@ -6,15 +6,14 @@ import { isArray, isEmpty } from 'lodash/lang';
 import GridIcon from 'components/gridicon';
 import Spinner from 'components/spinner';
 import {
-	pure,
 	first,
 	any,
 	all,
 	when,
 	propExists,
 	propEquals,
-	actionDispatcher,
-	each
+	// actionDispatcher,
+	compose
 } from 'lib/functional';
 import {
 	openChat,
@@ -27,12 +26,6 @@ import {
 } from 'state/live-chat/actions';
 
 const debug = require( 'debug' )( 'calypso:live-chat:component' );
-
-const dispatchOpenChat = actionDispatcher( openChat );
-const dispatchCloseChat = actionDispatcher( closeChat )();
-// const dispatchMinimizeChat = actionDispatcher( minimizeChat )();
-const dispatchUpdateChatMessageOnChange = actionDispatcher( updateChatMessage )( ( event ) => event.target.value );
-const dispatchSendMessage = actionDispatcher( sendChatMessage );
 
 const returnPressed = ( e ) => e.which === 13;
 const preventDefault = ( e ) => e.preventDefault();
@@ -52,56 +45,58 @@ const timelineHasContent = ( { timeline } ) => isArray( timeline ) && !isEmpty( 
  */
 const availabilityTitle = when(
 	isAvailable,
-	( { dispatch, user } ) => <div onClick={ dispatchOpenChat( pure( user ) )( dispatch ) }>Help</div>,
+	( { onOpenChat, user } ) => {
+		const onClick = () => onOpenChat( user );
+		return <div onClick={ onClick }>Help</div>;
+	},
 	() => <div>Live Support Unavailable</div>
 );
 
-const connectingTitle = ( { dispatch } ) => {
+const connectingTitle = ( { onCloseChat } ) => {
 	return (
 		<div className="live-chat__active-toolbar">
 			<span>Starting chat</span>
-			<div onClick={ dispatchCloseChat( dispatch ) }>
+			<div onClick={ onCloseChat }>
 				<GridIcon icon="cross" />
 			</div>
 		</div>
 	);
 };
 
-const connectedTitle = ( { dispatch } ) => (
+const connectedTitle = ( { onCloseChat } ) => (
 	<div className="live-chat__active-toolbar">
 		<h4>Support Chat</h4>
-		<div onClick={ dispatchCloseChat( dispatch ) }>
+		<div onClick={ onCloseChat }>
 			<GridIcon icon="cross" />
 		</div>
 	</div>
 );
 
-const title = first(
-	when( isConnected, connectedTitle ),
-	when( isConnecting, connectingTitle ),
-	availabilityTitle
-);
-
 /*
  * Renders a textarea to be used to comopose a message for the chat.
  */
-const renderComposer = ( { dispatch, message } ) => (
-	<div className="live-chat-composer">
-		<div className="live-chat-message">
-			<textarea
-				type="text"
-				placeholder="Ask a question..."
-				onChange={ dispatchUpdateChatMessageOnChange( dispatch ) }
-				onKeyDown={ when( returnPressed, each( preventDefault, dispatchSendMessage( pure( message ) )( dispatch ) ) ) }
-				value={ message } />
+const renderComposer = ( { message, onUpdateChatMessage, onSendChatMessage } ) => {
+	const sendMessage = () => onSendChatMessage( message );
+	const onChange = ( { target: { value } } ) => onUpdateChatMessage( value );
+	const onKeyDown = when( returnPressed, compose( preventDefault, sendMessage ) );
+	return (
+		<div className="live-chat-composer">
+			<div className="live-chat-message">
+				<textarea
+					type="text"
+					placeholder="Ask a question..."
+					onChange={ onChange }
+					onKeyDown={ onKeyDown }
+					value={ message } />
+			</div>
+			<div className="live-chat-submit"
+					tabIndex="-1"
+					onClick={ sendMessage }>
+					<svg viewBox="0 0 24 24" width="24" height="24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg>
+			</div>
 		</div>
-		<div
-				tabIndex="-1"
-				className="live-chat-submit"
-				onClick={ dispatchSendMessage( pure( message ) )( dispatch ) }
-				><svg viewBox="0 0 24 24" width="24" height="24"><path d="M2 21l21-9L2 3v7l15 2-15 2z"/></svg></div>
-	</div>
-);
+	);
+};
 
 /*
  * Renders a single line of message text prefixed by the provided `nick`.
@@ -110,22 +105,18 @@ const messageTextWithNick = ( { message, nick, key } ) => (
 	<p key={ key }><span className="message-nick">{ nick }</span> { message }</p>
 );
 
-const openLiveChatMessageURL = ( { dispatch, url } ) => () => {
-	dispatch( openChatURL( url ) );
-};
-
 /*
  * Renders a single line of message text.
  */
 const linksNotEmpty = ( { links } ) => !isEmpty( links );
 const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
-const messageWithLinks = ( { message, key, links, dispatch } ) => {
+const messageWithLinks = ( { message, key, links, onOpenChatUrl } ) => {
 	// extract the links and replace with components?
 	let children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
 		if ( last < startIndex ) {
 			parts = parts.concat( <span>{ message.slice( last, startIndex ) }</span> );
 		}
-		parts = parts.concat( <a href="#" onClick={ each( preventDefault, openLiveChatMessageURL( { dispatch, url } ) ) }>{ url }</a> );
+		parts = parts.concat( <a href="#" onClick={ compose( preventDefault, () => onOpenChatUrl( url ) ) }>{ url }</a> );
 		return { parts, last: startIndex + length };
 	}, { parts: [], last: 0 } );
 
@@ -144,14 +135,25 @@ const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt
  */
 const renderMessage = when( propExists( 'isCurrentUser' ), messageText, messageTextWithNick );
 
-const renderGroupedMessages = ( { item, isCurrentUser, dispatch }, index ) => {
+const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) => {
 	let [ initial, ... rest ] = item;
 	let [ message, meta ] = initial;
 	return (
 		<div className={ classnames( 'live-chat-timeline-message', { userMessage: isCurrentUser } ) } key={ meta.id || index }>
 			<div className="message-text">
-				{ renderMessage( { isCurrentUser, message, nick: meta.nick, key: meta.id, links: meta.links, dispatch } ) }
-				{ rest.map( ( [ remaining, remaining_meta ] ) => messageText( { dispatch, message: remaining, key: remaining_meta.id, links: remaining_meta.links } ) ) }
+				{ renderMessage( {
+					isCurrentUser,
+					message,
+					nick: meta.nick,
+					key: meta.id,
+					links: meta.links,
+					onOpenChatUrl
+				} ) }
+				{ rest.map( ( [ remaining, remaining_meta ] ) => messageText( {
+					message: remaining,
+					key: remaining_meta.id,
+					links: remaining_meta.links
+				} ) ) }
 			</div>
 			<div className="message-meta">
 				<div className="message-avatar">{ messageAvatar( { meta } ) }</div>
@@ -221,20 +223,26 @@ const groupMessages = ( messages ) => {
 /*
  * Returns a function for a component's ref property to enable autoscroll detection
  */
-const autoScroll = ( { dispatch, autoscroll } ) => ( ref ) => {
+const autoScroll = ( { onSetAutoscroll, isAutoscrollActive } ) => ( ref ) => {
 	if ( !ref ) return;
 
 	// Scroll to the bottom of the chat transcript if autoscroll is enabled
-	if ( autoscroll ) ref.scrollTop = Math.max( 0, ref.scrollHeight - ref.offsetHeight );
+	if ( isAutoscrollActive ) {
+		ref.scrollTop = Math.max( 0, ref.scrollHeight - ref.offsetHeight );
+	}
 
 	ref.addEventListener( 'scroll', () => {
-		dispatch( setLiveChatAutoScroll( ref.scrollTop + ref.offsetHeight >= ref.scrollHeight ) );
+		onSetAutoscroll( ref.scrollTop + ref.offsetHeight >= ref.scrollHeight );
 	} );
 };
 
-const renderConversation = ( { timeline, isCurrentUser, autoscroll, dispatch } ) => (
-	<div ref={ autoScroll( { dispatch, autoscroll } ) } className="live-chat-conversation">
-		{ groupMessages( timeline ).map( ( item ) => renderGroupedTimelineItem( { dispatch, item, isCurrentUser: isCurrentUser( item[0] ) } ) ) }
+const renderTimeline = ( { timeline, isCurrentUser, isAutoscrollActive, onOpenChatUrl, onSetAutoscroll } ) => (
+	<div ref={ autoScroll( { onSetAutoscroll, isAutoscrollActive } ) } className="live-chat-conversation">
+		{ groupMessages( timeline ).map( ( item ) => renderGroupedTimelineItem( {
+			onOpenChatUrl,
+			item,
+			isCurrentUser: isCurrentUser( item[0] )
+		} ) ) }
 	</div>
 );
 
@@ -244,23 +252,71 @@ const welcomeMessage = () => (
 	</div>
 );
 
-const renderTimeline = first(
+const liveChatTimeline = first(
 	when( isConnecting, renderLoading ),
-	when( isConnected, when( timelineHasContent, renderConversation, welcomeMessage ) )
+	when( isConnected, when( timelineHasContent, renderTimeline, welcomeMessage ) )
 );
+
+const liveChatTitle = first(
+	when( isConnected, connectedTitle ),
+	when( isConnecting, connectingTitle ),
+	availabilityTitle
+);
+
+const liveChatComposer = when( isConnected, renderComposer );
 
 /*
  * Main chat UI component
  */
-const component = ( { available, connectionStatus, message, dispatch, timeline, isCurrentUser, user, autoscroll } ) => (
-	<div className="live-chat-container">
-		<div className={ classnames( 'live-chat', { open: isChatOpen( { connectionStatus, available } ) } ) }>
-			<div className="live-chat__title">{ title( { available, connectionStatus, user, dispatch } ) }</div>
-			{ renderTimeline( { connectionStatus, timeline, isCurrentUser, dispatch, autoscroll } ) }
-			{ when( isConnected, renderComposer )( { connectionStatus, dispatch, message } ) }
-		</div>
-	</div>
-);
+const LiveChat = React.createClass( {
+	render() {
+		const {
+			available,
+			connectionStatus,
+			message,
+			timeline,
+			isCurrentUser,
+			user,
+			isAutoscrollActive,
+			onCloseChat,
+			onOpenChat,
+			onSendChatMessage,
+			onUpdateChatMessage,
+			onOpenChatUrl,
+			onSetAutoscroll,
+		} = this.props;
+
+		return (
+			<div className="live-chat-container">
+				<div className={ classnames( 'live-chat', { open: isChatOpen( { connectionStatus, available } ) } ) }>
+					<div className="live-chat__title">
+						{ liveChatTitle( {
+							available,
+							connectionStatus,
+							user,
+							onCloseChat,
+							onOpenChat
+						} ) }
+					</div>
+					{ liveChatTimeline( {
+						connectionStatus,
+						isCurrentUser,
+						isAutoscrollActive,
+						timeline,
+						onOpenChatUrl,
+						onSetAutoscroll
+					} ) }
+					{ liveChatComposer( {
+						connectionStatus,
+						message,
+						onSendChatMessage,
+						onUpdateChatMessage
+					} ) }
+				</div>
+			</div>
+		);
+	}
+} );
 
 function mapStateToProps( { liveChat, currentUser, users } ) {
 	return {
@@ -270,11 +326,34 @@ function mapStateToProps( { liveChat, currentUser, users } ) {
 		timeline: liveChat.timeline,
 		isCurrentUser: ( [ , meta ] ) => meta.user_id === currentUser.id,
 		user: users.items[currentUser.id],
-		autoscroll: liveChat.autoscroll
+		isAutoscrollActive: liveChat.autoscroll
+	};
+}
+
+function mapDispatchToProps( dispatch ) {
+	return {
+		onOpenChat( user ) {
+			dispatch( openChat( user ) );
+		},
+		onCloseChat() {
+			dispatch( closeChat() );
+		},
+		onUpdateChatMessage( message ) {
+			dispatch( updateChatMessage( message ) );
+		},
+		onSendChatMessage( message ) {
+			dispatch( sendChatMessage( message ) );
+		},
+		onOpenChatUrl( url ) {
+			dispatch( openChatURL( url ) );
+		},
+		onSetAutoscroll( isAuto ) {
+			dispatch( setLiveChatAutoScroll( isAuto ) );
+		}
 	};
 }
 
 /*
  * Export redux connected component
  */
-export default connect( mapStateToProps )( component );
+export default connect( mapStateToProps, mapDispatchToProps )( LiveChat );
