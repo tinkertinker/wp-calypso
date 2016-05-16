@@ -23,6 +23,13 @@ const emitMessage = ( connection ) => ( { id, text, timestamp, user } ) => {
 	} } );
 };
 
+const customerIdentity = user => assign(
+	mapKeys(
+		pick( user, [ 'ID', 'avatar_URL', 'display_name', 'username' ] ),
+		mapWPComUserKeys
+	),
+	{ userId: user.ID }
+);
 
 const p = ( ... args ) => new Promise( ... args );
 
@@ -37,9 +44,7 @@ class Connection extends EventEmitter {
 			socket
 				.once( 'connect', () => resolve( socket ) )
 				.on( 'init', ( ... args ) => debug( 'initialized', ... args ) )
-				.on( 'identify', () => socket.emit( 'user',
-					mapKeys( pick( user, [ 'ID', 'avatar_URL', 'display_name', 'username' ] ), mapWPComUserKeys )
-				) )
+				.on( 'identify', () => socket.emit( 'user', customerIdentity( user ) ) )
 				.on( 'token', ( handler ) => handler( user ) )
 				.on( 'message', emitMessage( this ) );
 		} );
