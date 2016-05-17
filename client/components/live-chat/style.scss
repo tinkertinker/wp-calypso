@@ -53,9 +53,16 @@
 .live-chat {
 	overflow: hidden;
 	position: fixed;
-	bottom: 12px;
+	bottom: 0;
 	right: 12px;
 	font-size: 14px;
+
+	.live-chat__title {
+		height: auto;
+		line-height: 32px;
+		border-radius: 4px 4px 0 0;
+	}
+
 }
 
 
@@ -70,6 +77,8 @@
 	.live-chat__title {
 		cursor: default;
 		padding: 0;
+		line-height: 46px;
+		border-radius: 0;
 	}
 
 }
@@ -332,7 +341,8 @@
 
 		.live-chat-loading,
 		.live-chat-conversation,
-		.live-chat-composer {
+		.live-chat-composer,
+		.live-chat-welcome {
 			border-left: 1px solid lighten( $gray, 25% );
 		}
 
@@ -361,9 +371,10 @@
 		width: 280px;
 	}
 
-	.live-chat__title {
+	.live-chat.open .live-chat__title {
 		height: 32px;
 		line-height: 32px;
+		border-radius: 0;
 
 		.live-chat__active-toolbar {
 	
