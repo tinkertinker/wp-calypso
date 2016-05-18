@@ -224,13 +224,19 @@ const groupMessages = ( messages ) => {
  * Returns a function for a component's ref property to enable autoscroll detection
  */
 const autoScroll = ( { onSetAutoscroll, isAutoscrollActive } ) => ( ref ) => {
-	if ( !ref ) return;
+	if ( !ref ) {
+		return;
+	}
 
 	// Scroll to the bottom of the chat transcript if autoscroll is enabled
 	if ( isAutoscrollActive ) {
 		ref.scrollTop = Math.max( 0, ref.scrollHeight - ref.offsetHeight );
 	}
 
+	if ( ref.hasListener ) {
+		return;
+	}
+	ref.hasListener = true;
 	ref.addEventListener( 'scroll', () => {
 		onSetAutoscroll( ref.scrollTop + ref.offsetHeight >= ref.scrollHeight );
 	} );
