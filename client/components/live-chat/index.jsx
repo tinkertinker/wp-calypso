@@ -220,30 +220,8 @@ const groupMessages = ( messages ) => {
 	return grouped.groups.concat( [ grouped.group ] );
 };
 
-/*
- * Returns a function for a component's ref property to enable autoscroll detection
- */
-const autoScroll = ( { onSetAutoscroll, isAutoscrollActive } ) => ( ref ) => {
-	if ( !ref ) {
-		return;
-	}
-
-	// Scroll to the bottom of the chat transcript if autoscroll is enabled
-	if ( isAutoscrollActive ) {
-		ref.scrollTop = Math.max( 0, ref.scrollHeight - ref.offsetHeight );
-	}
-
-	if ( ref.hasListener ) {
-		return;
-	}
-	ref.hasListener = true;
-	ref.addEventListener( 'scroll', () => {
-		onSetAutoscroll( ref.scrollTop + ref.offsetHeight >= ref.scrollHeight );
-	} );
-};
-
-const renderTimeline = ( { timeline, isCurrentUser, isAutoscrollActive, onOpenChatUrl, onSetAutoscroll } ) => (
-	<div ref={ autoScroll( { onSetAutoscroll, isAutoscrollActive } ) } className="live-chat-conversation">
+const renderTimeline = ( { timeline, isCurrentUser, onOpenChatUrl, onScrollContainer } ) => (
+	<div ref={ onScrollContainer } className="live-chat-conversation">
 		{ groupMessages( timeline ).map( ( item ) => renderGroupedTimelineItem( {
 			onOpenChatUrl,
 			item,
@@ -275,6 +253,51 @@ const liveChatComposer = when( isConnected, renderComposer );
  * Main chat UI component
  */
 const LiveChat = React.createClass( {
+
+	componentWillUnmount() {
+		if ( this.scrollContainer ) {
+			this.scrollContainer.removeEventListener( this.detectAutoScroll );
+		}
+	},
+
+	componentDidMount() {
+		this.scrollToBottom();
+	},
+
+	onScrollContainer( scrollContainer ) {
+		if ( scrollContainer === null ) {
+			return;
+		}
+
+		scrollContainer.addEventListener( 'scroll', this.detectAutoScroll );
+		this.scrollContainer = scrollContainer;
+		this.scrollToBottom();
+	},
+
+	scrollToBottom() {
+		const { isAutoscrollActive } = this.props;
+		if ( ! isAutoscrollActive ) {
+			return;
+		}
+
+		if ( ! this.scrollContainer ) {
+			return;
+		}
+
+		const { scrollHeight, offsetHeight } = this.scrollContainer;
+		this.scrollContainer.scrollTop = Math.max( 0, scrollHeight - offsetHeight );
+	},
+
+	detectAutoScroll() {
+		const { onSetAutoscroll, isAutoscrollActive } = this.props;
+		const { scrollTop, offsetHeight, scrollHeight } = this.scrollContainer;
+		const enableAutoScroll = scrollTop + offsetHeight >= scrollHeight;
+		if ( enableAutoScroll === isAutoscrollActive ) {
+			return;
+		}
+		onSetAutoscroll( enableAutoScroll );
+	},
+
 	render() {
 		const {
 			available,
@@ -283,13 +306,11 @@ const LiveChat = React.createClass( {
 			timeline,
 			isCurrentUser,
 			user,
-			isAutoscrollActive,
 			onCloseChat,
 			onOpenChat,
 			onSendChatMessage,
 			onUpdateChatMessage,
 			onOpenChatUrl,
-			onSetAutoscroll,
 		} = this.props;
 
 		return (
@@ -307,10 +328,9 @@ const LiveChat = React.createClass( {
 					{ liveChatTimeline( {
 						connectionStatus,
 						isCurrentUser,
-						isAutoscrollActive,
 						timeline,
 						onOpenChatUrl,
-						onSetAutoscroll
+						onScrollContainer: this.onScrollContainer
 					} ) }
 					{ liveChatComposer( {
 						connectionStatus,
