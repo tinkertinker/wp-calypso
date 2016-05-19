@@ -5,6 +5,7 @@ import { isArray, isEmpty } from 'lodash/lang';
 
 import GridIcon from 'components/gridicon';
 import Spinner from 'components/spinner';
+import AgentW from 'components/live-chat/agent-w';
 import {
 	first,
 	any,
@@ -138,6 +139,7 @@ const renderMessage = when( propExists( 'isCurrentUser' ), messageText, messageT
 const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) => {
 	let [ initial, ... rest ] = item;
 	let [ message, meta ] = initial;
+	let userAvatar = messageAvatar( { meta } );
 	return (
 		<div className={ classnames( 'live-chat-timeline-message', { userMessage: isCurrentUser } ) } key={ meta.id || index }>
 			<div className="message-text">
@@ -156,7 +158,9 @@ const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) 
 				} ) ) }
 			</div>
 			<div className="message-meta">
-				<div className="message-avatar">{ messageAvatar( { meta } ) }</div>
+				<div className="message-avatar">
+				{ isCurrentUser ? userAvatar : <AgentW /> }
+				</div>
 			</div>
 		</div>
 	);
