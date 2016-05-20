@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import { isArray, isEmpty } from 'lodash/lang';
+import isArray from 'lodash/isArray';
+import isEmpty from 'lodash/isEmpty';
 
 import GridIcon from 'components/gridicon';
 import Spinner from 'components/spinner';
@@ -224,8 +225,8 @@ const groupMessages = ( messages ) => {
 	return grouped.groups.concat( [ grouped.group ] );
 };
 
-const renderTimeline = ( { timeline, isCurrentUser, onOpenChatUrl, onScrollContainer } ) => (
-	<div ref={ onScrollContainer } className="live-chat-conversation">
+const renderTimeline = ( { timeline, isCurrentUser, onOpenChatUrl, onScrollContainer, onScroll } ) => (
+	<div ref={ onScrollContainer } onScroll={ onScroll } className="live-chat-conversation">
 		{ groupMessages( timeline ).map( ( item ) => renderGroupedTimelineItem( {
 			onOpenChatUrl,
 			item,
@@ -258,12 +259,6 @@ const liveChatComposer = when( isConnected, renderComposer );
  */
 const LiveChat = React.createClass( {
 
-	componentWillUnmount() {
-		if ( this.scrollContainer ) {
-			this.scrollContainer.removeEventListener( this.detectAutoScroll );
-		}
-	},
-
 	componentDidMount() {
 		this.scrollToBottom();
 	},
@@ -273,11 +268,6 @@ const LiveChat = React.createClass( {
 	},
 
 	onScrollContainer( scrollContainer ) {
-		if ( scrollContainer === null ) {
-			return;
-		}
-
-		scrollContainer.addEventListener( 'scroll', this.detectAutoScroll );
 		this.scrollContainer = scrollContainer;
 		this.scrollToBottom();
 	},
@@ -338,7 +328,8 @@ const LiveChat = React.createClass( {
 						isCurrentUser,
 						timeline,
 						onOpenChatUrl,
-						onScrollContainer: this.onScrollContainer
+						onScrollContainer: this.onScrollContainer,
+						onScroll: this.detectAutoScroll
 					} ) }
 					{ liveChatComposer( {
 						connectionStatus,
