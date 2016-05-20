@@ -268,6 +268,10 @@ const LiveChat = React.createClass( {
 		this.scrollToBottom();
 	},
 
+	componentDidUpdate() {
+		this.scrollToBottom();
+	},
+
 	onScrollContainer( scrollContainer ) {
 		if ( scrollContainer === null ) {
 			return;
