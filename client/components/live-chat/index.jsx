@@ -283,19 +283,18 @@ const LiveChat = React.createClass( {
 	},
 
 	handleScroll( e ) {
-
+		var delta = null;
 		if ( ! this.scrollContainer ) {
 			return;
 		}
 
 		e = e || window.event;
-		if (e.preventDefault)
+		if ( e.preventDefault )
 			e.preventDefault();
 		e.returnValue = false;
 
 		// scroll the window itself using JS
 		// this is not perfect, we're basically guessing at how much your wheel usually scrolls
-		var delta = null;
 		if ( e === 'DOMMouseScroll' ) { // old FF
 			delta = e.detail * -10;
 		} else if ( e.wheelDelta ) { // webkit
@@ -303,12 +302,12 @@ const LiveChat = React.createClass( {
 		} else if ( e.deltaY ) { // new FF
 			delta = -1 * e.deltaY * 20;
 		}
-		
+
 		this.scrollContainer.scrollTop -= delta;
 	},
 
 	lockScroll() {
-		if ( window.addEventListener) // older FF
+		if ( window.addEventListener ) // older FF
 			window.addEventListener( 'DOMMouseScroll', this.handleScroll, false );
 		window.onwheel = this.handleScroll;
 		window.onmousewheel = document.onmousewheel = this.handleScroll;
@@ -317,8 +316,8 @@ const LiveChat = React.createClass( {
 	unlockScroll() {
 		if ( window.removeEventListener )	// older FF
 			window.removeEventListener( 'DOMMouseScroll', this.handleScroll, false );
-		window.onwheel = null; 
-		window.onmousewheel = document.onmousewheel = null; 
+		window.onwheel = null;
+		window.onmousewheel = document.onmousewheel = null;
 	},
 
 	render() {
