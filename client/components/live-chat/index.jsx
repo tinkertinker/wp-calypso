@@ -297,6 +297,11 @@ const LiveChat = React.createClass( {
 	},
 
 	handleScroll( e ) {
+
+		if ( ! this.scrollContainer ) {
+			return;
+		}
+
 		e = e || window.event;
 		if (e.preventDefault)
 			e.preventDefault();
