@@ -101,13 +101,6 @@ const renderComposer = ( { message, onUpdateChatMessage, onSendChatMessage } ) =
 };
 
 /*
- * Renders a single line of message text prefixed by the provided `nick`.
- */
-const messageTextWithNick = ( { message, nick, key } ) => (
-	<p key={ key }><span className="message-nick">{ nick }</span> { message }</p>
-);
-
-/*
  * Renders a single line of message text.
  */
 const linksNotEmpty = ( { links } ) => !isEmpty( links );
@@ -131,12 +124,6 @@ const messageWithLinks = ( { message, key, links, onOpenChatUrl } ) => {
 const messageText = when( linksNotEmpty, messageWithLinks, messageParagraph );
 const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt={ meta.nick } src={ meta.image } /> );
 
-/*
- * Picks which message render function to call based on whether the message is from the currently logged in
- * user.
- */
-const renderMessage = when( propExists( 'isCurrentUser' ), messageText, messageTextWithNick );
-
 const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) => {
 	let [ initial, ... rest ] = item;
 	let [ message, meta ] = initial;
@@ -144,8 +131,7 @@ const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) 
 	return (
 		<div className={ classnames( 'live-chat-timeline-message', { userMessage: isCurrentUser } ) } key={ meta.id || index }>
 			<div className="message-text">
-				{ renderMessage( {
-					isCurrentUser,
+				{ messageText( {
 					message,
 					nick: meta.nick,
 					key: meta.id,
