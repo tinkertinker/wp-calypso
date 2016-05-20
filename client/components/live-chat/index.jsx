@@ -296,6 +296,40 @@ const LiveChat = React.createClass( {
 		onSetAutoscroll( enableAutoScroll );
 	},
 
+	handleScroll( e ) {
+		e = e || window.event;
+		if (e.preventDefault)
+			e.preventDefault();
+		e.returnValue = false;
+
+		// scroll the window itself using JS
+		// this is not perfect, we're basically guessing at how much your wheel usually scrolls
+		var delta = null;
+		if ( e === 'DOMMouseScroll' ) { // old FF
+			delta = e.detail * -10;
+		} else if ( e.wheelDelta ) { // webkit
+			delta = e.wheelDelta / 4;
+		} else if ( e.deltaY ) { // new FF
+			delta = -1 * e.deltaY * 20;
+		}
+		
+		this.scrollContainer.scrollTop -= delta;
+	},
+
+	lockScroll() {
+		if ( window.addEventListener) // older FF
+			window.addEventListener( 'DOMMouseScroll', this.handleScroll, false );
+		window.onwheel = this.handleScroll;
+		window.onmousewheel = document.onmousewheel = this.handleScroll;
+	},
+
+	unlockScroll() {
+		if ( window.removeEventListener )	// older FF
+			window.removeEventListener( 'DOMMouseScroll', this.handleScroll, false );
+		window.onwheel = null; 
+		window.onmousewheel = document.onmousewheel = null; 
+	},
+
 	render() {
 		const {
 			available,
@@ -313,7 +347,7 @@ const LiveChat = React.createClass( {
 
 		return (
 			<div className="live-chat-container">
-				<div className={ classnames( 'live-chat', { open: isChatOpen( { connectionStatus, available } ) } ) }>
+				<div onMouseEnter={ this.lockScroll } onMouseLeave={ this.unlockScroll } className={ classnames( 'live-chat', { open: isChatOpen( { connectionStatus, available } ) } ) }>
 					<div className="live-chat__title">
 						{ liveChatTitle( {
 							available,
