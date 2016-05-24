@@ -78,7 +78,7 @@ const connectedTitle = ( { onCloseChat } ) => (
  * Renders a textarea to be used to comopose a message for the chat.
  */
 const renderComposer = ( { message, onUpdateChatMessage, onSendChatMessage } ) => {
-	const sendMessage = () => onSendChatMessage( message );
+	const sendMessage = when( () => !isEmpty( message ), () => onSendChatMessage( message ) );
 	const onChange = ( { target: { value } } ) => onUpdateChatMessage( value );
 	const onKeyDown = when( returnPressed, compose( preventDefault, sendMessage ) );
 	return (
