@@ -124,6 +124,7 @@
 
 	::-webkit-scrollbar {
 		width: 12px;
+		height: 12px;
 	}
 
 	::-webkit-scrollbar-thumb {
@@ -218,6 +219,12 @@
 		color: $white;
 		background: $blue-medium;
 		position: relative;
+
+		overflow-wrap: break-word;
+		word-wrap: break-word;
+		word-break: break-all;
+		word-break: break-word;
+		hyphens: auto;
 
 		p {
 			margin: 8px 0;
