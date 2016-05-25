@@ -38,7 +38,10 @@ const setChatOpen = ( isOpen ) => {
 	return { type: LIVE_CHAT_OPEN, isOpen }
 }
 
-export const openChat = ( user ) => ( dispatch ) => {
+export const openChat = () => ( dispatch, getState ) => {
+	const { users, currentUser } = getState();
+	const user = users.items[currentUser.id];
+
 	dispatch( setChatConnecting() )
 	dispatch( setChatOpen( true ) )
 	debug( 'connecting, now attempt to connect' )
