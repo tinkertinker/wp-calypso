@@ -226,6 +226,8 @@
 		word-break: break-word;
 		hyphens: auto;
 
+		white-space: pre-wrap;
+
 		p {
 			margin: 8px 0;
 			&:first-child { margin-top: 0 }
