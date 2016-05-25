@@ -47,8 +47,8 @@ const timelineHasContent = ( { timeline } ) => isArray( timeline ) && !isEmpty( 
  */
 const availabilityTitle = when(
 	isAvailable,
-	( { onOpenChat, user } ) => {
-		const onClick = () => onOpenChat( user );
+	( { onOpenChat } ) => {
+		const onClick = () => onOpenChat();
 		return <div onClick={ onClick }>Support Chat</div>;
 	},
 	() => <div>Live Support Unavailable</div>
@@ -367,22 +367,21 @@ const LiveChat = React.createClass( {
 	}
 } );
 
-function mapStateToProps( { liveChat, currentUser, users } ) {
+function mapStateToProps( { liveChat, currentUser } ) {
 	return {
 		available: liveChat.available,
 		connectionStatus: liveChat.status,
 		message: liveChat.message,
 		timeline: liveChat.timeline,
 		isCurrentUser: ( [ , meta ] ) => meta.user_id === currentUser.id,
-		user: users.items[currentUser.id],
 		isAutoscrollActive: liveChat.autoscroll
 	};
 }
 
 function mapDispatchToProps( dispatch ) {
 	return {
-		onOpenChat( user ) {
-			dispatch( openChat( user ) );
+		onOpenChat() {
+			dispatch( openChat() );
 		},
 		onCloseChat() {
 			dispatch( closeChat() );
