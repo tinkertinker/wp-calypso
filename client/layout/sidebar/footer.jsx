@@ -2,22 +2,35 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
  */
-var Gridicon = require( 'components/gridicon' );
-
+import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import localize from 'lib/mixins/i18n/localize';
+import { openChat } from 'state/live-chat/actions';
 
-const SidebarFooter = ( { translate, children } ) => (
+const SidebarFooter = ( { translate, children, onOpenChat } ) => (
 	<div className="sidebar__footer">
 		{ children }
-		<Button compact borderless href="/help">
+		<Button compact borderless href="/help" onClick={ onOpenChat }>
 			<Gridicon icon="help-outline" /> { translate( 'Help' ) }
 		</Button>
 	</div>
 );
 
-export default localize( SidebarFooter );
+const mapStateToProps = () => {
+	return {};
+}
+
+const mapDispatchToProps = ( dispatch ) => {
+	return {
+		onOpenChat() {
+			dispatch( openChat() );
+		}
+	}
+}
+
+export default connect( mapStateToProps, mapDispatchToProps )( localize( SidebarFooter ) );
