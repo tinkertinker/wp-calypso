@@ -14,13 +14,11 @@ import {
 	when,
 	propExists,
 	propEquals,
-	// actionDispatcher,
 	compose
 } from 'lib/functional';
 import {
 	openChat,
 	closeChat,
-	// minimizeChat,
 	updateChatMessage,
 	sendChatMessage,
 	setLiveChatAutoScroll,
