@@ -47,15 +47,20 @@
 
 
 /**
- * Collapsed button @todo: move to bottom of sidebar
+ * Open Live Chat Button
+ *
+ * Two options for opening chat, a floating blue button, or a button in the bottom of the sidebar
+ * Probably worth testing both options to see what works best
  */
 
+/* Floating blue button */
 .live-chat {
 	overflow: hidden;
 	position: fixed;
 	bottom: 0;
 	right: 12px;
 	font-size: 14px;
+	display: none;		/* disabled */
 
 	.live-chat__title {
 		height: auto;
@@ -65,12 +70,18 @@
 
 }
 
+/* Sidebar-footer button */
+.sidebar__footer__support-chat {
+	/* display: none; */
+}
+
 
 /**
  * Base styles
  */
 
 .live-chat.open {
+	display: block;
 	background: lighten( $gray, 30% );
 	bottom: 0;
 
