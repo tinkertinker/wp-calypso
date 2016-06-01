@@ -1,23 +1,33 @@
+/*
+ * External dependencies
+ */
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
+
+/*
+ * Internal dependencies
+ */
 import { openChatURL } from 'state/live-chat/actions';
 import GridIcon from 'components/gridicon';
 
-const closeBrowser = ( { dispatch } ) => ( e ) => {
-	e.preventDefault();
-	dispatch( openChatURL( null ) );
-};
-
-const browser = ( { url, dispatch } ) => (
+const Browser = ( { url, closeBrowser } ) => (
 	<div className={ classnames( 'support-browser', { disabled: isEmpty( url ) } ) }>
 		<div className="browser-bar">
 			{ url }
-			<div onClick={ closeBrowser( { dispatch } ) }><GridIcon icon="cross" /></div>
+			<div onClick={ closeBrowser }><GridIcon icon="cross" /></div>
 		</div>
 		<iframe src={ url } />
 	</div>
 );
 
-export default connect( ( { liveChat } ) => ( { url: liveChat.supportURL } ) )( browser );
+const mapDispatch = ( dispatch ) => ( {
+	closeBrowser() {
+		dispatch( openChatURL( null ) );
+	}
+} );
+
+const mapState = ( { liveChat: { supportURL: url } } ) => ( { url } );
+
+export default connect( mapState, mapDispatch )( Browser );
