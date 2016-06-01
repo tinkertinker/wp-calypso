@@ -376,6 +376,11 @@
 		padding: 32px 304px;
 	}
 
+	// add space in the editor for the docked sidebar
+	.has-chat.is-group-editor .wp-content {
+		padding: 0 304px 0 0;
+	}
+
 }
 
 
