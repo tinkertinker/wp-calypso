@@ -436,16 +436,26 @@
 
 @include breakpoint( "<480px" ) {
 
+	.has-chat .wp-content {
+		display: none;	/* this prevents scroll bleed */
+	}
+
 	.live-chat.open {
 		position: fixed;
 		top: 47px;
-		bottom: 0;
 		left: 0;
 		right: 0;
 		width: auto;
+		height: 100%;
 		display: flex;
 		flex-direction: column;
 		box-sizing: border-box;
+
+		.live-chat__title {
+			height: auto;
+			line-height: 32px;
+		}
+
 	}
 
 }
