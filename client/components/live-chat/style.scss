@@ -84,6 +84,7 @@
 	display: block;
 	background: lighten( $gray, 30% );
 	bottom: 0;
+	z-index: 10;
 
 	.live-chat__title {
 		cursor: default;
