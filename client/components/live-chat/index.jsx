@@ -245,6 +245,11 @@ const LiveChat = React.createClass( {
 
 	componentDidMount() {
 		this.scrollToBottom();
+		window.addEventListener( 'resize', this.scrollToBottom );
+	},
+
+	componentWillUnmount() {
+		window.removeEventListener( 'resize', this.scrollToBottom );
 	},
 
 	componentDidUpdate() {
