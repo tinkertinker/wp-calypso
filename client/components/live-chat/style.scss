@@ -438,25 +438,20 @@
 @include breakpoint( "<480px" ) {
 
 	.has-chat .wp-content {
-		display: none;	/* this prevents scroll bleed */
+		display: none;	/* this prevents scroll bleed, but does it invoke infinite scroll endlessly? */
 	}
 
 	.live-chat.open {
 		position: fixed;
-		top: 47px;
+		top: 0;
+		margin-top: 47px;
 		left: 0;
 		right: 0;
+		bottom: 0;
 		width: auto;
-		height: 100%;
 		display: flex;
 		flex-direction: column;
 		box-sizing: border-box;
-
-		.live-chat__title {
-			height: auto;
-			line-height: 32px;
-		}
-
 	}
 
 }

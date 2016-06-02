@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import classnames from 'classnames';
 import isArray from 'lodash/isArray';
 import isEmpty from 'lodash/isEmpty';
+import viewport from 'lib/viewport';
 
 import GridIcon from 'components/gridicon';
 import Spinner from 'components/spinner';
@@ -75,7 +76,7 @@ const connectedTitle = ( { onCloseChat } ) => (
 /*
  * Renders a textarea to be used to comopose a message for the chat.
  */
-const renderComposer = ( { message, onUpdateChatMessage, onSendChatMessage } ) => {
+const renderComposer = ( { message, onUpdateChatMessage, onSendChatMessage, onFocus } ) => {
 	const sendMessage = when( () => !isEmpty( message ), () => onSendChatMessage( message ) );
 	const onChange = ( { target: { value } } ) => onUpdateChatMessage( value );
 	const onKeyDown = when( returnPressed, compose( preventDefault, sendMessage ) );
@@ -83,6 +84,7 @@ const renderComposer = ( { message, onUpdateChatMessage, onSendChatMessage } ) =
 		<div className="live-chat-composer">
 			<div className="live-chat-message">
 				<textarea
+					onFocus={ onFocus }
 					type="text"
 					placeholder="Ask a question..."
 					onChange={ onChange }
@@ -261,6 +263,16 @@ const LiveChat = React.createClass( {
 		this.scrollToBottom();
 	},
 
+	onFocus() {
+		if ( viewport.isMobile() ) {
+			/* User tapped textfield on a phone. This shows the keyboard. Unless we scroll to the bottom, the chatbox will be invisible */
+			console.log( "Scroll to the bottom" );
+			setTimeout( function () {
+				window.scrollTo( 0, document.body.scrollHeight );
+			}, 500 );	/* Wait for the keyboard to appear */
+		}
+	},
+
 	scrollToBottom() {
 		const { isAutoscrollActive } = this.props;
 		if ( ! isAutoscrollActive ) {
@@ -362,7 +374,8 @@ const LiveChat = React.createClass( {
 						connectionStatus,
 						message,
 						onSendChatMessage,
-						onUpdateChatMessage
+						onUpdateChatMessage,
+						onFocus: this.onFocus
 					} ) }
 				</div>
 			</div>
