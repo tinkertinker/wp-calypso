@@ -14,32 +14,30 @@ import route from 'lib/route';
 import titleActions from 'lib/screen-title/actions';
 import config from 'config';
 
-module.exports = {
-	help: function( context ) {
-		var Help = require( './main' ),
-			basePath = route.sectionify( context.path );
+export function help( context ) {
+	var Help = require( './main' ),
+		basePath = route.sectionify( context.path );
 
-		titleActions.setTitle( i18n.translate( 'Help', { textOnly: true } ) );
+	titleActions.setTitle( i18n.translate( 'Help', { textOnly: true } ) );
 
-		analytics.pageView.record( basePath, 'Help' );
+	analytics.pageView.record( basePath, 'Help' );
 
-		ReactDom.render(
-			React.createElement( Help ),
-			document.getElementById( 'primary' )
-		);
-	},
+	ReactDom.render(
+		React.createElement( Help ),
+		document.getElementById( 'primary' )
+	);
+}
 
-	contact: function( context ) {
-		var ContactComponent = require( './help-contact' ),
-			basePath = route.sectionify( context.path );
+export function contact( context ) {
+	var ContactComponent = require( './help-contact' ),
+		basePath = route.sectionify( context.path );
 
-		analytics.pageView.record( basePath, 'Help > Contact' );
+	analytics.pageView.record( basePath, 'Help > Contact' );
 
-		ReactDom.render(
-			<ReduxProvider store={ context.store } >
-				<ContactComponent clientSlug={ config( 'client_slug' ) } />
-			</ReduxProvider>,
-			document.getElementById( 'primary' )
-		);
-	}
-};
+	ReactDom.render(
+		<ReduxProvider store={ context.store } >
+			<ContactComponent clientSlug={ config( 'client_slug' ) } />
+		</ReduxProvider>,
+		document.getElementById( 'primary' )
+	);
+}

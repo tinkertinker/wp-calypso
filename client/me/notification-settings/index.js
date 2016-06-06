@@ -6,12 +6,17 @@ import page from 'page';
 /**
  * Internal dependencies
  */
-import meController from 'me/controller';
-import controller from './controller';
+import { sidebar } from 'me/controller';
+import {
+	notifications,
+	comments,
+	updates,
+	notificationSubscriptions
+} from './controller';
 
 export default function() {
-	page( '/me/notifications', meController.sidebar, controller.notifications );
-	page( '/me/notifications/comments', meController.sidebar, controller.comments );
-	page( '/me/notifications/updates', meController.sidebar, controller.updates );
-	page( '/me/notifications/subscriptions', meController.sidebar, controller.notificationSubscriptions );
-};
+	page( '/me/notifications', sidebar, notifications );
+	page( '/me/notifications/comments', sidebar, comments );
+	page( '/me/notifications/updates', sidebar, updates );
+	page( '/me/notifications/subscriptions', sidebar, notificationSubscriptions );
+}

@@ -1,8 +1,8 @@
-var page = require( 'page' ),
-	meController = require( 'me/controller' ),
-	helpController = require( './controller' );
+import page from 'page';
+import { sidebar } from 'me/controller';
+import { help, contact } from './controller';
 
 module.exports = function() {
-	page( '/help', meController.sidebar, helpController.help );
-	page( '/help/contact', meController.sidebar, helpController.contact );
+	page( '/help', sidebar, help );
+	page( '/help/contact', sidebar, contact );
 };
