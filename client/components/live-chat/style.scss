@@ -438,7 +438,7 @@
 @include breakpoint( "<480px" ) {
 
 	.has-chat .wp-content {
-		display: none;	/* this prevents scroll bleed, but does it invoke infinite scroll endlessly? */
+		/*display: none; disabled for now, def. seems to cause memory leaks */	/* this prevents scroll bleed, but does it invoke infinite scroll endlessly? */
 	}
 
 	.live-chat.open {

@@ -266,10 +266,10 @@ const LiveChat = React.createClass( {
 	onFocus() {
 		if ( viewport.isMobile() ) {
 			/* User tapped textfield on a phone. This shows the keyboard. Unless we scroll to the bottom, the chatbox will be invisible */
-			console.log( "Scroll to the bottom" );
+			/*console.log( "Scroll to the bottom" );
 			setTimeout( function () {
 				window.scrollTo( 0, document.body.scrollHeight );
-			}, 500 );	/* Wait for the keyboard to appear */
+			}, 1000 );	/* Wait for the keyboard to appear */
 		}
 	},
 
