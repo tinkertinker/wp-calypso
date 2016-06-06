@@ -159,6 +159,13 @@ module.exports = React.createClass( {
 							onNavigate={ this.onNavigate }
 							preloadSectionName="help"
 						/>
+						<SidebarItem
+							selected= { selected === 'chat' }
+							link="/me/chat"
+							icon="comment"
+							label= { this.translate( 'Chat' ) }
+							onNavigate={ this.onNavigate }
+						/>
 					</ul>
 				</SidebarMenu>
 			</Sidebar>
