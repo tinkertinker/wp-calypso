@@ -20,107 +20,105 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 const ANALYTICS_PAGE_TITLE = 'Me',
 	user = userFactory();
 
-export default {
-	sidebar( context, next ) {
-		const SidebarComponent = require( 'me/sidebar' );
+export function sidebar ( context, next ) {
+	const SidebarComponent = require( 'me/sidebar' );
 
-		renderWithReduxStore(
-			React.createElement( SidebarComponent, {
-				user,
-				context: context
-			} ),
-			document.getElementById( 'secondary' ),
-			context.store
-		);
+	renderWithReduxStore(
+		React.createElement( SidebarComponent, {
+			user,
+			context: context
+		} ),
+		document.getElementById( 'secondary' ),
+		context.store
+	);
 
-		next();
-	},
+	next();
+}
 
-	profile( context ) {
-		const ProfileComponent = require( 'me/profile' ),
-			basePath = context.path;
+export function profile( context ) {
+	const ProfileComponent = require( 'me/profile' ),
+		basePath = context.path;
 
-		titleActions.setTitle( i18n.translate( 'My Profile', { textOnly: true } ) );
+	titleActions.setTitle( i18n.translate( 'My Profile', { textOnly: true } ) );
 
-		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > My Profile' );
+	analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > My Profile' );
 
-		renderWithReduxStore(
-			React.createElement( ProfileComponent,
-				{
-					userSettings: userSettings,
-					path: context.path
-				}
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
+	renderWithReduxStore(
+		React.createElement( ProfileComponent,
+			{
+				userSettings: userSettings,
+				path: context.path
+			}
+		),
+		document.getElementById( 'primary' ),
+		context.store
+	);
+}
 
-	apps( context ) {
-		const AppsComponent = require( 'me/get-apps' ),
-			basePath = context.path;
+export function apps( context ) {
+	const AppsComponent = require( 'me/get-apps' ),
+		basePath = context.path;
 
-		titleActions.setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) );
+	titleActions.setTitle( i18n.translate( 'Get Apps', { textOnly: true } ) );
 
-		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Get Apps' );
+	analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Get Apps' );
 
-		renderWithReduxStore(
-			React.createElement( AppsComponent,
-				{
-					userSettings: userSettings,
-					path: context.path
-				}
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
+	renderWithReduxStore(
+		React.createElement( AppsComponent,
+			{
+				userSettings: userSettings,
+				path: context.path
+			}
+		),
+		document.getElementById( 'primary' ),
+		context.store
+	);
+}
 
-	nextSteps( context ) {
-		const analyticsBasePath = route.sectionify( context.path ),
-			NextSteps = require( './next-steps' ),
-			trophiesData = require( 'lib/trophies-data' ),
-			isWelcome = 'welcome' === context.params.welcome;
+export function nextSteps( context ) {
+	const analyticsBasePath = route.sectionify( context.path ),
+		NextSteps = require( './next-steps' ),
+		trophiesData = require( 'lib/trophies-data' ),
+		isWelcome = 'welcome' === context.params.welcome;
 
-		titleActions.setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) );
+	titleActions.setTitle( i18n.translate( 'Next Steps', { textOnly: true } ) );
 
-		if ( isWelcome ) {
-			ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
-		}
+	if ( isWelcome ) {
+		ReactDom.unmountComponentAtNode( document.getElementById( 'secondary' ) );
+	}
 
-		analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );
-		analytics.pageView.record( analyticsBasePath, ANALYTICS_PAGE_TITLE + ' > Next' );
+	analytics.tracks.recordEvent( 'calypso_me_next_view', { is_welcome: isWelcome } );
+	analytics.pageView.record( analyticsBasePath, ANALYTICS_PAGE_TITLE + ' > Next' );
 
-		renderWithReduxStore(
-			React.createElement( NextSteps, {
-				path: context.path,
-				isWelcome: isWelcome,
-				trophiesData: trophiesData
-			} ),
-			document.getElementById( 'primary' ),
-			context.store
-		);
-	},
+	renderWithReduxStore(
+		React.createElement( NextSteps, {
+			path: context.path,
+			isWelcome: isWelcome,
+			trophiesData: trophiesData
+		} ),
+		document.getElementById( 'primary' ),
+		context.store
+	);
+}
 
 	// Users that are redirected to `/me/next?welcome` after signup should visit
 	// `/me/next/welcome` instead.
-	nextStepsWelcomeRedirect( context, next ) {
-		if ( includes( context.path, '?welcome' ) ) {
-			return page.redirect( '/me/next/welcome' );
-		}
-
-		next();
-	},
-
-	profileRedirect() {
-		page.redirect( '/me' );
-	},
-
-	trophiesRedirect() {
-		page.redirect( '/me' );
-	},
-
-	findFriendsRedirect() {
-		page.redirect( '/me' );
+export function nextStepsWelcomeRedirect( context, next ) {
+	if ( includes( context.path, '?welcome' ) ) {
+		return page.redirect( '/me/next/welcome' );
 	}
-};
+
+	next();
+}
+
+export function profileRedirect() {
+	page.redirect( '/me' );
+}
+
+export function trophiesRedirect() {
+	page.redirect( '/me' );
+}
+
+export function findFriendsRedirect() {
+	page.redirect( '/me' );
+}

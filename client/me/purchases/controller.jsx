@@ -62,197 +62,195 @@ function setTitle( ...title ) {
 	);
 }
 
-export default {
-	cancelPrivateRegistration( context ) {
-		setTitle(
-			titles.cancelPrivateRegistration
-		);
+export function cancelPrivateRegistration( context ) {
+	setTitle(
+		titles.cancelPrivateRegistration
+	);
 
-		recordPageView(
-			paths.cancelPrivateRegistration(),
-			'Cancel Private Registration'
-		);
+	recordPageView(
+		paths.cancelPrivateRegistration(),
+		'Cancel Private Registration'
+	);
 
-		sites.setSelectedSite( context.params.site );
+	sites.setSelectedSite( context.params.site );
 
-		renderPage(
-			context,
-			<ManagePurchaseData
-				component={ CancelPrivateRegistration }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
-		);
-	},
+	renderPage(
+		context,
+		<ManagePurchaseData
+			component={ CancelPrivateRegistration }
+			purchaseId={ context.params.purchaseId }
+			sites={ sites } />
+	);
+}
 
-	cancelPurchase( context ) {
-		setTitle(
-			titles.cancelPurchase
-		);
+export function cancelPurchase( context ) {
+	setTitle(
+		titles.cancelPurchase
+	);
 
-		recordPageView(
-			paths.cancelPurchase(),
-			'Cancel Purchase'
-		);
+	recordPageView(
+		paths.cancelPurchase(),
+		'Cancel Purchase'
+	);
 
-		sites.setSelectedSite( context.params.site );
+	sites.setSelectedSite( context.params.site );
 
-		renderPage(
-			context,
-			<ManagePurchaseData
-				component={ CancelPurchase }
-				isDataLoading={ isDataLoading }
-				loadingPlaceholder={ CancelPurchaseLoadingPlaceholder }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
-		);
-	},
+	renderPage(
+		context,
+		<ManagePurchaseData
+			component={ CancelPurchase }
+			isDataLoading={ isDataLoading }
+			loadingPlaceholder={ CancelPurchaseLoadingPlaceholder }
+			purchaseId={ context.params.purchaseId }
+			sites={ sites } />
+	);
+}
 
-	confirmCancelDomain( context ) {
-		setTitle(
-			titles.confirmCancelDomain
-		);
+export function confirmCancelDomain( context ) {
+	setTitle(
+		titles.confirmCancelDomain
+	);
 
-		recordPageView(
-			paths.confirmCancelDomain(),
-			'Confirm Cancel Domain'
-		);
+	recordPageView(
+		paths.confirmCancelDomain(),
+		'Confirm Cancel Domain'
+	);
 
-		sites.setSelectedSite( context.params.site );
+	sites.setSelectedSite( context.params.site );
 
-		renderPage(
-			context,
-			<ManagePurchaseData
-				component={ ConfirmCancelDomain }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
-		);
-	},
+	renderPage(
+		context,
+		<ManagePurchaseData
+			component={ ConfirmCancelDomain }
+			purchaseId={ context.params.purchaseId }
+			sites={ sites } />
+	);
+}
 
-	editCardDetails( context ) {
-		setTitle(
-			titles.editCardDetails
-		);
+export function editCardDetails( context ) {
+	setTitle(
+		titles.editCardDetails
+	);
 
-		recordPageView(
-			paths.editCardDetails(),
-			'Edit Card Details'
-		);
+	recordPageView(
+		paths.editCardDetails(),
+		'Edit Card Details'
+	);
 
-		sites.setSelectedSite( context.params.site );
+	sites.setSelectedSite( context.params.site );
 
-		renderPage(
-			context,
-			<EditCardDetailsData
-				cardId={ context.params.cardId }
-				component={ EditCardDetails }
-				purchaseId={ context.params.purchaseId }
-				loadingPlaceholder={ EditCardDetailsLoadingPlaceholder }
-				sites={ sites } />
-		);
-	},
+	renderPage(
+		context,
+		<EditCardDetailsData
+			cardId={ context.params.cardId }
+			component={ EditCardDetails }
+			purchaseId={ context.params.purchaseId }
+			loadingPlaceholder={ EditCardDetailsLoadingPlaceholder }
+			sites={ sites } />
+	);
+}
 
-	editPaymentMethod( context ) {
-		setTitle(
-			titles.editPaymentMethod
-		);
+export function editPaymentMethod( context ) {
+	setTitle(
+		titles.editPaymentMethod
+	);
 
-		recordPageView(
-			paths.editPaymentMethod(),
-			'Edit Payment Method'
-		);
+	recordPageView(
+		paths.editPaymentMethod(),
+		'Edit Payment Method'
+	);
 
-		sites.setSelectedSite( context.params.site );
+	sites.setSelectedSite( context.params.site );
 
-		renderPage(
-			context,
-			<ManagePurchaseData
-				component={ EditPaymentMethod }
-				purchaseId={ context.params.purchaseId }
-				sites={ sites } />
-		);
-	},
+	renderPage(
+		context,
+		<ManagePurchaseData
+			component={ EditPaymentMethod }
+			purchaseId={ context.params.purchaseId }
+			sites={ sites } />
+	);
+}
 
-	list( context ) {
-		setTitle();
+export function list( context ) {
+	setTitle();
 
-		recordPageView(
-			paths.list()
-		);
+	recordPageView(
+		paths.list()
+	);
 
-		renderPage(
-			context,
-			<PurchasesData
-				component={ PurchasesList }
-				noticeType={ context.params.noticeType }
-				sites={ sites } />
-		);
-	},
+	renderPage(
+		context,
+		<PurchasesData
+			component={ PurchasesList }
+			noticeType={ context.params.noticeType }
+			sites={ sites } />
+	);
+}
 
-	listNotice( context ) {
-		page.redirect( paths.list() );
+export function listNotice( context ) {
+	page.redirect( paths.list() );
 
-		const { noticeType } = context.params;
+	const { noticeType } = context.params;
 
-		if ( noticeType === 'cancel-success' ) {
-			notices.success( i18n.translate(
-				'Your purchase was canceled and refunded. The refund may take up to ' +
-				'7 days to appear in your PayPal/bank/credit card account.'
-			), { persistent: true } );
-		}
-
-		if ( noticeType === 'cancel-problem' ) {
-			notices.error( i18n.translate(
-				'There was a problem canceling your purchase. ' +
-				'Please {{a}}contact support{{/a}} for more information.',
-				{
-					components: {
-						a: <a href={ supportPaths.CALYPSO_CONTACT } />
-					}
-				}
-			), { persistent: true } );
-		}
-	},
-
-	managePurchase( context ) {
-		setTitle(
-			titles.managePurchase
-		);
-
-		analytics.pageView.record(
-			paths.managePurchase(),
-			'Manage Purchase'
-		);
-
-		sites.setSelectedSite( context.params.site );
-
-		renderPage(
-			context,
-			<ManagePurchaseData
-				component={ ManagePurchase }
-				purchaseId={ context.params.purchaseId }
-				destinationType={ context.params.destinationType }
-				sites={ sites } />
-		);
-	},
-
-	noSitesMessage( context, next ) {
-		if ( user.get().site_count > 0 ) {
-			return next();
-		}
-
-		setTitle();
-
-		recordPageView(
-			context.path,
-			'No Sites'
-		);
-
-		renderPage(
-			context,
-			<Main>
-				<PurchasesHeader section={ 'purchases' } />
-				<NoSitesMessage />
-			</Main>
-		);
+	if ( noticeType === 'cancel-success' ) {
+		notices.success( i18n.translate(
+			'Your purchase was canceled and refunded. The refund may take up to ' +
+			'7 days to appear in your PayPal/bank/credit card account.'
+		), { persistent: true } );
 	}
-};
+
+	if ( noticeType === 'cancel-problem' ) {
+		notices.error( i18n.translate(
+			'There was a problem canceling your purchase. ' +
+			'Please {{a}}contact support{{/a}} for more information.',
+			{
+				components: {
+					a: <a href={ supportPaths.CALYPSO_CONTACT } />
+				}
+			}
+		), { persistent: true } );
+	}
+}
+
+export function managePurchase( context ) {
+	setTitle(
+		titles.managePurchase
+	);
+
+	analytics.pageView.record(
+		paths.managePurchase(),
+		'Manage Purchase'
+	);
+
+	sites.setSelectedSite( context.params.site );
+
+	renderPage(
+		context,
+		<ManagePurchaseData
+			component={ ManagePurchase }
+			purchaseId={ context.params.purchaseId }
+			destinationType={ context.params.destinationType }
+			sites={ sites } />
+	);
+}
+
+export function noSitesMessage( context, next ) {
+	if ( user.get().site_count > 0 ) {
+		return next();
+	}
+
+	setTitle();
+
+	recordPageView(
+		context.path,
+		'No Sites'
+	);
+
+	renderPage(
+		context,
+		<Main>
+			<PurchasesHeader section={ 'purchases' } />
+			<NoSitesMessage />
+		</Main>
+	);
+}

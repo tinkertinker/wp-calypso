@@ -6,55 +6,64 @@ import page from 'page';
 /**
  * Internal Dependencies
  */
-import meController from 'me/controller';
-import controller from './controller';
+import { sidebar } from 'me/controller';
+import {
+	noSitesMessage,
+	cancelPurchase,
+	cancelPrivateRegistration,
+	confirmCancelDomain,
+	editCardDetails,
+	list,
+	listNotice,
+	managePurchase
+} from './controller';
 import paths from './paths';
 
 export default function() {
 	page(
 		paths.cancelPurchase(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.cancelPurchase
+		sidebar,
+		noSitesMessage,
+		cancelPurchase
 	);
 
 	page(
 		paths.cancelPrivateRegistration(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.cancelPrivateRegistration
+		sidebar,
+		noSitesMessage,
+		cancelPrivateRegistration
 	);
 
 	page(
 		paths.confirmCancelDomain(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.confirmCancelDomain
+		sidebar,
+		noSitesMessage,
+		confirmCancelDomain
 	);
 
 	page(
 		paths.editCardDetails(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.editCardDetails
+		sidebar,
+		noSitesMessage,
+		editCardDetails
 	);
 
 	page(
 		paths.list(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.list
+		sidebar,
+		noSitesMessage,
+		list
 	);
 
 	page(
 		paths.listNotice(),
-		controller.listNotice
+		listNotice
 	);
 
 	page(
 		paths.managePurchase(),
-		meController.sidebar,
-		controller.noSitesMessage,
-		controller.managePurchase
+		sidebar,
+		noSitesMessage,
+		managePurchase
 	);
-};
+}

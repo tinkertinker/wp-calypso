@@ -15,37 +15,35 @@ import { renderWithReduxStore } from 'lib/react-helpers';
 
 const ANALYTICS_PAGE_TITLE = 'Me';
 
-export default {
-	account( context ) {
-		const AccountComponent = require( 'me/account/main' );
-		const username = require( 'lib/username' );
-		const basePath = context.path;
-		let showNoticeInitially = false;
+export function account( context ) {
+	const AccountComponent = require( 'me/account/main' );
+	const username = require( 'lib/username' );
+	const basePath = context.path;
+	let showNoticeInitially = false;
 
-		titleActions.setTitle( i18n.translate( 'Account Settings', { textOnly: true } ) );
+	titleActions.setTitle( i18n.translate( 'Account Settings', { textOnly: true } ) );
 
-		// Update the url and show the notice after a redirect
-		if ( context.query && context.query.updated === 'success' ) {
-			showNoticeInitially = true;
-			page.replace( context.pathname );
-		}
-
-		// We don't want to record the event twice if we are replacing the url
-		if ( ! showNoticeInitially ) {
-			analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Settings' );
-		}
-
-		renderWithReduxStore(
-			React.createElement( AccountComponent,
-				{
-					userSettings: userSettings,
-					path: context.path,
-					username: username,
-					showNoticeInitially: showNoticeInitially
-				}
-			),
-			document.getElementById( 'primary' ),
-			context.store
-		);
+	// Update the url and show the notice after a redirect
+	if ( context.query && context.query.updated === 'success' ) {
+		showNoticeInitially = true;
+		page.replace( context.pathname );
 	}
-};
+
+	// We don't want to record the event twice if we are replacing the url
+	if ( ! showNoticeInitially ) {
+		analytics.pageView.record( basePath, ANALYTICS_PAGE_TITLE + ' > Account Settings' );
+	}
+
+	renderWithReduxStore(
+		React.createElement( AccountComponent,
+			{
+				userSettings: userSettings,
+				path: context.path,
+				username: username,
+				showNoticeInitially: showNoticeInitially
+			}
+		),
+		document.getElementById( 'primary' ),
+		context.store
+	);
+}

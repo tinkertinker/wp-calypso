@@ -59,7 +59,8 @@ module.exports = React.createClass( {
 				'/me/notifications/subscriptions': 'notifications',
 				'/help/contact': 'help',
 				'/purchases': 'billing',
-				'/me/billing': 'billing'
+				'/me/billing': 'billing',
+				'/me/chat': 'chat'
 			},
 			filteredPath = context.path.replace( /\/\d+$/, '' ), // Remove ID from end of path
 			selected;
