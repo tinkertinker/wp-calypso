@@ -3,9 +3,6 @@
  */
 
 
-.live-chat-container {
-}
-
 .live-chat__title {
 	cursor: pointer;
 	padding: 0 12px;
@@ -54,7 +51,7 @@
  */
 
 /* Floating blue button */
-.live-chat {
+.live-chat.floating {
 	overflow: hidden;
 	position: fixed;
 	bottom: 0;
