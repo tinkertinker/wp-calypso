@@ -34,8 +34,7 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	KeyboardShortcutsMenu,
 	Layout,
 	SupportUser,
-	LiveChat = require( 'components/live-chat' ),
-	SupportBrowser = require( 'components/live-chat/browser' );
+	LiveChat = require( 'components/live-chat' );
 
 import { isOffline } from 'state/application/selectors';
 import { getGuidedTourState } from 'state/ui/guided-tours/selectors';
@@ -214,8 +213,7 @@ Layout = React.createClass( {
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
 				{ this.renderPreview() }
-				{ config.isEnabled( 'live-chat' ) && <SupportBrowser /> }
-				{ config.isEnabled( 'live-chat' ) && <LiveChat floating={ true } /> }
+				{ config.isEnabled( 'live-chat' ) && this.props.chatIsOpen && <LiveChat floating={ true } /> }
 			</div>
 		);
 	}
@@ -232,7 +230,7 @@ export default connect(
 			isOffline: isOffline( state ),
 			tourState: getGuidedTourState( state ),
 			isShowingSupportURL: !!supportURL,
-			chatIsOpen
+			chatIsOpen: chatIsOpen && section.name !== 'chat'
 		};
 	}
 )( Layout );
