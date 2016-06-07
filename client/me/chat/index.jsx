@@ -9,7 +9,7 @@ import page from 'page';
 */
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { sidebar } from 'me/controller';
-import LiveChat from 'components/live-chat';
+import LiveChat from 'components/live-chat/page';
 
 const debug = require( 'debug' )( 'calypso:live-chat:section' );
 
