@@ -194,30 +194,28 @@ Layout = React.createClass( {
 			} );
 
 		return (
-			<div className="app-anchor">
-				<div className={ sectionClass }>
-					{ config.isEnabled( 'guided-tours' ) && this.props.tourState.shouldShow ? <GuidedTours /> : null }
-					{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
-					{ this.renderMasterbar() }
-					{ config.isEnabled( 'support-user' ) && <SupportUser /> }
-					<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
-					{ this.props.isOffline && <OfflineStatus /> }
-					<div id="content" className="wp-content">
-						{ this.renderWelcome() }
-						{ this.renderEmailVerificationNotice() }
-						{ this.renderPushNotificationPrompt() }
-						<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
-						<div id="primary" className="wp-primary wp-section" />
-						<div id="secondary" className="wp-secondary" />
-					</div>
-					<div id="tertiary" />
-					<TranslatorLauncher
-						isEnabled={ translator.isEnabled() }
-						isActive={ translator.isActivated() }/>
-					{ this.renderPreview() }
-					{ config.isEnabled( 'live-chat' ) && <SupportBrowser /> }
-					{ config.isEnabled( 'live-chat' ) && <LiveChat floating={true} /> }
+			<div className={ sectionClass }>
+				{ config.isEnabled( 'guided-tours' ) && this.props.tourState.shouldShow ? <GuidedTours /> : null }
+				{ config.isEnabled( 'keyboard-shortcuts' ) ? <KeyboardShortcutsMenu /> : null }
+				{ this.renderMasterbar() }
+				{ config.isEnabled( 'support-user' ) && <SupportUser /> }
+				<div className={ loadingClass } ><PulsingDot active={ this.props.isLoading } chunkName={ this.props.section.name } /></div>
+				{ this.props.isOffline && <OfflineStatus /> }
+				<div id="content" className="wp-content">
+					{ this.renderWelcome() }
+					{ this.renderEmailVerificationNotice() }
+					{ this.renderPushNotificationPrompt() }
+					<GlobalNotices id="notices" notices={ notices.list } forcePinned={ 'post' === this.props.section.name } />
+					<div id="primary" className="wp-primary wp-section" />
+					<div id="secondary" className="wp-secondary" />
 				</div>
+				<div id="tertiary" />
+				<TranslatorLauncher
+					isEnabled={ translator.isEnabled() }
+					isActive={ translator.isActivated() }/>
+				{ this.renderPreview() }
+				{ config.isEnabled( 'live-chat' ) && <SupportBrowser /> }
+				{ config.isEnabled( 'live-chat' ) && <LiveChat floating={ true } /> }
 			</div>
 		);
 	}
