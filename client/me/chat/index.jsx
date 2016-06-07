@@ -9,22 +9,19 @@ import page from 'page';
 */
 import { renderWithReduxStore } from 'lib/react-helpers';
 import { sidebar } from 'me/controller';
+import LiveChat from 'components/live-chat';
 
 const debug = require( 'debug' )( 'calypso:live-chat:section' );
 
-const Chat = React.createClass( {
-	render() {
-		return <div>Hi</div>;
-	}
-} );
+const renderChat = ( context, next ) => {
+	renderWithReduxStore(
+		<LiveChat />,
+		document.getElementById( 'primary' ),
+		context.store
+	);
+	next();
+};
 
 export default () => {
-	page( '/me/chat', sidebar, ( context, next ) => {
-		renderWithReduxStore(
-			<Chat context={ context } />,
-			document.getElementById( 'primary' ),
-			context.store
-		);
-		next();
-	} );
+	page( '/me/chat', sidebar, renderChat );
 };

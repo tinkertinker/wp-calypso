@@ -355,11 +355,15 @@ const LiveChat = React.createClass( {
 			onSendChatMessage,
 			onUpdateChatMessage,
 			onOpenChatUrl,
+			floating
 		} = this.props;
 
 		return (
 			<div className="live-chat-container">
-				<div onMouseEnter={ this.lockScroll } onMouseLeave={ this.unlockScroll } className={ classnames( 'live-chat', { open: isChatOpen( { connectionStatus, available } ) } ) }>
+				<div
+					className={ classnames( 'live-chat', { floating, open: isChatOpen( { connectionStatus, available } ) } ) }
+					onMouseEnter={ this.lockScroll }
+					onMouseLeave={ this.unlockScroll }>
 					<div className="live-chat__title">
 						{ liveChatTitle( {
 							available,
