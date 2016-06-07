@@ -313,9 +313,16 @@ const LiveChat = React.createClass( {
 		if ( e === 'DOMMouseScroll' ) { // old FF
 			delta = e.detail * -10;
 		} else if ( e.wheelDelta ) { // webkit
-			delta = e.wheelDelta / 4;
+			delta = e.wheelDelta / 8;
 		} else if ( e.deltaY ) { // new FF
-			delta = -1 * e.deltaY * 20;
+			if ( e.deltaMode && e.deltaMode === 0 )	{			// scrolling pixels
+				console.log( "scrolling pixels" );
+				delta = -1 * e.deltaY;
+			} else if ( e.deltaMode && e.deltaMode === 1 ) { 	// scrolling lines
+				delta = -1 * e.deltaY * 15;
+			} else { 											// fallback
+				delta = -1 * e.deltaY * 10;
+			}
 		}
 
 		this.scrollContainer.scrollTop -= delta;
