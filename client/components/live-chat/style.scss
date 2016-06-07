@@ -51,20 +51,22 @@
  */
 
 /* Floating blue button */
-.live-chat.floating {
-	overflow: hidden;
-	position: fixed;
-	bottom: 0;
-	right: 12px;
-	font-size: 14px;
-	display: none;		/* disabled */
+.floating {
+	.live-chat {
+		overflow: hidden;
+		position: fixed;
+		bottom: 0;
+		right: 12px;
+		font-size: 14px;
+		display: none;		/* disabled */
 
-	.live-chat__title {
-		height: auto;
-		line-height: 32px;
-		border-radius: 4px 4px 0 0;
-	}
+		.live-chat__title {
+			height: auto;
+			line-height: 32px;
+			border-radius: 4px 4px 0 0;
+		}
 
+	}	
 }
 
 /* Sidebar-footer button */
