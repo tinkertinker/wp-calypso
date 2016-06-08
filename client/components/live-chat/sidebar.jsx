@@ -1,7 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import classnames from 'classnames';
-import viewport from 'lib/viewport';
 
 import GridIcon from 'components/gridicon';
 import Spinner from 'components/spinner';
@@ -85,46 +84,9 @@ const liveChatComposer = when( isConnected, ( props ) => <Composer { ... props }
  */
 const LiveChat = React.createClass( {
 
-	componentDidMount() {
-		this.scrollToBottom();
-		window.addEventListener( 'resize', this.scrollToBottom );
-	},
-
-	componentWillUnmount() {
-		window.removeEventListener( 'resize', this.scrollToBottom );
-	},
-
-	componentDidUpdate() {
-		this.scrollToBottom();
-	},
-
 	onScrollContainer( scrollContainer ) {
 		this.scrollContainer = scrollContainer;
 		this.scrollToBottom();
-	},
-
-	scrollToBottom() {
-		const { isAutoscrollActive } = this.props;
-		if ( ! isAutoscrollActive ) {
-			return;
-		}
-
-		if ( ! this.scrollContainer ) {
-			return;
-		}
-
-		const { scrollHeight, offsetHeight } = this.scrollContainer;
-		this.scrollContainer.scrollTop = Math.max( 0, scrollHeight - offsetHeight );
-	},
-
-	detectAutoScroll() {
-		const { onSetAutoscroll, isAutoscrollActive } = this.props;
-		const { scrollTop, offsetHeight, scrollHeight } = this.scrollContainer;
-		const enableAutoScroll = scrollTop + offsetHeight >= scrollHeight;
-		if ( enableAutoScroll === isAutoscrollActive ) {
-			return;
-		}
-		onSetAutoscroll( enableAutoScroll );
 	},
 
 	handleScroll( e ) {
