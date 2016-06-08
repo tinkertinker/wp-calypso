@@ -163,7 +163,7 @@ module.exports = React.createClass( {
 							selected= { selected === 'chat' }
 							link="/me/chat"
 							icon="comment"
-							label= { this.translate( 'Chat' ) }
+							label= { this.translate( 'Support Chat' ) }
 							onNavigate={ this.onNavigate }
 						/>
 					</ul>
