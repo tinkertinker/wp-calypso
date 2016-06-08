@@ -6,8 +6,11 @@ import ReactDOM from 'react-dom';
 import { openChat } from 'state/live-chat/actions';
 import Timeline from './timeline';
 import Composer from './composer';
+import scrollbleed from './scrollbleed';
 
 export const LiveChatPage = React.createClass( {
+	mixins: [ scrollbleed ],
+
 	componentDidMount() {
 		this.props.openChat();
 	},
@@ -23,8 +26,10 @@ export const LiveChatPage = React.createClass( {
 
 	render() {
 		return (
-			<div className="live-chat-container">
-				<Timeline />
+			<div className="live-chat-container"
+				onMouseEnter={ this.scrollbleedLock }
+				onMouseLeave={ this.scrollbleedUnlock }>
+				<Timeline onScrollContainer={ this.setScrollbleedTarget } />
 				<Composer onFocus={ this.onFocus } ref="composer" />
 			</div>
 		);
