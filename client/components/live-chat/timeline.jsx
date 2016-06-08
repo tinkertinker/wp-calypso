@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import {
 	first,
 	when,
-	compose,
+	forEach,
 	propExists
 } from 'lib/functional';
 import autoscroll from './autoscroll';
@@ -36,7 +36,7 @@ const messageWithLinks = ( { message, key, links, onOpenChatUrl } ) => {
 		if ( last < startIndex ) {
 			parts = parts.concat( <span>{ message.slice( last, startIndex ) }</span> );
 		}
-		parts = parts.concat( <a href="#" onClick={ compose( e => e.preventDefault(), () => onOpenChatUrl( url ) ) }>{ url }</a> );
+		parts = parts.concat( <a href="#" onClick={ forEach( e => e.preventDefault(), () => onOpenChatUrl( url ) ) }>{ url }</a> );
 		return { parts, last: startIndex + length };
 	}, { parts: [], last: 0 } );
 
@@ -137,18 +137,16 @@ const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer } ) => (
 
 const liveChatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
 
-const Timeline = React.createClass( {
+export const Timeline = React.createClass( {
 	mixins: [ autoscroll ],
 	render() {
 		return liveChatTimeline( assign( { onScrollContainer: this.setupAutoscroll }, this.props ) );
 	}
 } );
 
-const mapProps = ( state ) => {
-	const {
-		liveChat: { timeline, available, status: connectionStatus },
-		currentUser: { id: current_user_id }
-	} = state;
+const mapProps = ( { liveChat, currentUser } ) => {
+	const { timeline, available, status: connectionStatus } = liveChat;
+	const { id: current_user_id } = currentUser;
 	return {
 		available,
 		connectionStatus,
@@ -157,6 +155,4 @@ const mapProps = ( state ) => {
 	};
 };
 
-const ConnectedTimeline = connect( mapProps )( Timeline );
-
-export { ConnectedTimeline as default };
+export default connect( mapProps )( Timeline );
