@@ -6,21 +6,6 @@ import ReactDOM from 'react-dom';
 import { openChat } from 'state/live-chat/actions';
 import Timeline from './timeline';
 import Composer from './composer';
-import {
-	first,
-	any,
-	all,
-	when
-} from 'lib/functional';
-import {
-	isConnected,
-	isConnecting,
-	isAvailable
-} from './helpers';
-
-const debug = require( 'debug' )( 'calypso:live-chat:page' );
-
-const liveChatComposer = ( props ) => <Composer { ... props } />;
 
 export const LiveChatPage = React.createClass( {
 	componentDidMount() {
@@ -28,18 +13,11 @@ export const LiveChatPage = React.createClass( {
 	},
 
 	onFocus() {
-
 		var composerNode = ReactDOM.findDOMNode( this.refs.composer );
 
 		if ( viewport.isMobile() ) {
-
 			/* User tapped textfield on a phone. This shows the keyboard. Unless we scroll to the bottom, the chatbox will be invisible */
-			setTimeout( function () {
-
-				composerNode.scrollIntoView();
-
-			}, 500 );	/* Wait for the keyboard to appear */
-
+			setTimeout( () => composerNode.scrollIntoView(), 500 );	/* Wait for the keyboard to appear */
 		}
 	},
 
@@ -47,10 +25,7 @@ export const LiveChatPage = React.createClass( {
 		return (
 			<div className="live-chat-container">
 				<Timeline />
-				{ liveChatComposer( {
-					onFocus: this.onFocus,
-					ref: "composer"
-				} ) }
+				<Composer onFocus={ this.onFocus } ref="composer" />
 			</div>
 		);
 	}
