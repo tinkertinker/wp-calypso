@@ -144,7 +144,6 @@ const Timeline = React.createClass( {
 	}
 } );
 
-const noop = () => {};
 const mapProps = ( state ) => {
 	const {
 		liveChat: { timeline, available, status: connectionStatus },
@@ -154,16 +153,10 @@ const mapProps = ( state ) => {
 		available,
 		connectionStatus,
 		timeline,
-		isCurrentUser: ( [ , { user_id } ] ) => user_id === current_user_id,
-		openChatUrl: noop,
-		onScrollContainer: noop,
-		onScroll: noop
+		isCurrentUser: ( [ , { user_id } ] ) => user_id === current_user_id
 	};
 };
-const mapDispatch = ( dispatch ) => {
-	return {};
-};
 
-const ConnectedTimeline = connect( mapProps, mapDispatch )( Timeline );
+const ConnectedTimeline = connect( mapProps )( Timeline );
 
 export { ConnectedTimeline as default };
