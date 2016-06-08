@@ -4,24 +4,29 @@ import isEmpty from 'lodash/isEmpty';
 
 import {
 	when,
-	compose
+	forEach,
+	compose,
+	propEquals,
+	call,
+	prop
 } from 'lib/functional';
 import {
 	updateChatMessage,
 	sendChatMessage
 } from 'state/live-chat/actions';
 
-const returnPressed = ( e ) => e.which === 13;
+const returnPressed = propEquals( 'which', 13 );
+const preventDefault = call( 'preventDefault' );
 
 /*
  * Renders a textarea to be used to comopose a message for the chat.
  */
-const Composer = React.createClass( {
+export const Composer = React.createClass( {
 	render() {
 		const { message, onUpdateChatMessage, onSendChatMessage, onFocus } = this.props;
 		const sendMessage = when( () => !isEmpty( message ), () => onSendChatMessage( message ) );
-		const onChange = ( { target: { value } } ) => onUpdateChatMessage( value );
-		const onKeyDown = when( returnPressed, compose( e => e.preventDefault(), sendMessage ) );
+		const onChange = compose( prop( 'target.value' ), onUpdateChatMessage );
+		const onKeyDown = when( returnPressed, forEach( preventDefault, sendMessage ) );
 		return (
 			<div className="live-chat-composer">
 				<div className="live-chat-message">
@@ -43,9 +48,8 @@ const Composer = React.createClass( {
 	}
 } );
 
-const mapState = ( { liveChat: { message } } ) => ( {
-	message
-} );
+const mapState = ( { liveChat: { message } } ) => ( { message } );
+
 const mapDispatch = ( dispatch ) => ( {
 	onUpdateChatMessage( message ) {
 		dispatch( updateChatMessage( message ) );
