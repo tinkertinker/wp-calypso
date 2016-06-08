@@ -465,17 +465,25 @@
 		padding: 0;
 	}
 
+	.is-section-chat .live-chat-container {
+		position: fixed;
+		top: 0;
+		margin-top: 47px;
+		left: 0;
+		right: 0;
+		bottom: 0;
+		width: auto;
+		display: flex;
+		flex-direction: column;
+		box-sizing: border-box;
+	}
+
 }
 
 @include breakpoint( "<480px" ) {
 
 
 }
-
-
-
-
-
 
 
 
