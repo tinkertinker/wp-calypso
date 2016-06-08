@@ -108,7 +108,6 @@ const LiveChat = React.createClass( {
 			delta = e.wheelDelta / 8;
 		} else if ( e.deltaY ) { // new FF
 			if ( e.deltaMode && e.deltaMode === 0 )	{			// scrolling pixels
-				console.log( "scrolling pixels" );
 				delta = -1 * e.deltaY;
 			} else if ( e.deltaMode && e.deltaMode === 1 ) { 	// scrolling lines
 				delta = -1 * e.deltaY * 15;
