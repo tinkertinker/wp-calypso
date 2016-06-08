@@ -442,6 +442,7 @@
 .is-section-chat .live-chat-container {
 	position: fixed;
 	overflow: auto;
+	-webkit-overflow-scrolling: touch;
 	display: flex;
 	flex-direction: column;
 	box-sizing: border-box;

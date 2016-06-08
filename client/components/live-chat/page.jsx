@@ -32,11 +32,14 @@ export const LiveChatPage = React.createClass( {
 		var composerNode = ReactDOM.findDOMNode( this.refs.composer );
 
 		if ( viewport.isMobile() ) {
+
 			/* User tapped textfield on a phone. This shows the keyboard. Unless we scroll to the bottom, the chatbox will be invisible */
 			setTimeout( function () {
-				/* On iOS we need to move the  keyboard up, this is a hack to do so */
+
 				composerNode.scrollIntoView();
-			}, 600 );	/* Wait for the keyboard to appear */
+
+			}, 500 );	/* Wait for the keyboard to appear */
+
 		}
 	},
 
