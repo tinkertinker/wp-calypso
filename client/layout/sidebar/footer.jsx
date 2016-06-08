@@ -11,6 +11,7 @@ import Gridicon from 'components/gridicon';
 import Button from 'components/button';
 import localize from 'lib/mixins/i18n/localize';
 import { openChat } from 'state/live-chat/actions';
+import viewport from 'lib/viewport';
 
 const SidebarFooter = ( { translate, children, onOpenChat } ) => (
 	<div className="sidebar__footer">
@@ -26,14 +27,18 @@ const SidebarFooter = ( { translate, children, onOpenChat } ) => (
 
 const mapStateToProps = () => {
 	return {};
-}
+};
 
 const mapDispatchToProps = ( dispatch ) => {
 	return {
 		onOpenChat() {
+			if ( viewport.isMobile() ) {
+				window.location = '/me/chat';
+				return;
+			}
 			dispatch( openChat() );
 		}
-	}
-}
+	};
+};
 
 export default connect( mapStateToProps, mapDispatchToProps )( localize( SidebarFooter ) );
