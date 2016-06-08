@@ -88,7 +88,7 @@ const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) 
 	);
 };
 
-const itemTypeIs = ( type ) => ( { item } ) => item[0][1].type === type;
+const itemTypeIs = ( type ) => ( { item } ) => item[ 0 ][ 1 ].type === type;
 
 /*
  * Renders a chat bubble with multiple messages grouped by user.
@@ -96,7 +96,7 @@ const itemTypeIs = ( type ) => ( { item } ) => item[0][1].type === type;
 const renderGroupedTimelineItem = first(
 	when( itemTypeIs( 'message' ), renderGroupedMessages ),
 	when( itemTypeIs( 'join' ), renderJoinMessage ),
-	( { item } ) => debug( 'no handler for message type', item[0][1].type, item )
+	( { item } ) => debug( 'no handler for message type', item[ 0 ][ 1 ].type, item )
 );
 
 const groupMessages = ( messages ) => {
@@ -130,7 +130,7 @@ const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer } ) => (
 	<div className="live-chat-conversation" ref={ onScrollContainer }>
 		{ groupMessages( timeline ).map( ( item ) => renderGroupedTimelineItem( {
 			item,
-			isCurrentUser: isCurrentUser( item[0] )
+			isCurrentUser: isCurrentUser( item[ 0 ] )
 		} ) ) }
 	</div>
 );
