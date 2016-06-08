@@ -284,6 +284,7 @@
 
 	&.userMessage {
 		flex-direction: row;
+		margin-left: auto;
 
 		.message-text {
 			background: $white;
@@ -389,41 +390,44 @@
 
 @include breakpoint( "480px-1040px" ) {
 
-	.live-chat.open {
-		box-shadow: 0 1px 2px rgba( 0,0,0,.2 ), 0 1px 10px rgba( 0,0,0, .1 );
-		width: 280px;
-	}
-
-	.live-chat.open .live-chat__title {
-		height: 32px;
-		line-height: 32px;
-		border-radius: 0;
-
-		.live-chat__active-toolbar {
+	.wp:not( .is-section-chat ) {
+		.live-chat.open {
+			box-shadow: 0 1px 2px rgba( 0,0,0,.2 ), 0 1px 10px rgba( 0,0,0, .1 );
+			width: 280px;
+		}
 	
-			> div {
-				padding: 4px 11px;
+		.live-chat.open .live-chat__title {
+			height: 32px;
+			line-height: 32px;
+			border-radius: 0;
+	
+			.live-chat__active-toolbar {
+		
+				> div {
+					padding: 4px 11px;
+				}
+		
 			}
 	
 		}
-
-	}
-
-	.live-chat-composer {
-
-		.live-chat-message {
-			height: 48px;
+	
+		.live-chat-composer {
+	
+			.live-chat-message {
+				height: 48px;
+			}
+	
+			.live-chat-message > textarea {
+				padding: 12px;
+			}
+	
+		}
+	
+		.live-chat-conversation {
+			min-height: 160px;
+			max-height: 220px;
 		}
 
-		.live-chat-message > textarea {
-			padding: 12px;
-		}
-
-	}
-
-	.live-chat-conversation {
-		min-height: 160px;
-		max-height: 220px;
 	}
 
 }
@@ -431,26 +435,40 @@
 
 /**
  * Mobile fullscreen mode
+ * Includes code to make the Me > Chat section nice on larger breakoints as well,
+ * even though we'll be hiding that for the time being.
  */
+
+.is-section-chat .wp-content {
+	padding: 0 0 0 272px;
+}
+
+@include breakpoint( ">1040px" ) {
+
+	.is-section-chat .live-chat-timeline-message {
+		max-width: 80%;
+	}
+
+}
+
+@include breakpoint( "<960px" ) {
+
+	.is-section-chat .wp-content {
+		padding: 0 0 0 229px;
+	}
+
+}
+
+@include breakpoint( "<660px" ) {
+
+	.is-section-chat .wp-content {
+		padding: 0;
+	}
+
+}
 
 @include breakpoint( "<480px" ) {
 
-	.has-chat .wp-content {
-		/*display: none; disabled for now, def. seems to cause memory leaks */	/* this prevents scroll bleed, but does it invoke infinite scroll endlessly? */
-	}
-
-	.live-chat.open {
-		position: fixed;
-		top: 0;
-		margin-top: 47px;
-		left: 0;
-		right: 0;
-		bottom: 0;
-		width: auto;
-		display: flex;
-		flex-direction: column;
-		box-sizing: border-box;
-	}
 
 }
 
