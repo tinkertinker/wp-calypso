@@ -103,16 +103,6 @@ const LiveChat = React.createClass( {
 		this.scrollToBottom();
 	},
 
-	onFocus() {
-		if ( viewport.isMobile() ) {
-			/* User tapped textfield on a phone. This shows the keyboard. Unless we scroll to the bottom, the chatbox will be invisible */
-			/*console.log( "Scroll to the bottom" );
-			setTimeout( function () {
-				window.scrollTo( 0, document.body.scrollHeight );
-			}, 1000 );	/* Wait for the keyboard to appear */
-		}
-	},
-
 	scrollToBottom() {
 		const { isAutoscrollActive } = this.props;
 		if ( ! isAutoscrollActive ) {
@@ -209,8 +199,7 @@ const LiveChat = React.createClass( {
 					</div>
 					{ liveChatTimeline( { connectionStatus } ) }
 					{ liveChatComposer( {
-						connectionStatus,
-						onFocus: this.onFocus
+						connectionStatus
 					} ) }
 				</div>
 			</div>
