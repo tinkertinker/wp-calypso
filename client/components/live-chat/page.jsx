@@ -14,7 +14,7 @@ export const LiveChatPage = React.createClass( {
 
 	render() {
 		return (
-			<div>
+			<div className="live-chat-container">
 				<Timeline />
 				<Composer />
 			</div>
