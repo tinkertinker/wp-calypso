@@ -1,5 +1,7 @@
-import { get } from 'lodash/object';
-import { map, find } from 'lodash/collection';
+import get from 'lodash/get';
+import { default as collect } from 'lodash/map';
+import find from 'lodash/find';
+import { default as iterate } from 'lodash/forEach';
 
 /*
  * Returns a function that checks for props that have a truthy `propkey` (uses lodash/object/get
@@ -48,7 +50,7 @@ export const when = ( condition, ifTrue, ifFalse = () => null ) => ( ... args ) 
 export const first = ( ... fns ) => ( ... args ) => {
 	var i, result;
 	for ( i = 0; i < fns.length; i++ ) {
-		result = fns[i]( ... args );
+		result = fns[ i ]( ... args );
 		if ( result ) return result;
 	}
 };
@@ -81,6 +83,9 @@ export const any = ( ... fns ) => ( ... args ) => find( fns, ( fn ) => fn( ... a
  */
 export const all = ( ... fns ) => ( ... args ) => !find( fns, ( fn ) => !fn( ... args ) );
 
+// Returns a function that calls each of fns
+export const forEach = ( ... fns ) => ( ... args ) => iterate( fns, ( fn ) => fn( ... args ) );
+
 /*
  * Returns a function that iterates through each function and calls it and returns each value. Example:
  *
@@ -93,4 +98,23 @@ export const all = ( ... fns ) => ( ... args ) => !find( fns, ( fn ) => !fn( ...
  *  maths( 3 )
  *  // => [ 6, 5 ]
  */
-export const compose = ( ... fns ) => ( ... args ) => map( fns, ( fn ) => fn( ... args ) );
+export const map = ( ... fns ) => ( ... args ) => collect( fns, ( fn ) => fn( ... args ) );
+
+export const compose = ( ... fns ) => ( ... args ) => {
+	const [ head, ... rest ] = fns;
+	return rest.reduce( ( result, fn ) => fn( result ), head( ... args ) );
+};
+
+/*
+ * Returns a function that calls the provided method with the given args as arguments on
+ * the first argument given to the returned function.
+ *
+ * Example:
+ *
+ *	document.querySelector( 'a' ).addEventListener( 'click', call( 'preventDefault', true ) );
+ *
+ * Is functionaly equivalent to:
+ *
+ *	document.querySelector( 'a' ).addEventListener( 'click', ( e ) => e.preventDefault( true ) );
+ */
+export const call = ( method, ... args ) => ( obj ) => obj[ method ].apply( obj, args );
