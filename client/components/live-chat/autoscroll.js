@@ -1,5 +1,3 @@
-const debug = require( 'debug' )( 'calypso:live-chat:autoscroll' );
-
 export default {
 	componentWillMount() {
 		this._autoscroll_enabled = true;
@@ -24,7 +22,6 @@ export default {
 			return;
 		}
 
-		debug( 'start listening', this._autoscroll_node );
 		this._autoscroll_node.addEventListener( 'scroll', this._autoscroll_detectScroll );
 	},
 
@@ -32,12 +29,10 @@ export default {
 		if ( ! this._autoscroll_node ) {
 			return;
 		}
-		debug( 'stop listening', this._autoscroll_node );
 		this._autoscroll_node.removeEventListener( 'scroll', this._autoscroll_detectScroll );
 	},
 
 	scrollToBottom() {
-		debug( 'scroll it' );
 		if ( ! this._autoscroll_enabled ) {
 			return;
 		}
@@ -57,7 +52,6 @@ export default {
 		const enable = scrollTop + offsetHeight >= scrollHeight;
 		if ( this._autoscroll_enabled !== enable ) {
 			this._autoscroll_enabled = enable;
-			debug( 'flip autoscroll', enable );
 		}
 	}
 };
