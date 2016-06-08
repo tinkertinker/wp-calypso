@@ -59,6 +59,4 @@ const mapDispatch = ( dispatch ) => ( {
 	}
 } );
 
-const Connected = connect( mapState, mapDispatch )( Composer );
-
-export { Connected as default };
+export default connect( mapState, mapDispatch )( Composer );
