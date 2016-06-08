@@ -439,8 +439,17 @@
  * even though we'll be hiding that for the time being.
  */
 
-.is-section-chat .wp-content {
-	padding: 0 0 0 272px;
+.is-section-chat .live-chat-container {
+	position: fixed;
+	overflow: auto;
+	display: flex;
+	flex-direction: column;
+	box-sizing: border-box;
+	top: 0;
+	margin-top: 47px;
+	left: 272px;
+	right: 0;
+	bottom: 0;
 }
 
 @include breakpoint( ">1040px" ) {
@@ -453,37 +462,18 @@
 
 @include breakpoint( "<960px" ) {
 
-	.is-section-chat .wp-content {
-		padding: 0 0 0 229px;
+	.is-section-chat .live-chat-container {
+		left: 229px;
 	}
 
 }
 
 @include breakpoint( "<660px" ) {
 
-	.is-section-chat .wp-content {
-		padding: 0;
-	}
-
 	.is-section-chat .live-chat-container {
-		position: fixed;
-		top: 0;
-		margin-top: 47px;
 		left: 0;
-		right: 0;
-		bottom: 0;
-		width: auto;
-		display: flex;
-		flex-direction: column;
-		box-sizing: border-box;
 	}
 
 }
-
-@include breakpoint( "<480px" ) {
-
-
-}
-
 
 
