@@ -139,8 +139,18 @@ const liveChatTimeline = when( timelineHasContent, renderTimeline, welcomeMessag
 
 export const Timeline = React.createClass( {
 	mixins: [ autoscroll ],
+
+	getDefaultProps() {
+		return {
+			onScrollContainer: () => {}
+		};
+	},
+
 	render() {
-		return liveChatTimeline( assign( { onScrollContainer: this.setupAutoscroll }, this.props ) );
+		const { onScrollContainer } = this.props;
+		return liveChatTimeline( assign( {}, this.props, {
+			onScrollContainer: forEach( this.setupAutoscroll, onScrollContainer )
+		} ) );
 	}
 } );
 

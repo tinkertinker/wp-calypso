@@ -21,6 +21,7 @@ import {
 } from './helpers';
 import Timeline from './timeline';
 import Composer from './composer';
+import scrollbleed from './scrollbleed';
 
 const isChatOpen = all(
 	isAvailable,
@@ -36,7 +37,11 @@ const renderLoading = () => (
 	</div>
 );
 
-const liveChatTimeline = when( isConnecting, renderLoading, () => <Timeline /> );
+const liveChatTimeline = when(
+	isConnecting,
+	renderLoading,
+	( { onScrollContainer } ) => <Timeline onScrollContainer={ onScrollContainer } />
+);
 
 /*
  * Renders chat title message to display when chat is not active.
@@ -77,56 +82,13 @@ const liveChatTitle = first(
 	availabilityTitle
 );
 
-const liveChatComposer = when( isConnected, ( props ) => <Composer { ... props } /> );
+const liveChatComposer = when( isConnected, () => <Composer /> );
 
 /*
  * Main chat UI component
  */
 const LiveChat = React.createClass( {
-
-	handleScroll( e ) {
-		var delta = null;
-		if ( ! this.scrollContainer ) {
-			return;
-		}
-
-		e = e || window.event;
-		if ( e.preventDefault )
-			e.preventDefault();
-		e.returnValue = false;
-
-		// scroll the window itself using JS
-		// this is not perfect, we're basically guessing at how much your wheel usually scrolls
-		if ( e === 'DOMMouseScroll' ) { // old FF
-			delta = e.detail * -10;
-		} else if ( e.wheelDelta ) { // webkit
-			delta = e.wheelDelta / 8;
-		} else if ( e.deltaY ) { // new FF
-			if ( e.deltaMode && e.deltaMode === 0 )	{			// scrolling pixels
-				delta = -1 * e.deltaY;
-			} else if ( e.deltaMode && e.deltaMode === 1 ) { 	// scrolling lines
-				delta = -1 * e.deltaY * 15;
-			} else { 											// fallback
-				delta = -1 * e.deltaY * 10;
-			}
-		}
-
-		this.scrollContainer.scrollTop -= delta;
-	},
-
-	lockScroll() {
-		if ( window.addEventListener ) // older FF
-			window.addEventListener( 'DOMMouseScroll', this.handleScroll, false );
-		window.onwheel = this.handleScroll;
-		window.onmousewheel = document.onmousewheel = this.handleScroll;
-	},
-
-	unlockScroll() {
-		if ( window.removeEventListener )	// older FF
-			window.removeEventListener( 'DOMMouseScroll', this.handleScroll, false );
-		window.onwheel = null;
-		window.onmousewheel = document.onmousewheel = null;
-	},
+	mixins: [ scrollbleed ],
 
 	render() {
 		const {
@@ -142,8 +104,8 @@ const LiveChat = React.createClass( {
 			<div className={ classnames( 'live-chat-container', { floating } ) }>
 				<div
 					className={ classnames( 'live-chat', { open: floating && isChatOpen( { connectionStatus, available } ) } ) }
-					onMouseEnter={ this.lockScroll }
-					onMouseLeave={ this.unlockScroll }>
+					onMouseEnter={ this.scrollbleedLock }
+					onMouseLeave={ this.scrollbleedUnlock }>
 					<div className="live-chat__title">
 						{ liveChatTitle( {
 							available,
@@ -153,10 +115,8 @@ const LiveChat = React.createClass( {
 							onOpenChat
 						} ) }
 					</div>
-					{ liveChatTimeline( { connectionStatus } ) }
-					{ liveChatComposer( {
-						connectionStatus
-					} ) }
+					{ liveChatTimeline( { connectionStatus, onScrollContainer: this.setScrollbleedTarget } ) }
+					{ liveChatComposer( { connectionStatus } ) }
 				</div>
 			</div>
 		);
