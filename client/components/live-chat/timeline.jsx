@@ -2,6 +2,7 @@ import React from 'react';
 import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
 import isArray from 'lodash/isArray';
+import assign from 'lodash/assign';
 import { connect } from 'react-redux';
 
 import {
@@ -10,6 +11,7 @@ import {
 	compose,
 	propExists
 } from 'lib/functional';
+import autoscroll from './autoscroll';
 import AgentW from 'components/live-chat/agent-w';
 
 const debug = require( 'debug' )( 'calypso:live-chat:timeline' );
@@ -124,10 +126,9 @@ const welcomeMessage = () => (
 
 const timelineHasContent = ( { timeline } ) => isArray( timeline ) && !isEmpty( timeline );
 
-const renderTimeline = ( { timeline, isCurrentUser, onOpenChatUrl, onScrollContainer, onScroll } ) => (
-	<div ref={ onScrollContainer } onScroll={ onScroll } className="live-chat-conversation">
+const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer } ) => (
+	<div className="live-chat-conversation" ref={ onScrollContainer }>
 		{ groupMessages( timeline ).map( ( item ) => renderGroupedTimelineItem( {
-			onOpenChatUrl,
 			item,
 			isCurrentUser: isCurrentUser( item[0] )
 		} ) ) }
@@ -136,10 +137,10 @@ const renderTimeline = ( { timeline, isCurrentUser, onOpenChatUrl, onScrollConta
 
 const liveChatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
 
-// TODO: autoscrolling
 const Timeline = React.createClass( {
+	mixins: [ autoscroll ],
 	render() {
-		return liveChatTimeline( this.props );
+		return liveChatTimeline( assign( { onScrollContainer: this.setupAutoscroll }, this.props ) );
 	}
 } );
 
