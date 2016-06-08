@@ -84,11 +84,6 @@ const liveChatComposer = when( isConnected, ( props ) => <Composer { ... props }
  */
 const LiveChat = React.createClass( {
 
-	onScrollContainer( scrollContainer ) {
-		this.scrollContainer = scrollContainer;
-		this.scrollToBottom();
-	},
-
 	handleScroll( e ) {
 		var delta = null;
 		if ( ! this.scrollContainer ) {
