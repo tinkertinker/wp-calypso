@@ -2,6 +2,10 @@
  * Agent W.
  */
 
+.chat__agent-w {
+	display: inline-block;
+}
+
 .chat__agent-w:hover {
 	animation: jiggle .5s linear;
 }
