@@ -5,6 +5,10 @@ export default {
 		this.scrollToBottom();
 	},
 
+	componentDidMount() {
+		this.scrollToBottom();
+	},
+
 	componentWillUnmount() {
 		window.removeEventListener( 'resize', this.scrollToBottom );
 		this._autoscroll_stop_listening();
