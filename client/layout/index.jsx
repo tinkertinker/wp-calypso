@@ -213,7 +213,7 @@ Layout = React.createClass( {
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
 				{ this.renderPreview() }
-				{ config.isEnabled( 'live-chat' ) && this.props.chatIsOpen && <LiveChat floating={ true } /> }
+				{ config.isEnabled( 'live-chat' ) && this.props.chatIsOpen && <LiveChat /> }
 			</div>
 		);
 	}

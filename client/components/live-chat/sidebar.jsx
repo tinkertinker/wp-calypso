@@ -12,7 +12,8 @@ import {
 } from 'lib/functional';
 import {
 	openChat,
-	closeChat
+	closeChat,
+	connectChat
 } from 'state/live-chat/actions';
 import {
 	isConnected,
@@ -90,20 +91,23 @@ const liveChatComposer = when( isConnected, () => <Composer /> );
 const LiveChat = React.createClass( {
 	mixins: [ scrollbleed ],
 
+	componentDidMount() {
+		this.props.connectChat();
+	},
+
 	render() {
 		const {
 			available,
 			connectionStatus,
 			user,
 			onCloseChat,
-			onOpenChat,
-			floating
+			onOpenChat
 		} = this.props;
 
 		return (
-			<div className={ classnames( 'live-chat-container', { floating } ) }>
+			<div className="live-chat-container">
 				<div
-					className={ classnames( 'live-chat', { open: floating && isChatOpen( { connectionStatus, available } ) } ) }
+					className={ classnames( 'live-chat', { open: isChatOpen( { connectionStatus, available } ) } ) }
 					onMouseEnter={ this.scrollbleedLock }
 					onMouseLeave={ this.scrollbleedUnlock }>
 					<div className="live-chat__title">
@@ -137,6 +141,9 @@ const mapDispatch = ( dispatch ) => {
 		},
 		onCloseChat() {
 			dispatch( closeChat() );
+		},
+		connectChat() {
+			dispatch( connectChat() );
 		}
 	};
 };

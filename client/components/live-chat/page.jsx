@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import viewport from 'lib/viewport';
 import ReactDOM from 'react-dom';
 
-import { openChat } from 'state/live-chat/actions';
+import { connectChat } from 'state/live-chat/actions';
 import Timeline from './timeline';
 import Composer from './composer';
 import scrollbleed from './scrollbleed';
@@ -38,6 +38,6 @@ export const LiveChatPage = React.createClass( {
 
 const mapState = () => ( {} );
 const mapDispatch = dispatch => ( {
-	openChat: () => dispatch( openChat() )
+	openChat: () => dispatch( connectChat() )
 } );
 export default connect( mapState, mapDispatch )( LiveChatPage );

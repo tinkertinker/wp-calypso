@@ -1,8 +1,8 @@
-const debug = require( 'debug' )( 'calypso:live-chat:actions' )
+const debug = require( 'debug' )( 'calypso:live-chat:actions' );
 
-import buildConnection from 'lib/live-chat/connection'
-import { throttle } from 'lodash/function'
-import { propExists, when } from 'lib/functional'
+import buildConnection from 'lib/live-chat/connection';
+import { throttle } from 'lodash/function';
+import { propExists, when } from 'lib/functional';
 import {
 	LIVE_CHAT_CONNECTING,
 	LIVE_CHAT_CONNECTED,
@@ -12,69 +12,61 @@ import {
 	LIVE_CHAT_SET_AUTOSCROLL,
 	LIVE_CHAT_OPEN_URL,
 	LIVE_CHAT_OPEN
-} from 'state/action-types'
+} from 'state/action-types';
 
-export const checkAvailability = () => () => {
-	debug( 'check for availability' )
-}
+const connection = buildConnection();
 
-const connection = buildConnection()
+const setChatConnecting = () => ( { type: LIVE_CHAT_CONNECTING } );
+const setChatConnected = () => ( { type: LIVE_CHAT_CONNECTED } );
+const setChatClosing = () => ( { type: LIVE_CHAT_CLOSING } );
+const setChatMessage = message => ( { type: LIVE_CHAT_SET_MESSAGE, message } );
 
-const setChatConnecting = () => {
-	const action = { type: LIVE_CHAT_CONNECTING }
-	debug( 'setChatConnecting', action )
-	return action
-}
+const clearChatMessage = () => setChatMessage( '' );
 
-const setChatConnected = () => ( { type: LIVE_CHAT_CONNECTED } )
-const setChatClosing = () => ( { type: LIVE_CHAT_CLOSING } )
-const setChatMessage = ( message ) => ( { type: LIVE_CHAT_SET_MESSAGE, message } )
+const receiveChatEvent = event => ( { type: LIVE_CHAT_RECEIVE_EVENT, event } );
 
-const clearChatMessage = () => setChatMessage( '' )
+const setChatOpen = isOpen => ( { type: LIVE_CHAT_OPEN, isOpen } );
 
-const receiveChatEvent = ( event ) => ( { type: LIVE_CHAT_RECEIVE_EVENT, event } )
-
-const setChatOpen = ( isOpen ) => {
-	return { type: LIVE_CHAT_OPEN, isOpen }
-}
-
-export const openChat = () => ( dispatch, getState ) => {
+export const connectChat = () => ( dispatch, getState ) => {
 	const { users, currentUser } = getState();
-	const user = users.items[currentUser.id];
+	const user = users.items[ currentUser.id ];
 
-	dispatch( setChatConnecting() )
-	dispatch( setChatOpen( true ) )
-	debug( 'connecting, now attempt to connect' )
+	dispatch( setChatConnecting() );
+	debug( 'connecting, now attempt to connect' );
 	connection.open( user ).then( () => {
-		debug( 'connected' )
-		dispatch( setChatConnected() )
-		connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) )
-	} )
-}
+		debug( 'connected' );
+		dispatch( setChatConnected() );
+		connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) );
+	} );
+};
+
+export const openChat = () => dispatch => {
+	dispatch( setChatOpen( true ) );
+};
 
 const throttleTyping = when( propExists( 'message' ), throttle( ( { message } ) => {
-	debug( 'send typing indicator' )
-	connection.typing( message )
-}, 1000, { leading: true, trailing: false } ) )
+	debug( 'send typing indicator' );
+	connection.typing( message );
+}, 1000, { leading: true, trailing: false } ) );
 
-export const updateChatMessage = ( message ) => ( dispatch ) => {
-	dispatch( setChatMessage( message ) )
+export const updateChatMessage = message => dispatch => {
+	dispatch( setChatMessage( message ) );
 	// TODO: send a typing indicator?
-	throttleTyping( { message } )
-}
+	throttleTyping( { message } );
+};
 
-export const sendChatMessage = ( message ) => ( dispatch ) => {
-	debug( 'sending message', message )
-	dispatch( clearChatMessage() )
-	connection.send( message )
-}
+export const sendChatMessage = message => dispatch => {
+	debug( 'sending message', message );
+	dispatch( clearChatMessage() );
+	connection.send( message );
+};
 
 export const closeChat = () => ( dispatch ) => {
-	debug( 'time to close the current chat session' )
-	dispatch( setChatOpen( false ) )
-	dispatch( setChatClosing() )
-}
+	debug( 'time to close the current chat session' );
+	dispatch( setChatOpen( false ) );
+	dispatch( setChatClosing() );
+};
 
-export const setLiveChatAutoScroll = ( auto ) => ( { type: LIVE_CHAT_SET_AUTOSCROLL, auto } )
+export const setLiveChatAutoScroll = auto => ( { type: LIVE_CHAT_SET_AUTOSCROLL, auto } );
 
-export const openChatURL = ( url ) => ( { type: LIVE_CHAT_OPEN_URL, url } )
+export const openChatURL = url => ( { type: LIVE_CHAT_OPEN_URL, url } );
