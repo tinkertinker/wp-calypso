@@ -1,5 +1,6 @@
 const debug = require( 'debug' )( 'calypso:live-chat:actions' );
 
+import wpcom from 'lib/wp';
 import buildConnection from 'lib/live-chat/connection';
 import { throttle } from 'lodash/function';
 import { propExists, when } from 'lib/functional';
@@ -13,6 +14,15 @@ import {
 	LIVE_CHAT_OPEN_URL,
 	LIVE_CHAT_OPEN
 } from 'state/action-types';
+
+const request = ( ... args ) => new Promise( ( resolve, reject ) => {
+	wpcom.request( ... args, ( error, response ) => {
+		if ( error ) return reject( error );
+		resolve( response );
+	} );
+} );
+
+const sign = ( payload ) => request( { method: 'POST', path: '/jwt/sign', body: { payload: JSON.stringify( payload ) } } );
 
 const connection = buildConnection();
 
@@ -29,14 +39,20 @@ const setChatOpen = isOpen => ( { type: LIVE_CHAT_OPEN, isOpen } );
 
 export const connectChat = () => ( dispatch, getState ) => {
 	const { users, currentUser } = getState();
-	const user = users.items[ currentUser.id ];
-
+	const { id: user_id } = currentUser;
+	const user = users.items[ user_id ];
 	dispatch( setChatConnecting() );
-	debug( 'connecting, now attempt to connect' );
-	connection.open( user ).then( () => {
-		debug( 'connected' );
-		dispatch( setChatConnected() );
-		connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) );
+	// get signed identity data for authenticating
+	debug( 'requesting' );
+	sign( { user } ).then( ( { jwt } ) => {
+		connection.open( user_id, jwt ).then( () => {
+			dispatch( setChatConnected() );
+			connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) );
+		} );
+	} )
+	.catch( ( e ) => {
+		// TODO: notify of failure in UI?
+		debug( 'failed', e );
 	} );
 };
 

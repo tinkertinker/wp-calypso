@@ -1,18 +1,9 @@
 import IO from 'socket.io-client';
 import { EventEmitter } from 'events';
-import { pick, mapKeys, get, assign } from 'lodash/object';
 import config from 'config';
 import { v4 as uuid } from 'uuid';
 
 const debug = require( 'debug' )( 'calypso:live-chat:connection' );
-
-const USER_KEY_MAP = {
-	avatar_URL: 'picture',
-	ID: 'id',
-	display_name: 'name'
-};
-
-const mapWPComUserKeys = ( value, key ) => get( USER_KEY_MAP, key, key );
 
 const emitMessage = ( connection ) => ( { id, text, timestamp, user } ) => {
 	debug( 'received message', text );
@@ -23,19 +14,11 @@ const emitMessage = ( connection ) => ( { id, text, timestamp, user } ) => {
 	} } );
 };
 
-const customerIdentity = user => assign(
-	mapKeys(
-		pick( user, [ 'ID', 'avatar_URL', 'display_name', 'username' ] ),
-		mapWPComUserKeys
-	),
-	{ userId: user.ID }
-);
-
 const p = ( ... args ) => new Promise( ... args );
 
 class Connection extends EventEmitter {
 
-	connect( user ) {
+	connect( user_id, token ) {
 		if ( this.socket ) {
 			return p( ( resolve ) => resolve() );
 		}
@@ -44,8 +27,8 @@ class Connection extends EventEmitter {
 			socket
 				.once( 'connect', () => resolve( socket ) )
 				.on( 'init', ( ... args ) => debug( 'initialized', ... args ) )
-				.on( 'identify', () => socket.emit( 'user', customerIdentity( user ) ) )
-				.on( 'token', ( handler ) => handler( user ) )
+				.on( 'identify', () => socket.emit( 'token', token ) )
+				.on( 'token', ( handler ) => handler( { signer_user_id: user_id, jwt: token } ) )
 				.on( 'message', emitMessage( this ) );
 		} );
 	}
@@ -57,10 +40,10 @@ class Connection extends EventEmitter {
 		} );
 	}
 
-	open( user ) {
-		debug( 'open connection for user', user, config( 'live_chat_server_url' ) );
+	open( user_id, token ) {
+		debug( 'open connection for user', config( 'live_chat_server_url' ) );
 
-		return this.connect( user ).then( ( socket ) => p( ( resolve ) => {
+		return this.connect( user_id, token ).then( ( socket ) => p( ( resolve ) => {
 			debug( 'connected', socket );
 			resolve();
 		} ) );
