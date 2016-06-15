@@ -1,7 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import viewport from 'lib/viewport';
-import ReactDOM from 'react-dom';
+import { findDOMNode } from 'react-dom';
 
 import { connectChat } from 'state/live-chat/actions';
 import Timeline from './timeline';
@@ -16,7 +16,7 @@ export const LiveChatPage = React.createClass( {
 	},
 
 	onFocus() {
-		var composerNode = ReactDOM.findDOMNode( this.refs.composer );
+		var composerNode = findDOMNode( this.refs.composer );
 
 		if ( viewport.isMobile() ) {
 			/* User tapped textfield on a phone. This shows the keyboard. Unless we scroll to the bottom, the chatbox will be invisible */
