@@ -47,8 +47,8 @@ export const connectChat = () => ( dispatch, getState ) => {
 	debug( 'requesting' );
 	// create new session id
 	
-	sign( { user } ).then( ( { jwt } ) => {
-		startSession().then( ( { session_id } ) => {
+	startSession().then( ( { session_id } ) => {
+		sign( { user, session_id } ).then( ( { jwt } ) => {
 			connection.open( user_id, jwt ).then( () => {
 				dispatch( setChatConnected() );
 				connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) );
