@@ -23,6 +23,7 @@ const request = ( ... args ) => new Promise( ( resolve, reject ) => {
 } );
 
 const sign = ( payload ) => request( { method: 'POST', path: '/jwt/sign', body: { payload: JSON.stringify( payload ) } } );
+const startSession = () => request( { method: 'POST', path:'/tinkerchat/session' } );
 
 const connection = buildConnection();
 
@@ -44,10 +45,14 @@ export const connectChat = () => ( dispatch, getState ) => {
 	dispatch( setChatConnecting() );
 	// get signed identity data for authenticating
 	debug( 'requesting' );
+	// create new session id
+	
 	sign( { user } ).then( ( { jwt } ) => {
-		connection.open( user_id, jwt ).then( () => {
-			dispatch( setChatConnected() );
-			connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) );
+		startSession().then( ( { session_id } ) => {
+			connection.open( user_id, jwt ).then( () => {
+				dispatch( setChatConnected() );
+				connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) );
+			} );
 		} );
 	} )
 	.catch( ( e ) => {
