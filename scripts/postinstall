@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+if [ -z "$CALYPSO_SECRETS" ]; then
+	echo "No secrets provided"
+else
+	echo "Writing secrets from CALYPSO_SECRETS"
+	echo $CALYPSO_SECRETS > config/secrets.json
+fi
+
+export SKIP_NPM_INSTALL=true
+echo "Building calypso $SKIP_NPM_INSTALL"
+make build

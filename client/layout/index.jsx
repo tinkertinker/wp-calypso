@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-var React = require( 'react' ),
+const React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' ),
 	property = require( 'lodash/property' ),
@@ -10,7 +10,7 @@ var React = require( 'react' ),
 /**
  * Internal dependencies
  */
-var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
+const MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	MasterbarLoggedOut = require( 'layout/masterbar/logged-out' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
@@ -32,8 +32,9 @@ var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	OfflineStatus = require( 'layout/offline-status' ),
 	PollerPool = require( 'lib/data-poller' ),
 	QueryPreferences = require( 'components/data/query-preferences' ),
-	KeyboardShortcutsMenu,
-	Layout,
+	LiveChat = require( 'components/live-chat' );
+
+let KeyboardShortcutsMenu,
 	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
@@ -50,7 +51,7 @@ if ( config.isEnabled( 'support-user' ) ) {
 	SupportUser = require( 'support/support-user' );
 }
 
-Layout = React.createClass( {
+const Layout = React.createClass( {
 	displayName: 'Layout',
 
 	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
@@ -185,7 +186,9 @@ Layout = React.createClass( {
 				`focus-${this.props.currentLayoutFocus}`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
-				{ 'wp-singletree-layout': !! this.props.primary }
+				{ 'wp-singletree-layout': !! this.props.primary },
+				{ 'support-url': this.props.isShowingSupportURL },
+				{ 'has-chat': this.props.chatIsOpen }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
@@ -220,6 +223,7 @@ Layout = React.createClass( {
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
 				{ this.renderPreview() }
+				{ config.isEnabled( 'live-chat' ) && this.props.chatIsOpen && <LiveChat /> }
 			</div>
 		);
 	}
@@ -228,6 +232,7 @@ Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section } = state.ui;
+		const { supportURL, isOpen: chatIsOpen } = state.liveChat;
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
@@ -235,6 +240,8 @@ export default connect(
 			hasSidebar: hasSidebar( state ),
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
+			isShowingSupportURL: !! supportURL,
+			chatIsOpen: chatIsOpen && section.name !== 'chat'
 		};
 	}
 )( Layout );
