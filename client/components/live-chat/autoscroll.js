@@ -22,7 +22,7 @@ export default {
 		this._autoscroll_stop_listening();
 		this._autoscroll_node = node;
 
-		if ( !this._autoscroll_node ) {
+		if ( ! this._autoscroll_node ) {
 			return;
 		}
 

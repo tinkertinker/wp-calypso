@@ -32,7 +32,7 @@ const isChatOpen = all(
  * Renders a spinner in a flex-box context so it is centered vertically and horizontally
  */
 const renderLoading = () => (
-	<div className="live-chat-loading">
+	<div className="live-chat__loading">
 		<Spinner />
 	</div>
 );
@@ -103,7 +103,7 @@ const LiveChat = React.createClass( {
 		} = this.props;
 
 		return (
-			<div className="live-chat-container">
+			<div className="live-chat__container">
 				<div
 					className={ classnames( 'live-chat', { open: isChatOpen( { connectionStatus, available } ) } ) }>
 					<div className="live-chat__title">

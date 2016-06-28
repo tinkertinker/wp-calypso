@@ -13,8 +13,8 @@ import { openChatURL } from 'state/live-chat/actions';
 import GridIcon from 'components/gridicon';
 
 const Browser = ( { url, closeBrowser } ) => (
-	<div className={ classnames( 'support-browser', { disabled: isEmpty( url ) } ) }>
-		<div className="browser-bar">
+	<div className={ classnames( 'live-cat__support-browser', { disabled: isEmpty( url ) } ) }>
+		<div className="live-chat__browser-bar">
 			{ url }
 			<div onClick={ closeBrowser }><GridIcon icon="cross" /></div>
 		</div>

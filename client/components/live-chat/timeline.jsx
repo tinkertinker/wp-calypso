@@ -54,7 +54,7 @@ const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt
 const renderJoinMessage = ( { item }, index ) => {
 	const [ initial, ... rest ] = item;
 	return (
-		<div className="live-chat-timeline-join-message" key={ index }>
+		<div className="live-chat__timeline-join-message" key={ index }>
 			<div>{ nick( initial ) }{ andRestWhenMoreThanOne( { rest: rest } ) } joined.</div>
 		</div>
 	);
@@ -65,8 +65,8 @@ const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) 
 	const [ message, meta ] = initial;
 	const userAvatar = messageAvatar( { meta } );
 	return (
-		<div className={ classnames( 'live-chat-timeline-message', { userMessage: isCurrentUser } ) } key={ meta.id || index }>
-			<div className="message-text">
+		<div className={ classnames( 'live-chat__timeline-message', { userMessage: isCurrentUser } ) } key={ meta.id || index }>
+			<div className="live-chat__message-text">
 				{ messageText( {
 					message,
 					nick: meta.nick,
@@ -80,8 +80,8 @@ const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) 
 					links: remaining_meta.links
 				} ) ) }
 			</div>
-			<div className="message-meta">
-				<div className="message-avatar">
+			<div className="live-chat__message-meta">
+				<div className="live-chat__message-avatar">
 				{ isCurrentUser ? userAvatar : <AgentW /> }
 				</div>
 			</div>
@@ -120,7 +120,7 @@ const groupMessages = ( messages ) => {
 };
 
 const welcomeMessage = () => (
-	<div className="live-chat-welcome">
+	<div className="live-chat__welcome">
 		This is the beginning of your chat history with WordPress.com support. A chat history will be stored here.
 	</div>
 );
@@ -128,7 +128,7 @@ const welcomeMessage = () => (
 const timelineHasContent = ( { timeline } ) => isArray( timeline ) && ! isEmpty( timeline );
 
 const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer, scrollbleedLock, scrollbleedUnlock } ) => (
-	<div className="live-chat-conversation"
+	<div className="live-chat__conversation"
 		ref={ onScrollContainer }
 		onMouseEnter={ scrollbleedLock }
 		onMouseLeave={ scrollbleedUnlock }>

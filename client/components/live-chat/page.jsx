@@ -13,7 +13,7 @@ export const LiveChatPage = React.createClass( {
 	},
 
 	onFocus() {
-		var composerNode = findDOMNode( this.refs.composer );
+		const composerNode = findDOMNode( this.refs.composer );
 
 		if ( viewport.isMobile() ) {
 			/* User tapped textfield on a phone. This shows the keyboard. Unless we scroll to the bottom, the chatbox will be invisible */
@@ -23,7 +23,7 @@ export const LiveChatPage = React.createClass( {
 
 	render() {
 		return (
-			<div className="live-chat-container">
+			<div className="live-chat__container">
 				<Timeline />
 				<Composer onFocus={ this.onFocus } ref="composer" />
 			</div>

@@ -17,8 +17,9 @@ export default {
 		}
 
 		e = e || window.event;
-		if ( e.preventDefault )
+		if ( e.preventDefault ) {
 			e.preventDefault();
+		}
 		e.returnValue = false;
 
 		// scroll the window itself using JS
@@ -41,16 +42,18 @@ export default {
 	},
 
 	scrollbleedLock( e ) {
-		if ( window.addEventListener ) // older FF
+		if ( window.addEventListener ) { // older FF
 			window.addEventListener( 'DOMMouseScroll', this._scrollbleed_handleScroll, false );
+		}
 		window.onwheel = this._scrollbleed_handleScroll;
 		window.onmousewheel = document.onmousewheel = this._scrollbleed_handleScroll;
 		debug( 'scrollbleed lock enabled', e );
 	},
 
 	scrollbleedUnlock( e ) {
-		if ( window.removeEventListener )	// older FF
+		if ( window.removeEventListener ) { // older FF
 			window.removeEventListener( 'DOMMouseScroll', this._scrollbleed_handleScroll, false );
+		}
 		window.onwheel = null;
 		window.onmousewheel = document.onmousewheel = null;
 		debug( 'scrollbleed lock disabled', e );
