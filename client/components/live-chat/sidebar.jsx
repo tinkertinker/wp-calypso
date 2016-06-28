@@ -22,7 +22,6 @@ import {
 } from './helpers';
 import Timeline from './timeline';
 import Composer from './composer';
-import scrollbleed from './scrollbleed';
 
 const isChatOpen = all(
 	isAvailable,
@@ -89,7 +88,6 @@ const liveChatComposer = when( isConnected, () => <Composer /> );
  * Main chat UI component
  */
 const LiveChat = React.createClass( {
-	mixins: [ scrollbleed ],
 
 	componentDidMount() {
 		this.props.connectChat();
@@ -107,9 +105,7 @@ const LiveChat = React.createClass( {
 		return (
 			<div className="live-chat-container">
 				<div
-					className={ classnames( 'live-chat', { open: isChatOpen( { connectionStatus, available } ) } ) }
-					onMouseEnter={ this.scrollbleedLock }
-					onMouseLeave={ this.scrollbleedUnlock }>
+					className={ classnames( 'live-chat', { open: isChatOpen( { connectionStatus, available } ) } ) }>
 					<div className="live-chat__title">
 						{ liveChatTitle( {
 							available,
@@ -119,7 +115,7 @@ const LiveChat = React.createClass( {
 							onOpenChat
 						} ) }
 					</div>
-					{ liveChatTimeline( { connectionStatus, onScrollContainer: this.setScrollbleedTarget } ) }
+					{ liveChatTimeline( { connectionStatus } ) }
 					{ liveChatComposer( { connectionStatus } ) }
 				</div>
 			</div>

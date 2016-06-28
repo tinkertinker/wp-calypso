@@ -13,6 +13,7 @@ import {
 } from 'lib/functional';
 import autoscroll from './autoscroll';
 import AgentW from 'components/live-chat/agent-w';
+import scrollbleed from './scrollbleed';
 
 const debug = require( 'debug' )( 'calypso:live-chat:timeline' );
 
@@ -27,7 +28,7 @@ const andRest = ( { rest } ) => <div>
 </div>;
 
 const andRestWhenMoreThanOne = when( ( { rest } ) => rest.length > 0, andRest );
-const linksNotEmpty = ( { links } ) => !isEmpty( links );
+const linksNotEmpty = ( { links } ) => ! isEmpty( links );
 
 const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
 const messageWithLinks = ( { message, key, links, onOpenChatUrl } ) => {
@@ -124,10 +125,13 @@ const welcomeMessage = () => (
 	</div>
 );
 
-const timelineHasContent = ( { timeline } ) => isArray( timeline ) && !isEmpty( timeline );
+const timelineHasContent = ( { timeline } ) => isArray( timeline ) && ! isEmpty( timeline );
 
-const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer } ) => (
-	<div className="live-chat-conversation" ref={ onScrollContainer }>
+const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer, scrollbleedLock, scrollbleedUnlock } ) => (
+	<div className="live-chat-conversation"
+		ref={ onScrollContainer }
+		onMouseEnter={ scrollbleedLock }
+		onMouseLeave={ scrollbleedUnlock }>
 		{ groupMessages( timeline ).map( ( item ) => renderGroupedTimelineItem( {
 			item,
 			isCurrentUser: isCurrentUser( item[ 0 ] )
@@ -138,7 +142,7 @@ const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer } ) => (
 const liveChatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
 
 export const Timeline = React.createClass( {
-	mixins: [ autoscroll ],
+	mixins: [ autoscroll, scrollbleed ],
 
 	getDefaultProps() {
 		return {
@@ -149,7 +153,9 @@ export const Timeline = React.createClass( {
 	render() {
 		const { onScrollContainer } = this.props;
 		return liveChatTimeline( assign( {}, this.props, {
-			onScrollContainer: forEach( this.setupAutoscroll, onScrollContainer )
+			onScrollContainer: forEach( this.setupAutoscroll, onScrollContainer, this.setScrollbleedTarget ),
+			scrollbleedLock: this.scrollbleedLock,
+			scrollbleedUnlock: this.scrollbleedUnlock
 		} ) );
 	}
 } );

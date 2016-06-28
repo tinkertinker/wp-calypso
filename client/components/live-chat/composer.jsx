@@ -14,6 +14,7 @@ import {
 	updateChatMessage,
 	sendChatMessage
 } from 'state/live-chat/actions';
+import scrollbleed from './scrollbleed';
 
 const returnPressed = propEquals( 'which', 13 );
 const preventDefault = call( 'preventDefault' );
@@ -22,15 +23,21 @@ const preventDefault = call( 'preventDefault' );
  * Renders a textarea to be used to comopose a message for the chat.
  */
 export const Composer = React.createClass( {
+	mixins: [ scrollbleed ],
+
 	render() {
 		const { message, onUpdateChatMessage, onSendChatMessage, onFocus } = this.props;
-		const sendMessage = when( () => !isEmpty( message ), () => onSendChatMessage( message ) );
+		const sendMessage = when( () => ! isEmpty( message ), () => onSendChatMessage( message ) );
 		const onChange = compose( prop( 'target.value' ), onUpdateChatMessage );
 		const onKeyDown = when( returnPressed, forEach( preventDefault, sendMessage ) );
 		return (
-			<div className="live-chat-composer">
+			<div className="live-chat-composer"
+				onMouseEnter={ this.scrollbleedLock }
+				onMouseLeave={ this.scrollbleedUnlock }
+				>
 				<div className="live-chat-message">
 					<textarea
+						ref={ this.setScrollbleedTarget }
 						onFocus={ onFocus }
 						type="text"
 						placeholder="Ask a question..."
