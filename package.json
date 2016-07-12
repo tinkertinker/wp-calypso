@@ -146,6 +146,7 @@
     "test-test:watch": "nodemon -e js,jsx --exec npm run test-test",
     "lint": "bin/run-lint",
     "css-lint": "stylelint 'client/**/*.scss' --syntax scss",
+    "heroku-prebuild": "./scripts/preinstall",
     "heroku-postbuild": "./scripts/postinstall"
   },
   "devDependencies": {

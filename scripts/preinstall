@@ -1,0 +1,21 @@
+#!/usr/bin/env bash
+
+if [ -z "$CALYPSO_SECRETS" ]; then
+	echo "No secrets provided"
+else
+	echo "Writing secrets from CALYPSO_SECRETS"
+	echo $CALYPSO_SECRETS > config/secrets.json
+fi
+
+if [ -z "$WPCOM_OAUTH_APP_ID" ]; then
+	echo 'WPCOM_OAUTH_APP_ID not provided'
+	exit 1
+else
+	echo 'Generating local config' $CALYPSO_ENV.local.json
+	echo '{"oauth_app_id":'$WPCOM_OAUTH_APP_ID'}' > config/$CALYPSO_ENV.local.json
+fi
+
+export SKIP_NPM_INSTALL=true
+echo "Building calypso $SKIP_NPM_INSTALL"
+make clean
+DEBUG=config make build
