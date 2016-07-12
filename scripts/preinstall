@@ -12,5 +12,5 @@ if [ -z "$WPCOM_OAUTH_APP_ID" ]; then
 	exit 1
 else
 	echo 'Generating local config' $CALYPSO_ENV.local.json
-	echo '{"oauth_app_id":'$WPCOM_OAUTH_APP_ID'}' > config/$CALYPSO_ENV.local.json
+	echo '{"oauth_client_id":'$WPCOM_OAUTH_APP_ID'}' > config/$CALYPSO_ENV.local.json
 fi
