@@ -14,8 +14,3 @@ else
 	echo 'Generating local config' $CALYPSO_ENV.local.json
 	echo '{"oauth_app_id":'$WPCOM_OAUTH_APP_ID'}' > config/$CALYPSO_ENV.local.json
 fi
-
-export SKIP_NPM_INSTALL=true
-echo "Building calypso $SKIP_NPM_INSTALL"
-make clean
-DEBUG=config make build
