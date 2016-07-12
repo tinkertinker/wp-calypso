@@ -333,7 +333,7 @@ function reduxStoreReady( reduxStore ) {
 
 			if ( '/' === context.pathname && config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
 				if ( config.isEnabled( 'oauth' ) ) {
-					page.redirect( '/authorize' );
+					page.redirect( config( 'login_url' ) );
 				} else {
 					page.redirect( '/devdocs/start' );
 				}
