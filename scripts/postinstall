@@ -8,6 +8,9 @@ else
 fi
 
 if [ -z "$WPCOM_OAUTH_APP_ID" ]; then
+	echo 'WPCOM_OAUTH_APP_ID not provided'
+	exit 1
+else
 	echo '{"oauth_app_id":'$WPCOM_OAUTH_APP_ID'}' > config/$CALYPSO_ENV.local.json
 fi
 
