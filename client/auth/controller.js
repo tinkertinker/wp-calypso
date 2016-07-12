@@ -61,7 +61,7 @@ module.exports = {
 				client_id: config( 'oauth_client_id' ),
 				client_secret: 'n/a',
 				url: {
-					redirect: 'http://calypso.localhost:3000/api/oauth/token'
+					redirect: window.location.origin + '/api/oauth/token'
 				}
 			};
 
