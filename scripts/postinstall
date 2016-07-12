@@ -7,7 +7,7 @@ else
 	echo $CALYPSO_SECRETS > config/secrets.json
 fi
 
-if [ -z $WPCOM_OAUTH_APP_ID ]; then
+if [ -z "$WPCOM_OAUTH_APP_ID" ]; then
 	echo '{"oauth_app_id":'$WPCOM_OAUTH_APP_ID'}' > config/$CALYPSO_ENV.local.json
 fi
 
