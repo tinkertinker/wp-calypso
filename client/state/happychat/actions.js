@@ -45,21 +45,17 @@ export const connectChat = () => ( dispatch, getState ) => {
 	const { id: user_id } = currentUser;
 	const user = users.items[ user_id ];
 	dispatch( setChatConnecting() );
-	// get signed identity data for authenticating
-	debug( 'requesting' );
-	// create new session id
-	startSession().then( ( { session_id } ) => {
-		sign( { user, session_id } ).then( ( { jwt } ) => {
-			connection.open( user_id, jwt ).then( () => {
-				dispatch( setChatConnected() );
-				connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) );
-			} );
-		} );
-	} )
-	.catch( ( e ) => {
-		// TODO: notify of failure in UI?
-		debug( 'failed', e );
-	} );
+	// create new session id and get signed identity data for authenticating
+	startSession()
+	.then( ( { session_id } ) => sign( { user, session_id } ) )
+	.then( ( { jwt } ) => connection.open( user_id, jwt ) )
+	.then(
+		() => {
+			dispatch( setChatConnected() );
+			connection.on( 'event', ( event ) => dispatch( receiveChatEvent( event ) ) );
+		},
+		e => debug( 'failed to start happychat session', e, e.stack )
+	);
 };
 
 export const openChat = () => dispatch => {

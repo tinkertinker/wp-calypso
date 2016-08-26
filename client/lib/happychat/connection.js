@@ -23,7 +23,8 @@ class Connection extends EventEmitter {
 			return p( ( resolve ) => resolve() );
 		}
 		return p( ( resolve ) => {
-			const socket = this.socket = new IO( config( 'live_chat_server_url' ) );
+			const url = config( 'happychat_url' );
+			const socket = this.socket = new IO( url );
 			socket
 				.once( 'connect', () => resolve( socket ) )
 				.on( 'init', ( ... args ) => debug( 'initialized', ... args ) )
@@ -35,13 +36,15 @@ class Connection extends EventEmitter {
 
 	getSocket() {
 		return p( ( resolve, reject ) => {
-			if ( !this.socket ) return reject( new Error( 'not connected' ) );
+			if ( ! this.socket ) {
+				return reject( new Error( 'not connected' ) );
+			}
 			resolve( this.socket );
 		} );
 	}
 
 	open( user_id, token ) {
-		debug( 'open connection for user', config( 'live_chat_server_url' ) );
+		debug( 'open connection for user', config( 'happychat_url' ) );
 
 		return this.connect( user_id, token ).then( ( socket ) => p( ( resolve ) => {
 			debug( 'connected', socket );

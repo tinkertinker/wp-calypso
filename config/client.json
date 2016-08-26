@@ -31,5 +31,5 @@
   "sync-handler-defaults",
   "project",
   "reader_cold_start_graduation_threshold",
-  "live_chat_server_url"
+  "happychat_url"
 ]
