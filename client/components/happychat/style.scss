@@ -272,7 +272,7 @@
 		flex-direction: row;
 		margin-left: auto;
 
-		.message-text {
+		.happychat__message-text {
 			background: $white;
 			color: $gray-dark;
 			border-radius: 8px 8px 0 8px;
@@ -291,7 +291,7 @@
 
 		}
 
-		.message-meta {
+		.happychat__message-meta {
 			align-self: flex-end;
 			margin: 0 0 0 8px;
 		}
