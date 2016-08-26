@@ -9,9 +9,7 @@ import page from 'page';
 */
 import { renderWithReduxStore } from 'lib/react-helpers';
 import controller from 'me/controller';
-import LiveChat from 'components/live-chat/page';
-
-const debug = require( 'debug' )( 'calypso:live-chat:section' );
+import LiveChat from 'components/happychat/page';
 
 const renderChat = ( context, next ) => {
 	renderWithReduxStore(

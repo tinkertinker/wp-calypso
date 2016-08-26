@@ -12,10 +12,10 @@ import {
 	propExists
 } from 'lib/functional';
 import autoscroll from './autoscroll';
-import AgentW from 'components/live-chat/agent-w';
+import AgentW from 'components/happychat/agent-w';
 import scrollbleed from './scrollbleed';
 
-const debug = require( 'debug' )( 'calypso:live-chat:timeline' );
+const debug = require( 'debug' )( 'calypso:happychat:timeline' );
 
 const nick = ( [ , meta ] ) => <strong>{ meta.nick }</strong>;
 const nickComma = ( ... args ) => ( <span>{ nick( ... args ) }, </span> );
@@ -54,7 +54,7 @@ const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt
 const renderJoinMessage = ( { item }, index ) => {
 	const [ initial, ... rest ] = item;
 	return (
-		<div className="live-chat__timeline-join-message" key={ index }>
+		<div className="happychat__timeline-join-message" key={ index }>
 			<div>{ nick( initial ) }{ andRestWhenMoreThanOne( { rest: rest } ) } joined.</div>
 		</div>
 	);
@@ -65,8 +65,8 @@ const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) 
 	const [ message, meta ] = initial;
 	const userAvatar = messageAvatar( { meta } );
 	return (
-		<div className={ classnames( 'live-chat__timeline-message', { userMessage: isCurrentUser } ) } key={ meta.id || index }>
-			<div className="live-chat__message-text">
+		<div className={ classnames( 'happychat__timeline-message', { userMessage: isCurrentUser } ) } key={ meta.id || index }>
+			<div className="happychat__message-text">
 				{ messageText( {
 					message,
 					nick: meta.nick,
@@ -80,8 +80,8 @@ const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) 
 					links: remaining_meta.links
 				} ) ) }
 			</div>
-			<div className="live-chat__message-meta">
-				<div className="live-chat__message-avatar">
+			<div className="happychat__message-meta">
+				<div className="happychat__message-avatar">
 				{ isCurrentUser ? userAvatar : <AgentW /> }
 				</div>
 			</div>
@@ -120,7 +120,7 @@ const groupMessages = ( messages ) => {
 };
 
 const welcomeMessage = () => (
-	<div className="live-chat__welcome">
+	<div className="happychat__welcome">
 		This is the beginning of your chat history with WordPress.com support. A chat history will be stored here.
 	</div>
 );
@@ -128,7 +128,7 @@ const welcomeMessage = () => (
 const timelineHasContent = ( { timeline } ) => isArray( timeline ) && ! isEmpty( timeline );
 
 const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer, scrollbleedLock, scrollbleedUnlock } ) => (
-	<div className="live-chat__conversation"
+	<div className="happychat__conversation"
 		ref={ onScrollContainer }
 		onMouseEnter={ scrollbleedLock }
 		onMouseLeave={ scrollbleedUnlock }>
@@ -139,7 +139,7 @@ const renderTimeline = ( { timeline, isCurrentUser, onScrollContainer, scrollble
 	</div>
 );
 
-const liveChatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
+const chatTimeline = when( timelineHasContent, renderTimeline, welcomeMessage );
 
 export const Timeline = React.createClass( {
 	mixins: [ autoscroll, scrollbleed ],
@@ -152,7 +152,7 @@ export const Timeline = React.createClass( {
 
 	render() {
 		const { onScrollContainer } = this.props;
-		return liveChatTimeline( assign( {}, this.props, {
+		return chatTimeline( assign( {}, this.props, {
 			onScrollContainer: forEach( this.setupAutoscroll, onScrollContainer, this.setScrollbleedTarget ),
 			scrollbleedLock: this.scrollbleedLock,
 			scrollbleedUnlock: this.scrollbleedUnlock
@@ -160,8 +160,8 @@ export const Timeline = React.createClass( {
 	}
 } );
 
-const mapProps = ( { liveChat, currentUser } ) => {
-	const { timeline, available, status: connectionStatus } = liveChat;
+const mapProps = ( { happychat, currentUser } ) => {
+	const { timeline, available, status: connectionStatus } = happychat;
 	const { id: current_user_id } = currentUser;
 	return {
 		available,

@@ -9,12 +9,12 @@ import isEmpty from 'lodash/isEmpty';
 /*
  * Internal dependencies
  */
-import { openChatURL } from 'state/live-chat/actions';
+import { openChatURL } from 'state/happychat/actions';
 import GridIcon from 'components/gridicon';
 
 const Browser = ( { url, closeBrowser } ) => (
-	<div className={ classnames( 'live-cat__support-browser', { disabled: isEmpty( url ) } ) }>
-		<div className="live-chat__browser-bar">
+	<div className={ classnames( 'happychat__support-browser', { disabled: isEmpty( url ) } ) }>
+		<div className="happychat__browser-bar">
 			{ url }
 			<div onClick={ closeBrowser }><GridIcon icon="cross" /></div>
 		</div>
@@ -28,6 +28,6 @@ const mapDispatch = ( dispatch ) => ( {
 	}
 } );
 
-const mapState = ( { liveChat: { supportURL: url } } ) => ( { url } );
+const mapState = ( { happychat: { supportURL: url } } ) => ( { url } );
 
 export default connect( mapState, mapDispatch )( Browser );

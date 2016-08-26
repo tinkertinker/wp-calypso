@@ -3,7 +3,7 @@ import { EventEmitter } from 'events';
 import config from 'config';
 import { v4 as uuid } from 'uuid';
 
-const debug = require( 'debug' )( 'calypso:live-chat:connection' );
+const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
 const emitMessage = ( connection ) => ( { id, text, timestamp, user } ) => {
 	debug( 'received message', text );

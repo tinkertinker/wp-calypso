@@ -14,7 +14,7 @@ import {
 	openChat,
 	closeChat,
 	connectChat
-} from 'state/live-chat/actions';
+} from 'state/happychat/actions';
 import {
 	isConnected,
 	isConnecting,
@@ -32,12 +32,12 @@ const isChatOpen = all(
  * Renders a spinner in a flex-box context so it is centered vertically and horizontally
  */
 const renderLoading = () => (
-	<div className="live-chat__loading">
+	<div className="happychat__loading">
 		<Spinner />
 	</div>
 );
 
-const liveChatTimeline = when(
+const timeline = when(
 	isConnecting,
 	renderLoading,
 	( { onScrollContainer } ) => <Timeline onScrollContainer={ onScrollContainer } />
@@ -58,7 +58,7 @@ const availabilityTitle = when(
 
 const connectingTitle = ( { onCloseChat } ) => {
 	return (
-		<div className="live-chat__active-toolbar">
+		<div className="happychat__active-toolbar">
 			<span>Starting chat</span>
 			<div onClick={ onCloseChat }>
 				<GridIcon icon="cross" />
@@ -68,7 +68,7 @@ const connectingTitle = ( { onCloseChat } ) => {
 };
 
 const connectedTitle = ( { onCloseChat } ) => (
-	<div className="live-chat__active-toolbar">
+	<div className="happychat__active-toolbar">
 		<h4>Support Chat</h4>
 		<div onClick={ onCloseChat }>
 			<GridIcon icon="cross" />
@@ -76,18 +76,18 @@ const connectedTitle = ( { onCloseChat } ) => (
 	</div>
 );
 
-const liveChatTitle = first(
+const title = first(
 	when( isConnected, connectedTitle ),
 	when( isConnecting, connectingTitle ),
 	availabilityTitle
 );
 
-const liveChatComposer = when( isConnected, () => <Composer /> );
+const composer = when( isConnected, () => <Composer /> );
 
 /*
  * Main chat UI component
  */
-const LiveChat = React.createClass( {
+const Happychat = React.createClass( {
 
 	componentDidMount() {
 		this.props.connectChat();
@@ -103,11 +103,11 @@ const LiveChat = React.createClass( {
 		} = this.props;
 
 		return (
-			<div className="live-chat__container">
+			<div className="happychat__container">
 				<div
-					className={ classnames( 'live-chat', { open: isChatOpen( { connectionStatus, available } ) } ) }>
-					<div className="live-chat__title">
-						{ liveChatTitle( {
+					className={ classnames( 'happychat', { open: isChatOpen( { connectionStatus, available } ) } ) }>
+					<div className="happychat__title">
+						{ title( {
 							available,
 							connectionStatus,
 							user,
@@ -115,15 +115,15 @@ const LiveChat = React.createClass( {
 							onOpenChat
 						} ) }
 					</div>
-					{ liveChatTimeline( { connectionStatus } ) }
-					{ liveChatComposer( { connectionStatus } ) }
+					{ timeline( { connectionStatus } ) }
+					{ composer( { connectionStatus } ) }
 				</div>
 			</div>
 		);
 	}
 } );
 
-const mapState = ( { liveChat: { available, status: connectionStatus } } ) => {
+const mapState = ( { happychat: { available, status: connectionStatus } } ) => {
 	return {
 		available,
 		connectionStatus
@@ -147,4 +147,4 @@ const mapDispatch = ( dispatch ) => {
 /*
  * Export redux connected component
  */
-export default connect( mapState, mapDispatch )( LiveChat );
+export default connect( mapState, mapDispatch )( Happychat );

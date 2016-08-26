@@ -1,4 +1,4 @@
-const debug = require( 'debug' )( 'calypso:live-chat:scrollbleed' );
+const debug = require( 'debug' )( 'calypso:happychat:scrollbleed' );
 
 export default {
 	componentWillUnmount() {

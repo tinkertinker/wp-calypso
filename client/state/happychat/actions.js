@@ -1,42 +1,44 @@
-const debug = require( 'debug' )( 'calypso:live-chat:actions' );
+const debug = require( 'debug' )( 'calypso:happychat:actions' );
 
 import wpcom from 'lib/wp';
-import buildConnection from 'lib/live-chat/connection';
+import buildConnection from 'lib/happychat/connection';
 import { throttle } from 'lodash/function';
 import { propExists, when } from 'lib/functional';
 import {
-	LIVE_CHAT_CONNECTING,
-	LIVE_CHAT_CONNECTED,
-	LIVE_CHAT_SET_MESSAGE,
-	LIVE_CHAT_CLOSING,
-	LIVE_CHAT_RECEIVE_EVENT,
-	LIVE_CHAT_SET_AUTOSCROLL,
-	LIVE_CHAT_OPEN_URL,
-	LIVE_CHAT_OPEN
+	HAPPYCHAT_CONNECTING,
+	HAPPYCHAT_CONNECTED,
+	HAPPYCHAT_SET_MESSAGE,
+	HAPPYCHAT_CLOSING,
+	HAPPYCHAT_RECEIVE_EVENT,
+	HAPPYCHAT_SET_AUTOSCROLL,
+	HAPPYCHAT_OPEN_URL,
+	HAPPYCHAT_OPEN
 } from 'state/action-types';
 
 const request = ( ... args ) => new Promise( ( resolve, reject ) => {
 	wpcom.request( ... args, ( error, response ) => {
-		if ( error ) return reject( error );
+		if ( error ) {
+			return reject( error );
+		}
 		resolve( response );
 	} );
 } );
 
 const sign = ( payload ) => request( { method: 'POST', path: '/jwt/sign', body: { payload: JSON.stringify( payload ) } } );
-const startSession = () => request( { method: 'POST', path:'/happychat/session' } );
+const startSession = () => request( { method: 'POST', path: '/happychat/session' } );
 
 const connection = buildConnection();
 
-const setChatConnecting = () => ( { type: LIVE_CHAT_CONNECTING } );
-const setChatConnected = () => ( { type: LIVE_CHAT_CONNECTED } );
-const setChatClosing = () => ( { type: LIVE_CHAT_CLOSING } );
-const setChatMessage = message => ( { type: LIVE_CHAT_SET_MESSAGE, message } );
+const setChatConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
+const setChatConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
+const setChatClosing = () => ( { type: HAPPYCHAT_CLOSING } );
+const setChatMessage = message => ( { type: HAPPYCHAT_SET_MESSAGE, message } );
 
 const clearChatMessage = () => setChatMessage( '' );
 
-const receiveChatEvent = event => ( { type: LIVE_CHAT_RECEIVE_EVENT, event } );
+const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 
-const setChatOpen = isOpen => ( { type: LIVE_CHAT_OPEN, isOpen } );
+const setChatOpen = isOpen => ( { type: HAPPYCHAT_OPEN, isOpen } );
 
 export const connectChat = () => ( dispatch, getState ) => {
 	const { users, currentUser } = getState();
@@ -46,7 +48,6 @@ export const connectChat = () => ( dispatch, getState ) => {
 	// get signed identity data for authenticating
 	debug( 'requesting' );
 	// create new session id
-	
 	startSession().then( ( { session_id } ) => {
 		sign( { user, session_id } ).then( ( { jwt } ) => {
 			connection.open( user_id, jwt ).then( () => {
@@ -88,6 +89,6 @@ export const closeChat = () => ( dispatch ) => {
 	dispatch( setChatClosing() );
 };
 
-export const setLiveChatAutoScroll = auto => ( { type: LIVE_CHAT_SET_AUTOSCROLL, auto } );
+export const setLiveChatAutoScroll = auto => ( { type: HAPPYCHAT_SET_AUTOSCROLL, auto } );
 
-export const openChatURL = url => ( { type: LIVE_CHAT_OPEN_URL, url } );
+export const openChatURL = url => ( { type: HAPPYCHAT_OPEN_URL, url } );

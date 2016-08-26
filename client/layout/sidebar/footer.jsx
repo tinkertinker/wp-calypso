@@ -10,7 +10,7 @@ import { connect } from 'react-redux';
  */
 import Gridicon from 'components/gridicon';
 import Button from 'components/button';
-import { openChat } from 'state/live-chat/actions';
+import { openChat } from 'state/happychat/actions';
 import viewport from 'lib/viewport';
 
 const SidebarFooter = ( { translate, children, onOpenChat } ) => (

@@ -1,4 +1,4 @@
-const debug = require( 'debug' )( 'calypso:live-chat:mock' );
+const debug = require( 'debug' )( 'calypso:happychat:mock' );
 import { EventEmitter } from 'events';
 import { v4 as uuid } from 'uuid';
 import { any, times } from 'lib/functional';

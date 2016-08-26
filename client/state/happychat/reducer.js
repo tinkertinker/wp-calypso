@@ -1,22 +1,22 @@
 import { combineReducers } from 'redux';
 import {
-	LIVE_CHAT_CONNECTING,
-	LIVE_CHAT_CONNECTED,
-	LIVE_CHAT_SET_MESSAGE,
-	LIVE_CHAT_CLOSING,
-	LIVE_CHAT_RECEIVE_EVENT,
-	LIVE_CHAT_SET_AUTOSCROLL,
-	LIVE_CHAT_OPEN,
-	LIVE_CHAT_OPEN_URL
+	HAPPYCHAT_CONNECTING,
+	HAPPYCHAT_CONNECTED,
+	HAPPYCHAT_SET_MESSAGE,
+	HAPPYCHAT_CLOSING,
+	HAPPYCHAT_RECEIVE_EVENT,
+	HAPPYCHAT_SET_AUTOSCROLL,
+	HAPPYCHAT_OPEN,
+	HAPPYCHAT_OPEN_URL
 } from 'state/action-types';
 
-const debug = require( 'debug' )( 'calypso:live-chat:reducer' );
+const debug = require( 'debug' )( 'calypso:happychat:reducer' );
 
 const available = ( state = true ) => state;
 
 const timeline_event = ( state = [], action ) => {
 	switch ( action.type ) {
-		case LIVE_CHAT_RECEIVE_EVENT:
+		case HAPPYCHAT_RECEIVE_EVENT:
 			const event = action.event;
 			return [
 				event.message,
@@ -36,7 +36,7 @@ const timeline_event = ( state = [], action ) => {
 
 const timeline = ( state = [], action ) => {
 	switch ( action.type ) {
-		case LIVE_CHAT_RECEIVE_EVENT:
+		case HAPPYCHAT_RECEIVE_EVENT:
 			return state.concat( [ timeline_event( action.event, action ) ] );
 		default:
 			return state;
@@ -46,12 +46,12 @@ const timeline = ( state = [], action ) => {
 const status = ( state = 'disconnected', action ) => {
 	debug( 'status', action );
 	switch ( action.type ) {
-		case LIVE_CHAT_CONNECTING:
+		case HAPPYCHAT_CONNECTING:
 			debug( 'connecting' );
 			return 'connecting';
-		case LIVE_CHAT_CONNECTED:
+		case HAPPYCHAT_CONNECTED:
 			return 'connected';
-		case LIVE_CHAT_CLOSING:
+		case HAPPYCHAT_CLOSING:
 			return 'closing';
 		default:
 			return state;
@@ -60,7 +60,7 @@ const status = ( state = 'disconnected', action ) => {
 
 const message = ( state = '', action ) => {
 	switch ( action.type ) {
-		case LIVE_CHAT_SET_MESSAGE:
+		case HAPPYCHAT_SET_MESSAGE:
 			return action.message;
 		default:
 			return state;
@@ -69,7 +69,7 @@ const message = ( state = '', action ) => {
 
 const autoscroll = ( state = true, action ) => {
 	switch ( action.type ) {
-		case LIVE_CHAT_SET_AUTOSCROLL:
+		case HAPPYCHAT_SET_AUTOSCROLL:
 			return action.auto;
 		default:
 			return state;
@@ -78,7 +78,7 @@ const autoscroll = ( state = true, action ) => {
 
 const supportURL = ( state = null, action ) => {
 	switch ( action.type ) {
-		case LIVE_CHAT_OPEN_URL:
+		case HAPPYCHAT_OPEN_URL:
 			return action.url;
 		default:
 			return state;
@@ -87,7 +87,7 @@ const supportURL = ( state = null, action ) => {
 
 const isOpen = ( state = false, action ) => {
 	switch ( action.type ) {
-		case LIVE_CHAT_OPEN:
+		case HAPPYCHAT_OPEN:
 			return action.isOpen !== undefined ? action.isOpen : state;
 	}
 	return state;

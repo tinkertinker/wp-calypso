@@ -426,6 +426,7 @@ function reduxStoreReady( reduxStore ) {
 	} );
 
 	detectHistoryNavigation.start();
+	debug( 'starting page' )
 	page.start();
 }
 
