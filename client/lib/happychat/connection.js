@@ -5,9 +5,9 @@ import { v4 as uuid } from 'uuid';
 
 const debug = require( 'debug' )( 'calypso:happychat:connection' );
 
-const emitMessage = ( connection ) => ( { id, text, timestamp, user } ) => {
+const emitMessage = ( connection ) => ( { id, text, timestamp, user, meta } ) => {
 	debug( 'received message', text );
-	connection.emit( 'event', { id, type: 'message', timestamp, message: text, user: {
+	connection.emit( 'event', { id, type: 'message', timestamp, message: text, meta, user: {
 		nick: user.displayName,
 		picture: user.avatarURL,
 		id: user.id

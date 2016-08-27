@@ -1,4 +1,6 @@
 import { combineReducers } from 'redux';
+import get from 'lodash/get';
+
 import {
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
@@ -26,7 +28,7 @@ const timeline_event = ( state = [], action ) => {
 					image: event.user.picture,
 					user_id: event.user.id,
 					type: event.type,
-					links: event.links
+					links: get( event, 'meta.links' )
 				} )
 			];
 		default:
@@ -44,7 +46,6 @@ const timeline = ( state = [], action ) => {
 };
 
 const status = ( state = 'disconnected', action ) => {
-	debug( 'status', action );
 	switch ( action.type ) {
 		case HAPPYCHAT_CONNECTING:
 			debug( 'connecting' );
