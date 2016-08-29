@@ -1,5 +1,7 @@
 import { combineReducers } from 'redux';
 import get from 'lodash/get';
+import find from 'lodash/find';
+import concat from 'lodash/concat';
 
 import {
 	HAPPYCHAT_CONNECTING,
@@ -12,11 +14,9 @@ import {
 	HAPPYCHAT_OPEN_URL
 } from 'state/action-types';
 
-const debug = require( 'debug' )( 'calypso:happychat:reducer' );
-
 const available = ( state = true ) => state;
 
-const timeline_event = ( state = [], action ) => {
+const timeline_event = ( state = {}, action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_RECEIVE_EVENT:
 			const event = action.event;
@@ -39,7 +39,9 @@ const timeline_event = ( state = [], action ) => {
 const timeline = ( state = [], action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_RECEIVE_EVENT:
-			return state.concat( [ timeline_event( action.event, action ) ] );
+			const event = timeline_event( {}, action );
+			const existing = find( state, ( { id } ) => event.id === id );
+			return existing ? state : concat( state, [ event ] );
 		default:
 			return state;
 	}
@@ -48,7 +50,6 @@ const timeline = ( state = [], action ) => {
 const status = ( state = 'disconnected', action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_CONNECTING:
-			debug( 'connecting' );
 			return 'connecting';
 		case HAPPYCHAT_CONNECTED:
 			return 'connected';
