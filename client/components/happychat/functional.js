@@ -48,10 +48,12 @@ export const when = ( condition, ifTrue, ifFalse = () => null ) => ( ... args ) 
  */
 
 export const first = ( ... fns ) => ( ... args ) => {
-	var i, result;
+	let i, result;
 	for ( i = 0; i < fns.length; i++ ) {
 		result = fns[ i ]( ... args );
-		if ( result ) return result;
+		if ( result ) {
+			return result;
+		}
 	}
 };
 
@@ -81,7 +83,7 @@ export const any = ( ... fns ) => ( ... args ) => find( fns, ( fn ) => fn( ... a
  * lessThan10AndGreaterThan2AndEven( 8 ) // => true
  * lessThan10AndGreaterThan2AndEven( 2 ) // => false
  */
-export const all = ( ... fns ) => ( ... args ) => !find( fns, ( fn ) => !fn( ... args ) );
+export const all = ( ... fns ) => ( ... args ) => ! find( fns, ( fn ) => ! fn( ... args ) );
 
 // Returns a function that calls each of fns
 export const forEach = ( ... fns ) => ( ... args ) => iterate( fns, ( fn ) => fn( ... args ) );
