@@ -31,13 +31,13 @@ const andRestWhenMoreThanOne = when( ( { rest } ) => rest.length > 0, andRest );
 const linksNotEmpty = ( { links } ) => ! isEmpty( links );
 
 const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
-const messageWithLinks = ( { message, key, links, onOpenChatUrl } ) => {
+const messageWithLinks = ( { message, key, links } ) => {
 	// extract the links and replace with components?
 	const children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
 		if ( last < startIndex ) {
 			parts = parts.concat( <span>{ message.slice( last, startIndex ) }</span> );
 		}
-		parts = parts.concat( <a href="#" onClick={ forEach( e => e.preventDefault(), () => onOpenChatUrl( url ) ) }>{ url }</a> );
+		parts = parts.concat( <a href={ url } rel="noopener noreferrer" target="_blank">{ url }</a> );
 		return { parts, last: startIndex + length };
 	}, { parts: [], last: 0 } );
 
@@ -60,7 +60,7 @@ const renderJoinMessage = ( { item }, index ) => {
 	);
 };
 
-const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) => {
+const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 	const [ initial, ... rest ] = item;
 	const [ message, meta ] = initial;
 	const userAvatar = messageAvatar( { meta } );
@@ -71,8 +71,7 @@ const renderGroupedMessages = ( { item, isCurrentUser, onOpenChatUrl }, index ) 
 					message,
 					nick: meta.nick,
 					key: meta.id,
-					links: meta.links,
-					onOpenChatUrl
+					links: meta.links
 				} ) }
 				{ rest.map( ( [ remaining, remaining_meta ] ) => messageText( {
 					message: remaining,
