@@ -1,3 +1,6 @@
+/**
+ * Mixin that will scroll to the bottom of a scrollable container whenever it's rendered
+ */
 export default {
 	componentWillMount() {
 		this._autoscroll_enabled = true;

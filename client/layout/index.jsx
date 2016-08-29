@@ -32,7 +32,7 @@ const MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	OfflineStatus = require( 'layout/offline-status' ),
 	PollerPool = require( 'lib/data-poller' ),
 	QueryPreferences = require( 'components/data/query-preferences' ),
-	LiveChat = require( 'components/happychat' );
+	Happychat = require( 'components/happychat' );
 
 let KeyboardShortcutsMenu,
 	SupportUser;
@@ -223,7 +223,7 @@ const Layout = React.createClass( {
 					isEnabled={ translator.isEnabled() }
 					isActive={ translator.isActivated() }/>
 				{ this.renderPreview() }
-				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <LiveChat /> }
+				{ config.isEnabled( 'happychat' ) && this.props.chatIsOpen && <Happychat /> }
 			</div>
 		);
 	}

@@ -1,9 +1,14 @@
-const debug = require( 'debug' )( 'calypso:happychat:actions' );
+/**
+ * External dependencies
+ */
+import isEmpty from 'lodash/isEmpty';
+import throttle from 'lodash/throttle';
 
+/**
+ * Internal dependencies
+ */
 import wpcom from 'lib/wp';
 import buildConnection from 'lib/happychat/connection';
-import { throttle } from 'lodash/function';
-import { propExists, when } from 'lib/functional';
 import {
 	HAPPYCHAT_CONNECTING,
 	HAPPYCHAT_CONNECTED,
@@ -15,6 +20,9 @@ import {
 	HAPPYCHAT_OPEN
 } from 'state/action-types';
 
+const debug = require( 'debug' )( 'calypso:happychat:actions' );
+
+// Promise based interface for wpcom.request
 const request = ( ... args ) => new Promise( ( resolve, reject ) => {
 	wpcom.request( ... args, ( error, response ) => {
 		if ( error ) {
@@ -24,8 +32,16 @@ const request = ( ... args ) => new Promise( ( resolve, reject ) => {
 	} );
 } );
 
-const sign = ( payload ) => request( { method: 'POST', path: '/jwt/sign', body: { payload: JSON.stringify( payload ) } } );
-const startSession = () => request( { method: 'POST', path: '/happychat/session' } );
+const sign = ( payload ) => request( {
+	method: 'POST',
+	path: '/jwt/sign',
+	body: { payload: JSON.stringify( payload ) }
+} );
+
+const startSession = () => request( {
+	method: 'POST',
+	path: '/happychat/session' }
+);
 
 const connection = buildConnection();
 
@@ -39,6 +55,11 @@ const clearChatMessage = () => setChatMessage( '' );
 const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 
 const setChatOpen = isOpen => ( { type: HAPPYCHAT_OPEN, isOpen } );
+
+const sendTyping = throttle( message => {
+	debug( 'send typing indicator' );
+	connection.typing( message );
+}, 1000, { leading: true, trailing: false } );
 
 export const connectChat = () => ( dispatch, getState ) => {
 	const { users, currentUser } = getState();
@@ -62,15 +83,11 @@ export const openChat = () => dispatch => {
 	dispatch( setChatOpen( true ) );
 };
 
-const throttleTyping = when( propExists( 'message' ), throttle( ( { message } ) => {
-	debug( 'send typing indicator' );
-	connection.typing( message );
-}, 1000, { leading: true, trailing: false } ) );
-
 export const updateChatMessage = message => dispatch => {
 	dispatch( setChatMessage( message ) );
-	// TODO: send a typing indicator?
-	throttleTyping( { message } );
+	if ( ! isEmpty( message ) ) {
+		sendTyping( message );
+	}
 };
 
 export const sendChatMessage = message => dispatch => {

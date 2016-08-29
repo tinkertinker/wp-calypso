@@ -3,17 +3,17 @@ import { connect } from 'react-redux';
 import isEmpty from 'lodash/isEmpty';
 
 import {
+	updateChatMessage,
+	sendChatMessage
+} from 'state/happychat/actions';
+import {
 	when,
 	forEach,
 	compose,
 	propEquals,
 	call,
 	prop
-} from 'lib/functional';
-import {
-	updateChatMessage,
-	sendChatMessage
-} from 'state/happychat/actions';
+} from './functional';
 import scrollbleed from './scrollbleed';
 
 const returnPressed = propEquals( 'which', 13 );

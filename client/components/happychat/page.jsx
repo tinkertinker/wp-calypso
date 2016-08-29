@@ -4,10 +4,9 @@ import viewport from 'lib/viewport';
 import { findDOMNode } from 'react-dom';
 
 import { connectChat } from 'state/happychat/actions';
-import Timeline from './timeline';
-import Composer from './composer';
+import { timeline, composer } from './helpers';
 
-export const LiveChatPage = React.createClass( {
+export const HappychatPage = React.createClass( {
 	componentDidMount() {
 		this.props.openChat();
 	},
@@ -22,17 +21,18 @@ export const LiveChatPage = React.createClass( {
 	},
 
 	render() {
+		const { connectionStatus } = this.props;
 		return (
 			<div className="happychat__container">
-				<Timeline />
-				<Composer onFocus={ this.onFocus } ref="composer" />
+				{ timeline( { connectionStatus } ) }
+				{ composer( { connectionStatus } ) }
 			</div>
 		);
 	}
 } );
 
-const mapState = () => ( {} );
+const mapState = ( { happychat: { status: connectionStatus } } ) => ( { connectionStatus } );
 const mapDispatch = dispatch => ( {
 	openChat: () => dispatch( connectChat() )
 } );
-export default connect( mapState, mapDispatch )( LiveChatPage );
+export default connect( mapState, mapDispatch )( HappychatPage );

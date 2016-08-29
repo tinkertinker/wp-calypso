@@ -1,3 +1,6 @@
+/**
+ *	External dependencies
+ */
 import React from 'react';
 import classnames from 'classnames';
 import isEmpty from 'lodash/isEmpty';
@@ -5,34 +8,25 @@ import isArray from 'lodash/isArray';
 import assign from 'lodash/assign';
 import { connect } from 'react-redux';
 
+/**
+ *	Internal dependencies
+ */
 import {
 	first,
 	when,
 	forEach,
 	propExists
-} from 'lib/functional';
+} from './functional';
 import autoscroll from './autoscroll';
 import AgentW from 'components/happychat/agent-w';
 import scrollbleed from './scrollbleed';
 
 const debug = require( 'debug' )( 'calypso:happychat:timeline' );
 
-const nick = ( [ , meta ] ) => <strong>{ meta.nick }</strong>;
-const nickComma = ( ... args ) => ( <span>{ nick( ... args ) }, </span> );
-
-const andRest = ( { rest } ) => <div>
-	{ rest.slice( 0, -1 ).map( nickComma ) }
-	and
-	{ rest.slice( -1 ).map( nick ) }
-	joined.
-</div>;
-
-const andRestWhenMoreThanOne = when( ( { rest } ) => rest.length > 0, andRest );
 const linksNotEmpty = ( { links } ) => ! isEmpty( links );
 
 const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
 const messageWithLinks = ( { message, key, links } ) => {
-	// extract the links and replace with components?
 	const children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
 		if ( last < startIndex ) {
 			parts = parts.concat( <span>{ message.slice( last, startIndex ) }</span> );
@@ -50,15 +44,6 @@ const messageWithLinks = ( { message, key, links } ) => {
 
 const messageText = when( linksNotEmpty, messageWithLinks, messageParagraph );
 const messageAvatar = when( propExists( 'meta.image' ), ( { meta } ) => <img alt={ meta.nick } src={ meta.image } /> );
-
-const renderJoinMessage = ( { item }, index ) => {
-	const [ initial, ... rest ] = item;
-	return (
-		<div className="happychat__timeline-join-message" key={ index }>
-			<div>{ nick( initial ) }{ andRestWhenMoreThanOne( { rest: rest } ) } joined.</div>
-		</div>
-	);
-};
 
 const renderGroupedMessages = ( { item, isCurrentUser }, index ) => {
 	const [ initial, ... rest ] = item;
@@ -95,7 +80,6 @@ const itemTypeIs = ( type ) => ( { item } ) => item[ 0 ][ 1 ].type === type;
  */
 const renderGroupedTimelineItem = first(
 	when( itemTypeIs( 'message' ), renderGroupedMessages ),
-	when( itemTypeIs( 'join' ), renderJoinMessage ),
 	( { item } ) => debug( 'no handler for message type', item[ 0 ][ 1 ].type, item )
 );
 
