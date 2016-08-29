@@ -39,6 +39,7 @@ let KeyboardShortcutsMenu,
 
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
+import { isHappychatOpen } from 'state/ui/happychat/selectors';
 import SitePreview from 'blocks/site-preview';
 import { getCurrentLayoutFocus } from 'state/ui/layout-focus/selectors';
 import DocumentHead from 'components/data/document-head';
@@ -232,7 +233,6 @@ const Layout = React.createClass( {
 export default connect(
 	( state ) => {
 		const { isLoading, section } = state.ui;
-		const { supportURL, isOpen: chatIsOpen } = state.happychat;
 		return {
 			isLoading,
 			isSupportUser: state.support.isSupportUser,
@@ -240,8 +240,7 @@ export default connect(
 			hasSidebar: hasSidebar( state ),
 			isOffline: isOffline( state ),
 			currentLayoutFocus: getCurrentLayoutFocus( state ),
-			isShowingSupportURL: !! supportURL,
-			chatIsOpen: chatIsOpen && section.name !== 'chat'
+			chatIsOpen: isHappychatOpen( state )
 		};
 	}
 )( Layout );

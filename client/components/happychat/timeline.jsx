@@ -29,14 +29,14 @@ const messageParagraph = ( { message, key } ) => <p key={ key }>{ message }</p>;
 const messageWithLinks = ( { message, key, links } ) => {
 	const children = links.reduce( ( { parts, last }, [ url, startIndex, length ] ) => {
 		if ( last < startIndex ) {
-			parts = parts.concat( <span>{ message.slice( last, startIndex ) }</span> );
+			parts = parts.concat( <span key={ parts.length }>{ message.slice( last, startIndex ) }</span> );
 		}
-		parts = parts.concat( <a href={ url } rel="noopener noreferrer" target="_blank">{ url }</a> );
+		parts = parts.concat( <a key={ parts.length } href={ url } rel="noopener noreferrer" target="_blank">{ url }</a> );
 		return { parts, last: startIndex + length };
 	}, { parts: [], last: 0 } );
 
 	if ( children.last < message.length ) {
-		children.parts = children.parts.concat( <span>{ message.slice( children.last ) }</span> );
+		children.parts = children.parts.concat( <span key="last">{ message.slice( children.last ) }</span> );
 	}
 
 	return <p key={ key }>{ children.parts }</p>;

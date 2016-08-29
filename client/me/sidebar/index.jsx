@@ -62,7 +62,7 @@ const MeSidebar = React.createClass( {
 			'/help/contact': 'help',
 			'/purchases': 'billing',
 			'/me/billing': 'billing',
-			'/me/chat': 'chat'
+			'/me/chat': 'happychat'
 		};
 		const filteredPath = context.path.replace( /\/\d+$/, '' ); // Remove ID from end of path
 		let selected;
@@ -162,7 +162,7 @@ const MeSidebar = React.createClass( {
 							preloadSectionName="help"
 						/>
 						<SidebarItem
-							selected= { selected === 'chat' }
+							selected= { selected === 'happychat' }
 							link="/me/chat"
 							icon="comment"
 							label= { this.translate( 'Support Chat' ) }

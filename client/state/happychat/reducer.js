@@ -4,19 +4,19 @@ import find from 'lodash/find';
 import concat from 'lodash/concat';
 
 import {
-	HAPPYCHAT_CONNECTING,
-	HAPPYCHAT_CONNECTED,
 	HAPPYCHAT_SET_MESSAGE,
-	HAPPYCHAT_CLOSING,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_SET_AUTOSCROLL,
-	HAPPYCHAT_OPEN,
-	HAPPYCHAT_OPEN_URL
+	HAPPYCHAT_CONNECTING,
+	HAPPYCHAT_CONNECTED,
+	HAPPYCHAT_CLOSING,
 } from 'state/action-types';
+
+const debug = require( 'debug' )( 'calypso:happychat:reducer' );
 
 const available = ( state = true ) => state;
 
-const timeline_event = ( state = {}, action ) => {
+const timeline_event = ( state = [], action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_RECEIVE_EVENT:
 			const event = action.event;
@@ -40,21 +40,9 @@ const timeline = ( state = [], action ) => {
 	switch ( action.type ) {
 		case HAPPYCHAT_RECEIVE_EVENT:
 			const event = timeline_event( {}, action );
-			const existing = find( state, ( { id } ) => event.id === id );
+			const existing = find( state, ( [ , { id } ] ) => event[ 1 ].id === id );
+			debug( 'received event', existing, event );
 			return existing ? state : concat( state, [ event ] );
-		default:
-			return state;
-	}
-};
-
-const status = ( state = 'disconnected', action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_CONNECTING:
-			return 'connecting';
-		case HAPPYCHAT_CONNECTED:
-			return 'connected';
-		case HAPPYCHAT_CLOSING:
-			return 'closing';
 		default:
 			return state;
 	}
@@ -78,21 +66,17 @@ const autoscroll = ( state = true, action ) => {
 	}
 };
 
-const supportURL = ( state = null, action ) => {
+const status = ( state = 'disconnected', action ) => {
 	switch ( action.type ) {
-		case HAPPYCHAT_OPEN_URL:
-			return action.url;
+		case HAPPYCHAT_CONNECTING:
+			return 'connecting';
+		case HAPPYCHAT_CONNECTED:
+			return 'connected';
+		case HAPPYCHAT_CLOSING:
+			return 'closing';
 		default:
 			return state;
 	}
 };
 
-const isOpen = ( state = false, action ) => {
-	switch ( action.type ) {
-		case HAPPYCHAT_OPEN:
-			return action.isOpen !== undefined ? action.isOpen : state;
-	}
-	return state;
-};
-
-export default combineReducers( { timeline, available, status, message, autoscroll, supportURL, isOpen } );
+export default combineReducers( { timeline, available, message, autoscroll, status } );

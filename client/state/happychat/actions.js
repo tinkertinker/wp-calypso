@@ -16,8 +16,6 @@ import {
 	HAPPYCHAT_CLOSING,
 	HAPPYCHAT_RECEIVE_EVENT,
 	HAPPYCHAT_SET_AUTOSCROLL,
-	HAPPYCHAT_OPEN_URL,
-	HAPPYCHAT_OPEN
 } from 'state/action-types';
 
 const debug = require( 'debug' )( 'calypso:happychat:actions' );
@@ -47,19 +45,17 @@ const connection = buildConnection();
 
 const setChatConnecting = () => ( { type: HAPPYCHAT_CONNECTING } );
 const setChatConnected = () => ( { type: HAPPYCHAT_CONNECTED } );
-const setChatClosing = () => ( { type: HAPPYCHAT_CLOSING } );
 const setChatMessage = message => ( { type: HAPPYCHAT_SET_MESSAGE, message } );
 
 const clearChatMessage = () => setChatMessage( '' );
 
 const receiveChatEvent = event => ( { type: HAPPYCHAT_RECEIVE_EVENT, event } );
 
-const setChatOpen = isOpen => ( { type: HAPPYCHAT_OPEN, isOpen } );
-
 const sendTyping = throttle( message => {
-	debug( 'send typing indicator' );
 	connection.typing( message );
 }, 1000, { leading: true, trailing: false } );
+
+export const setChatClosing = () => ( { type: HAPPYCHAT_CLOSING } );
 
 export const connectChat = () => ( dispatch, getState ) => {
 	const { users, currentUser } = getState();
@@ -79,10 +75,6 @@ export const connectChat = () => ( dispatch, getState ) => {
 	);
 };
 
-export const openChat = () => dispatch => {
-	dispatch( setChatOpen( true ) );
-};
-
 export const updateChatMessage = message => dispatch => {
 	dispatch( setChatMessage( message ) );
 	if ( ! isEmpty( message ) ) {
@@ -96,12 +88,4 @@ export const sendChatMessage = message => dispatch => {
 	connection.send( message );
 };
 
-export const closeChat = () => ( dispatch ) => {
-	debug( 'time to close the current chat session' );
-	dispatch( setChatOpen( false ) );
-	dispatch( setChatClosing() );
-};
-
 export const setLiveChatAutoScroll = auto => ( { type: HAPPYCHAT_SET_AUTOSCROLL, auto } );
-
-export const openChatURL = url => ( { type: HAPPYCHAT_OPEN_URL, url } );

@@ -9,11 +9,11 @@ import {
 	all,
 	when
 } from './functional';
+import { connectChat } from 'state/happychat/actions';
 import {
 	openChat,
 	closeChat,
-	connectChat
-} from 'state/happychat/actions';
+} from 'state/ui/happychat/actions';
 import {
 	isConnected,
 	isConnecting,
