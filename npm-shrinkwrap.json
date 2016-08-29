@@ -646,7 +646,7 @@
       "version": "0.1.4"
     },
     "component-emitter": {
-      "version": "1.2.1"
+      "version": "1.2.0"
     },
     "component-event": {
       "version": "0.1.4"
@@ -3105,12 +3105,7 @@
       }
     },
     "socket.io-client": {
-      "version": "1.4.5",
-      "dependencies": {
-        "component-emitter": {
-          "version": "1.2.0"
-        }
-      }
+      "version": "1.4.5"
     },
     "socket.io-parser": {
       "version": "2.2.6",
@@ -3525,7 +3520,7 @@
       "version": "1.0.0"
     },
     "uuid": {
-      "version": "2.0.2"
+      "version": "2.0.1"
     },
     "valid-url": {
       "version": "1.0.9"

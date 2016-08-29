@@ -333,7 +333,7 @@ function reduxStoreReady( reduxStore ) {
 
 			if ( '/' === context.pathname && config.isEnabled( 'devdocs/redirect-loggedout-homepage' ) ) {
 				if ( config.isEnabled( 'oauth' ) ) {
-					page.redirect( config( 'login_url' ) );
+					page.redirect( '/authorize' );
 				} else {
 					page.redirect( '/devdocs/start' );
 				}
@@ -426,7 +426,6 @@ function reduxStoreReady( reduxStore ) {
 	} );
 
 	detectHistoryNavigation.start();
-	debug( 'starting page' )
 	page.start();
 }
 

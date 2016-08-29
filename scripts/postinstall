@@ -1,4 +1,0 @@
-#!/usr/bin/env bash
-export SKIP_NPM_INSTALL=true
-echo "Building calypso $SKIP_NPM_INSTALL"
-DEBUG=config make build

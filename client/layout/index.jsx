@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-const React = require( 'react' ),
+var React = require( 'react' ),
 	connect = require( 'react-redux' ).connect,
 	classnames = require( 'classnames' ),
 	property = require( 'lodash/property' ),
@@ -10,7 +10,7 @@ const React = require( 'react' ),
 /**
  * Internal dependencies
  */
-const MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
+var MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	MasterbarLoggedOut = require( 'layout/masterbar/logged-out' ),
 	observe = require( 'lib/mixins/data-observe' ),
 	GlobalNotices = require( 'components/global-notices' ),
@@ -32,10 +32,10 @@ const MasterbarLoggedIn = require( 'layout/masterbar/logged-in' ),
 	OfflineStatus = require( 'layout/offline-status' ),
 	PollerPool = require( 'lib/data-poller' ),
 	QueryPreferences = require( 'components/data/query-preferences' ),
+	KeyboardShortcutsMenu,
+	Layout,
+	SupportUser,
 	Happychat = require( 'components/happychat' );
-
-let KeyboardShortcutsMenu,
-	SupportUser;
 
 import { isOffline } from 'state/application/selectors';
 import { hasSidebar } from 'state/ui/selectors';
@@ -52,7 +52,7 @@ if ( config.isEnabled( 'support-user' ) ) {
 	SupportUser = require( 'support/support-user' );
 }
 
-const Layout = React.createClass( {
+Layout = React.createClass( {
 	displayName: 'Layout',
 
 	mixins: [ SitesListNotices, observe( 'user', 'nuxWelcome', 'sites', 'translatorInvitation' ) ],
@@ -187,9 +187,7 @@ const Layout = React.createClass( {
 				`focus-${this.props.currentLayoutFocus}`,
 				{ 'is-support-user': this.props.isSupportUser },
 				{ 'has-no-sidebar': ! this.props.hasSidebar },
-				{ 'wp-singletree-layout': !! this.props.primary },
-				{ 'support-url': this.props.isShowingSupportURL },
-				{ 'has-chat': this.props.chatIsOpen }
+				{ 'wp-singletree-layout': !! this.props.primary }
 			),
 			loadingClass = classnames( {
 				layout__loader: true,
